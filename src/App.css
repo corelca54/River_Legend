@@ -1,0 +1,66 @@
+/* Reseteo básico para eliminar márgenes y paddings que los navegadores añaden por defecto. */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Contenedor principal de nuestra aplicación. */
+.App {
+  position: relative; /* Esto es crucial para poder posicionar elementos hijos (como la UI) de forma absoluta dentro de él. */
+  width: 100vw;       /* Ocupa el 100% del ancho de la ventana. */
+  height: 100vh;      /* Ocupa el 100% del alto de la ventana. */
+  overflow: hidden;   /* Evita que aparezcan barras de scroll si algo se sale de la pantalla. */
+  background-color: #2c3e50; /* Un color de fondo oscuro por si el lienzo tarda en cargar. */
+}
+
+/* El lienzo donde Matter.js dibujará la simulación del juego. */
+.lienzo-juego {
+  position: absolute; /* Lo posicionamos de forma absoluta para que no afecte a otros elementos. */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Capa para la interfaz de usuario (botones, marcadores, etc.). */
+.capa-ui {
+  position: absolute; /* La posicionamos sobre el lienzo del juego. */
+  bottom: 0;          /* La anclamos a la parte inferior. */
+  left: 0;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box; /* Asegura que el padding no incremente el ancho total del div. */
+  display: flex;
+  justify-content: center; /* Centra los elementos hijos horizontalmente. */
+  align-items: center;     /* Centra los elementos hijos verticalmente. */
+  z-index: 10;             /* Le damos un z-index alto para asegurar que siempre esté por encima del lienzo del juego. */
+}
+
+/* Estilo para nuestro botón de acción principal. */
+.boton-accion {
+  padding: 15px 30px;
+  font-size: 1.2rem; /* Tamaño de la fuente. */
+  font-weight: bold;
+  color: white;
+  background-color: #e67e22; /* Un color naranja que destaca. */
+  border: none; /* Sin borde. */
+  border-radius: 12px; /* Bordes redondeados. */
+  cursor: pointer; /* Cambia el cursor a una mano para indicar que es clickeable. */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Una sombra sutil para darle profundidad. */
+  transition: background-color 0.2s ease, transform 0.1s ease; /* Transiciones suaves para los efectos. */
+}
+
+/* Efecto cuando el cursor pasa por encima del botón. */
+.boton-accion:hover {
+  background-color: #d35400; /* Se oscurece un poco. */
+}
+
+/* Efecto cuando se hace clic en el botón. */
+.boton-accion:active {
+  transform: scale(0.95); /* Se encoge ligeramente para dar feedback de pulsación. */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* La sombra se reduce. */
+}
