@@ -1,0 +1,243 @@
+/**
+ * VideoBackground.css - Estilos para el componente de video de fondo
+ * Optimizado para rendimiento y compatibilidad móvil
+ */
+
+/* Video de fondo principal */
+.video-fondo {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  object-fit: cover;
+  object-position: center;
+  z-index: -10 !important;
+  
+  /* Optimizaciones de rendimiento */
+  transform: translateZ(0); /* Fuerza aceleración por hardware */
+  backface-visibility: hidden;
+  perspective: 1000px;
+  
+  /* Suavizar la aparición */
+  opacity: 0;
+  transition: opacity 1s ease-in-out, filter 0.5s ease;
+  
+  /* Filtros por defecto para mejorar el ambiente */
+  filter: brightness(0.9) contrast(1.1) saturate(1.2);
+}
+
+/* Estado cuando el video está listo */
+.video-fondo.video-ready {
+  opacity: 1;
+}
+
+/* Imagen de fallback */
+.video-fondo-fallback {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  background-color: #003366; /* Color base del agua */
+  
+  /* Animación sutil para simular movimiento del agua */
+  animation: ondulacionAgua 8s ease-in-out infinite;
+}
+
+/* Overlay para mejorar legibilidad */
+.video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  
+  /* Gradiente sutil que mejora la legibilidad del contenido */
+  background: linear-gradient(
+    180deg,
+    rgba(0, 30, 60, 0.1) 0%,
+    rgba(0, 50, 100, 0.2) 30%,
+    rgba(0, 40, 80, 0.3) 70%,
+    rgba(0, 20, 40, 0.4) 100%
+  );
+  
+  /* Efectos adicionales para crear profundidad */
+  backdrop-filter: blur(0.5px);
+  -webkit-backdrop-filter: blur(0.5px);
+}
+
+/* Animaciones */
+@keyframes ondulacionAgua {
+  0%, 100% {
+    filter: brightness(0.8) hue-rotate(0deg);
+    transform: scale(1);
+  }
+  25% {
+    filter: brightness(0.85) hue-rotate(2deg);
+    transform: scale(1.01);
+  }
+  50% {
+    filter: brightness(0.9) hue-rotate(0deg);
+    transform: scale(1);
+  }
+  75% {
+    filter: brightness(0.85) hue-rotate(-2deg);
+    transform: scale(1.01);
+  }
+}
+
+/* Optimizaciones para diferentes tamaños de pantalla */
+
+/* Tablets y pantallas medianas */
+@media (max-width: 1024px) {
+  .video-fondo {
+    /* Reducir calidad de filtros para mejorar rendimiento */
+    filter: brightness(0.8) contrast(1.02);
+  }
+}
+
+/* Móviles */
+@media (max-width: 768px) {
+  .video-fondo {
+    /* Filtros mínimos para optimizar rendimiento en móviles */
+    filter: brightness(0.85);
+  }
+  
+  .video-overlay {
+    /* Overlay más fuerte en móviles para mejor legibilidad */
+    background: linear-gradient(
+      180deg,
+      rgba(0, 30, 60, 0.15) 0%,
+      rgba(0, 50, 100, 0.25) 30%,
+      rgba(0, 40, 80, 0.35) 70%,
+      rgba(0, 20, 40, 0.45) 100%
+    );
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .video-fondo {
+    /* Sin filtros en móviles muy pequeños */
+    filter: none;
+  }
+  
+  .video-fondo-fallback {
+    /* Animación reducida para ahorrar batería */
+    animation: ondulacionAgua 12s ease-in-out infinite;
+  }
+}
+
+/* Optimizaciones para modo de bajo consumo */
+@media (prefers-reduced-motion: reduce) {
+  .video-fondo {
+    transition: opacity 0.3s ease;
+  }
+  
+  .video-fondo-fallback {
+    animation: none;
+  }
+  
+  .video-overlay {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* Optimizaciones para conexiones lentas */
+@media (prefers-reduced-data: reduce) {
+  .video-fondo {
+    display: none;
+  }
+  
+  .video-fondo-fallback {
+    display: block;
+  }
+}
+
+/* Ajustes para pantallas de alta densidad */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .video-fondo-fallback {
+    background-size: cover;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Orientación horizontal en móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+  .video-fondo,
+  .video-fondo-fallback {
+    object-fit: cover;
+    object-position: center bottom;
+  }
+}
+
+/* Modo oscuro */
+@media (prefers-color-scheme: dark) {
+  .video-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(0, 15, 30, 0.2) 0%,
+      rgba(0, 25, 50, 0.3) 30%,
+      rgba(0, 20, 40, 0.4) 70%,
+      rgba(0, 10, 20, 0.5) 100%
+    );
+  }
+}
+
+/* Modo claro */
+@media (prefers-color-scheme: light) {
+  .video-fondo {
+    filter: brightness(0.9) contrast(0.95);
+  }
+  
+  .video-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(0, 50, 100, 0.05) 0%,
+      rgba(0, 70, 120, 0.15) 30%,
+      rgba(0, 60, 100, 0.25) 70%,
+      rgba(0, 40, 80, 0.35) 100%
+    );
+  }
+}
+
+/* Estados de carga */
+.video-fondo:not(.video-ready) {
+  background-color: #003366;
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+  animation: shimmerLoading 2s ease-in-out infinite;
+}
+
+@keyframes shimmerLoading {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Prevención de bugs de renderizado en algunos navegadores móviles */
+.video-fondo {
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+
+/* Optimización para dispositivos con poca memoria */
+@media (max-width: 320px) {
+  .video-overlay {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  
+  .video-fondo-fallback {
+    background-attachment: scroll; /* Mejor rendimiento que fixed */
+  }
+}

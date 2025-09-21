@@ -1,0 +1,409 @@
+/**
+ * FishingGame.css - Estilos principales del juego de pesca
+ * Diseño optimizado para mobile-first con experiencia inmersiva
+ */
+
+/* Variables CSS para consistencia y mantenibilidad */
+:root {
+  --color-primario: #2E8B57;
+  --color-secundario: #4682B4;
+  --color-acento: #FFD700;
+  --color-peligro: #DC143C;
+  --color-exito: #228B22;
+  --color-advertencia: #FF8C00;
+  --color-texto-claro: #FFFFFF;
+  --color-texto-oscuro: #2F4F4F;
+  --color-fondo-overlay: rgba(0, 30, 60, 0.8);
+  --color-fondo-glass: rgba(255, 255, 255, 0.1);
+  --border-radius-pequeno: 8px;
+  --border-radius-mediano: 12px;
+  --border-radius-grande: 20px;
+  --sombra-suave: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --sombra-fuerte: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --transicion-suave: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --fuente-principal: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Reset y configuración base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Contenedor principal del juego */
+.juego-pesca {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: var(--fuente-principal);
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  touch-action: manipulation;
+  background: linear-gradient(180deg, #001122 0%, #003366 50%, #004488 100%);
+}
+
+/* Interfaz principal del juego */
+.interfaz-juego {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(
+    180deg, 
+    rgba(0, 50, 100, 0.2) 0%, 
+    rgba(0, 30, 60, 0.4) 50%, 
+    rgba(0, 20, 40, 0.6) 100%
+  );
+  z-index: 1;
+}
+
+/* Panel superior */
+.panel-superior {
+  padding: 15px 20px;
+  background: var(--color-fondo-overlay);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-bottom: 2px solid var(--color-fondo-glass);
+  box-shadow: var(--sombra-suave);
+}
+
+/* Área central de pesca */
+.area-central-pesca {
+  flex: 1;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 10px;
+  min-height: calc(100vh - 200px); /* Usar casi toda la pantalla */
+  width: 100%;
+}
+
+/* Panel de controles */
+.panel-controles {
+  padding: 20px;
+  background: var(--color-fondo-overlay);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-top: 2px solid var(--color-fondo-glass);
+  box-shadow: var(--sombra-suave);
+}
+
+/* Mensaje de estado del juego */
+.mensaje-estado {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.texto-estado {
+  background: var(--color-fondo-overlay);
+  color: var(--color-texto-claro);
+  padding: 15px 30px;
+  border-radius: var(--border-radius-grande);
+  font-size: 1.2rem;
+  font-weight: 600;
+  border: 2px solid var(--color-fondo-glass);
+  text-align: center;
+  white-space: nowrap;
+  box-shadow: var(--sombra-fuerte);
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  animation: pulsoEstado 2s ease-in-out infinite;
+}
+
+.texto-estado.error {
+  background: rgba(220, 20, 60, 0.95);
+  border-color: var(--color-peligro);
+  animation: vibrarError 0.5s ease-in-out infinite alternate;
+}
+
+/* Botones flotantes */
+.boton-coleccion,
+.boton-estadisticas {
+  position: fixed;
+  right: 20px;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, var(--color-secundario), #87CEEB);
+  color: var(--color-texto-claro);
+  border: none;
+  border-radius: var(--border-radius-grande);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--sombra-suave);
+  transition: var(--transicion-suave);
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--color-fondo-glass);
+}
+
+.boton-coleccion {
+  bottom: 80px;
+}
+
+.boton-estadisticas {
+  bottom: 20px;
+}
+
+.boton-coleccion:hover,
+.boton-estadisticas:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(70, 130, 180, 0.6);
+  background: linear-gradient(135deg, #87CEEB, var(--color-secundario));
+}
+
+.boton-coleccion:active,
+.boton-estadisticas:active {
+  transform: translateY(-1px) scale(1.02);
+}
+
+/* Animaciones */
+@keyframes pulsoEstado {
+  0%, 100% { 
+    transform: translate(-50%, -50%) scale(1); 
+    opacity: 0.9; 
+  }
+  50% { 
+    transform: translate(-50%, -50%) scale(1.02); 
+    opacity: 1; 
+  }
+}
+
+@keyframes vibrarError {
+  0% { 
+    transform: translate(-50%, -50%) translateX(0); 
+  }
+  100% { 
+    transform: translate(-50%, -50%) translateX(-3px); 
+  }
+}
+
+@keyframes aparecer {
+  from { 
+    opacity: 0; 
+    transform: scale(0.8) translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1) translateY(0); 
+  }
+}
+
+@keyframes brillar {
+  0%, 100% { 
+    box-shadow: var(--sombra-suave); 
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), var(--sombra-suave); 
+  }
+}
+
+/* Efectos de vidrio esmerilado */
+.efecto-vidrio {
+  background: var(--color-fondo-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: var(--sombra-suave);
+}
+
+/* Estados de carga y transiciones */
+.cargando {
+  opacity: 0.7;
+  pointer-events: none;
+  position: relative;
+}
+
+.cargando::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid var(--color-fondo-glass);
+  border-top: 2px solid var(--color-acento);
+  border-radius: 50%;
+  animation: girar 1s linear infinite;
+}
+
+@keyframes girar {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+
+/* Tablets */
+@media (max-width: 768px) {
+  .panel-superior,
+  .panel-controles {
+    padding: 12px 15px;
+  }
+  
+  .area-central-pesca {
+    padding: 15px;
+  }
+  
+  .texto-estado {
+    font-size: 1.1rem;
+    padding: 12px 24px;
+  }
+  
+  .boton-coleccion,
+  .boton-estadisticas {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    right: 15px;
+  }
+  
+  .boton-coleccion {
+    bottom: 70px;
+  }
+  
+  .boton-estadisticas {
+    bottom: 15px;
+  }
+}
+
+/* Móviles */
+@media (max-width: 480px) {
+  .panel-superior,
+  .panel-controles {
+    padding: 10px 12px;
+  }
+  
+  .area-central-pesca {
+    padding: 10px;
+  }
+  
+  .texto-estado {
+    font-size: 1rem;
+    padding: 10px 20px;
+    max-width: 90vw;
+    word-wrap: break-word;
+  }
+  
+  .boton-coleccion,
+  .boton-estadisticas {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    right: 10px;
+  }
+  
+  .boton-coleccion {
+    bottom: 60px;
+  }
+  
+  .boton-estadisticas {
+    bottom: 10px;
+  }
+}
+
+/* Pantallas muy pequeñas */
+@media (max-width: 320px) {
+  .texto-estado {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+  }
+  
+  .boton-coleccion,
+  .boton-estadisticas {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+}
+
+/* Orientación horizontal en móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+  .panel-superior,
+  .panel-controles {
+    padding: 8px 15px;
+  }
+  
+  .area-central-pesca {
+    padding: 10px 15px;
+  }
+  
+  .texto-estado {
+    font-size: 1rem;
+    padding: 8px 20px;
+  }
+}
+
+/* Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Modo alto contraste */
+@media (prefers-contrast: high) {
+  :root {
+    --color-fondo-overlay: rgba(0, 0, 0, 0.9);
+    --color-fondo-glass: rgba(255, 255, 255, 0.3);
+  }
+  
+  .texto-estado {
+    border-width: 3px;
+  }
+  
+  .boton-coleccion,
+  .boton-estadisticas {
+    border: 2px solid var(--color-texto-claro);
+  }
+}
+
+/* Soporte para modo oscuro */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-fondo-overlay: rgba(0, 15, 30, 0.9);
+  }
+}
+
+/* Optimizaciones de rendimiento */
+.juego-pesca * {
+  will-change: auto;
+}
+
+.juego-pesca *:hover,
+.juego-pesca *:focus,
+.juego-pesca *.animando {
+  will-change: transform, opacity;
+}
+
+/* Prevención de zoom en iOS */
+input, button, select, textarea {
+  font-size: 16px;
+}
+
+/* Scroll personalizado para elementos internos */
+.scroll-personalizado::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scroll-personalizado::-webkit-scrollbar-track {
+  background: var(--color-fondo-glass);
+  border-radius: 3px;
+}
+
+.scroll-personalizado::-webkit-scrollbar-thumb {
+  background: var(--color-acento);
+  border-radius: 3px;
+}
+
+.scroll-personalizado::-webkit-scrollbar-thumb:hover {
+  background: #B8860B;
+}

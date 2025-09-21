@@ -1,0 +1,452 @@
+/**
+ * PlayerStats.css - Estilos para el componente de estadísticas del jugador
+ * Diseño moderno y responsivo con efectos visuales atractivos
+ */
+
+.estadisticas-jugador {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Efecto de brillo sutil de fondo */
+.estadisticas-jugador::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  animation: brilloSutil 3s ease-in-out infinite;
+}
+
+@keyframes brilloSutil {
+  0% { left: -100%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
+}
+
+/* Sección de nivel */
+.seccion-nivel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.badge-nivel {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.badge-nivel::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    from 0deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: rotarBadge 4s linear infinite;
+}
+
+@keyframes rotarBadge {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.numero-nivel {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  position: relative;
+}
+
+.info-nivel {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.titulo-jugador {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #FFD700;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  line-height: 1;
+}
+
+.texto-nivel {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  line-height: 1;
+}
+
+/* Sección de experiencia */
+.seccion-experiencia {
+  flex: 1;
+  min-width: 200px;
+}
+
+.etiqueta-experiencia {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+  color: white;
+  font-weight: 500;
+}
+
+.numeros-exp {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 400;
+}
+
+.contenedor-barra-exp {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.barra-experiencia {
+  flex: 1;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+}
+
+.relleno-experiencia {
+  height: 100%;
+  border-radius: 20px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efecto de pulso en la barra de experiencia */
+.relleno-experiencia::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: pulsoBarra 2s ease-in-out infinite;
+}
+
+@keyframes pulsoBarra {
+  0%, 100% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+}
+
+.porcentaje-exp {
+  font-size: 0.8rem;
+  color: white;
+  font-weight: 600;
+  min-width: 35px;
+  text-align: right;
+}
+
+/* Sección de estadísticas */
+.seccion-estadisticas {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.stat-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.stat-icono {
+  font-size: 1.2rem;
+  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.5));
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.stat-valor {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  line-height: 1;
+}
+
+.stat-etiqueta {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  line-height: 1;
+}
+
+/* Colores específicos para cada estadística */
+.stat-item.puntuacion:hover {
+  background: rgba(255, 215, 0, 0.2);
+}
+
+.stat-item.capturas:hover {
+  background: rgba(46, 204, 113, 0.2);
+}
+
+.stat-item.siguiente-nivel:hover {
+  background: rgba(155, 89, 182, 0.2);
+}
+
+/* Alerta de nivel cercano */
+.alerta-nivel-cercano {
+  position: absolute;
+  bottom: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #2F4F4F;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+  animation: pulsoAlerta 2s ease-in-out infinite;
+  white-space: nowrap;
+}
+
+@keyframes pulsoAlerta {
+  0%, 100% {
+    transform: translateX(-50%) scale(1);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+  }
+  50% {
+    transform: translateX(-50%) scale(1.05);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+  }
+}
+
+.icono-alerta {
+  animation: rotarIcono 2s ease-in-out infinite;
+}
+
+@keyframes rotarIcono {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(10deg); }
+}
+
+/* Responsive Design */
+
+/* Tablets */
+@media (max-width: 768px) {
+  .estadisticas-jugador {
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 12px 15px;
+  }
+  
+  .seccion-experiencia {
+    min-width: 150px;
+    order: 1;
+    flex: 1;
+  }
+  
+  .seccion-estadisticas {
+    order: 2;
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  
+  .stat-item {
+    flex: 1;
+    min-width: 0;
+    padding: 6px 8px;
+  }
+  
+  .badge-nivel {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .numero-nivel {
+    font-size: 1.2rem;
+  }
+}
+
+/* Móviles */
+@media (max-width: 480px) {
+  .estadisticas-jugador {
+    gap: 10px;
+    padding: 10px 12px;
+  }
+  
+  .seccion-nivel {
+    gap: 8px;
+  }
+  
+  .badge-nivel {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .numero-nivel {
+    font-size: 1.1rem;
+  }
+  
+  .titulo-jugador {
+    font-size: 0.8rem;
+  }
+  
+  .texto-nivel {
+    font-size: 0.7rem;
+  }
+  
+  .seccion-estadisticas {
+    gap: 8px;
+  }
+  
+  .stat-item {
+    padding: 5px 6px;
+  }
+  
+  .stat-icono {
+    font-size: 1rem;
+  }
+  
+  .stat-valor {
+    font-size: 0.8rem;
+  }
+  
+  .stat-etiqueta {
+    font-size: 0.65rem;
+  }
+  
+  .barra-experiencia {
+    height: 10px;
+  }
+  
+  .alerta-nivel-cercano {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    bottom: -30px;
+  }
+}
+
+/* Móviles muy pequeños */
+@media (max-width: 320px) {
+  .estadisticas-jugador {
+    padding: 8px 10px;
+  }
+  
+  .seccion-estadisticas {
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .stat-item {
+    justify-content: center;
+  }
+}
+
+/* Orientación horizontal en móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+  .estadisticas-jugador {
+    padding: 8px 15px;
+  }
+  
+  .seccion-nivel {
+    flex-direction: row;
+  }
+  
+  .badge-nivel {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .numero-nivel {
+    font-size: 1rem;
+  }
+  
+  .alerta-nivel-cercano {
+    display: none; /* Ocultar en landscape para ahorrar espacio */
+  }
+}
+
+/* Optimizaciones de rendimiento */
+@media (prefers-reduced-motion: reduce) {
+  .estadisticas-jugador::before,
+  .badge-nivel::after,
+  .relleno-experiencia::after,
+  .alerta-nivel-cercano,
+  .icono-alerta {
+    animation: none;
+  }
+  
+  .stat-item:hover {
+    transform: none;
+  }
+  
+  .relleno-experiencia {
+    transition: width 0.3s ease;
+  }
+}

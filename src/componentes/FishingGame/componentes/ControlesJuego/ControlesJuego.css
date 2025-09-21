@@ -1,0 +1,681 @@
+/**
+ * ControlesJuego.css - Estilos para los controles del juego
+ * Diseño optimizado para interacción táctil y visual atractiva
+ */
+
+.controles-juego {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 1000 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px 20px;
+  background: rgba(0, 20, 40, 0.98) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+  max-height: 140px;
+  overflow: visible;
+}
+
+/* Controles principales */
+.controles-principales {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.control-btn {
+  position: relative;
+  min-width: 90px;
+  min-height: 45px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.control-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.control-btn:hover::before {
+  left: 100%;
+}
+
+.contenido-boton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  position: relative;
+  z-index: 1;
+}
+
+.icono-boton {
+  font-size: 1.5rem;
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.5));
+}
+
+.texto-boton {
+  font-size: 0.9rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Botón de lanzar */
+.control-btn.lanzar {
+  background: linear-gradient(135deg, #2E8B57, #228B22);
+  color: white;
+  flex: 1;
+  max-width: 200px;
+}
+
+.control-btn.lanzar:hover:not(.deshabilitado) {
+  background: linear-gradient(135deg, #228B22, #2E8B57);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(46, 139, 87, 0.4);
+}
+
+.control-btn.lanzar.activo {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #2F4F4F;
+  animation: pulsoLanzando 1.5s ease-in-out infinite;
+}
+
+@keyframes pulsoLanzando {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 8px 30px rgba(255, 215, 0, 0.6);
+  }
+}
+
+.indicador-pulse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 16px;
+  animation: pulseIndicador 2s ease-in-out infinite;
+}
+
+@keyframes pulseIndicador {
+  0% {
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+  }
+  100% {
+    width: 120%;
+    height: 120%;
+    opacity: 0;
+  }
+}
+
+/* Botón de recoger */
+.control-btn.recoger {
+  background: linear-gradient(135deg, #4682B4, #87CEEB);
+  color: white;
+}
+
+.control-btn.recoger:hover:not(.deshabilitado) {
+  background: linear-gradient(135deg, #87CEEB, #4682B4);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(70, 130, 180, 0.4);
+}
+
+.control-btn.recoger.presionado {
+  background: linear-gradient(135deg, #1E90FF, #00BFFF);
+  transform: translateY(-1px) scale(0.98);
+  animation: efectoRecoger 0.2s ease-in-out infinite;
+}
+
+@keyframes efectoRecoger {
+  0%, 100% { transform: translateY(-1px) scale(0.98); }
+  50% { transform: translateY(-3px) scale(1.02); }
+}
+
+/* Botón de soltar */
+.control-btn.soltar {
+  background: linear-gradient(135deg, #FF8C00, #FF6347);
+  color: white;
+}
+
+.control-btn.soltar:hover:not(.deshabilitado) {
+  background: linear-gradient(135deg, #FF6347, #FF8C00);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(255, 140, 0, 0.4);
+}
+
+.control-btn.soltar.presionado {
+  background: linear-gradient(135deg, #FF4500, #DC143C);
+  transform: translateY(-1px) scale(0.98);
+  animation: efectoSoltar 0.2s ease-in-out infinite;
+}
+
+@keyframes efectoSoltar {
+  0%, 100% { transform: translateY(-1px) scale(0.98); }
+  50% { transform: translateY(-3px) scale(1.02); }
+}
+
+/* Estados de botones */
+.control-btn.deshabilitado {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+}
+
+.control-btn.deshabilitado::before {
+  display: none;
+}
+
+/* Efectos de los botones */
+.efecto-indicador {
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(0, 0, 0, 0.7);
+  padding: 2px 8px;
+  border-radius: 8px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.control-btn:hover .efecto-indicador {
+  opacity: 1;
+}
+
+.efecto-presion {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.3) 0%,
+    transparent 70%
+  );
+  border-radius: inherit;
+  animation: ondaPresion 0.6s ease-out infinite;
+}
+
+@keyframes ondaPresion {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+}
+
+/* Controles secundarios */
+.controles-secundarios {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.control-btn-secundario {
+  width: 50px;
+  height: 50px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.control-btn-secundario:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px) scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.control-btn-secundario.pausa:hover {
+  border-color: #FFD700;
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.3);
+}
+
+.control-btn-secundario.reiniciar:hover {
+  border-color: #FF6347;
+  box-shadow: 0 6px 20px rgba(255, 99, 71, 0.3);
+}
+
+.control-btn-secundario.configuracion:hover {
+  border-color: #87CEEB;
+  box-shadow: 0 6px 20px rgba(135, 206, 235, 0.3);
+}
+
+/* Instrucciones */
+.instrucciones-controles {
+  text-align: center;
+}
+
+.instruccion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: 10px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.instruccion.activa {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.instruccion.critica {
+  background: rgba(255, 68, 68, 0.2);
+  border-color: #FF4444;
+  animation: parpadearInstruccion 2s ease-in-out infinite;
+}
+
+@keyframes parpadearInstruccion {
+  0%, 100% {
+    background: rgba(255, 68, 68, 0.2);
+    box-shadow: 0 0 10px rgba(255, 68, 68, 0.2);
+  }
+  50% {
+    background: rgba(255, 68, 68, 0.4);
+    box-shadow: 0 0 20px rgba(255, 68, 68, 0.4);
+  }
+}
+
+.icono-instruccion {
+  font-size: 1.2rem;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+}
+
+.texto-instruccion {
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  line-height: 1.4;
+}
+
+/* Indicadores de estado */
+.indicadores-estado {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.indicador-caracteristica {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.icono-caracteristica {
+  font-size: 0.9rem;
+}
+
+.texto-caracteristica {
+  font-weight: 400;
+}
+
+.indicador-estado-juego {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.punto-estado {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4CAF50;
+  animation: pulsoEstado 2s ease-in-out infinite;
+}
+
+.indicador-estado-juego.luchando .punto-estado {
+  background: #FF4444;
+  animation: pulsoEstadoRapido 0.5s ease-in-out infinite;
+}
+
+.indicador-estado-juego.pescando .punto-estado {
+  background: #FFD700;
+}
+
+.indicador-estado-juego.pausa .punto-estado {
+  background: #FF8C00;
+  animation: none;
+}
+
+@keyframes pulsoEstado {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+@keyframes pulsoEstadoRapido {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(1.3); }
+}
+
+.texto-estado {
+  font-size: 0.8rem;
+  color: white;
+  font-weight: 500;
+}
+
+/* Consejos dinámicos */
+.consejos-dinamicos {
+  margin-top: 10px;
+}
+
+.consejo {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 15px;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 152, 0, 0.1));
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 10px;
+  animation: aparecerConsejo 0.5s ease-out;
+}
+
+@keyframes aparecerConsejo {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.icono-consejo {
+  font-size: 1.1rem;
+  margin-top: 2px;
+  filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.6));
+}
+
+.texto-consejo {
+  color: white;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .controles-juego {
+    padding: 15px;
+    gap: 15px;
+  }
+  
+  .controles-principales {
+    gap: 12px;
+  }
+  
+  .control-btn {
+    min-width: 100px;
+    min-height: 55px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+  }
+  
+  .icono-boton {
+    font-size: 1.3rem;
+  }
+  
+  .texto-boton {
+    font-size: 0.8rem;
+  }
+  
+  .control-btn-secundario {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .texto-instruccion {
+    font-size: 0.85rem;
+  }
+  
+  .consejo {
+    padding: 8px 12px;
+  }
+  
+  .texto-consejo {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .controles-juego {
+    padding: 12px;
+    gap: 12px;
+  }
+  
+  .controles-principales {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .control-btn {
+    width: 100%;
+    min-width: auto;
+    min-height: 50px;
+    padding: 10px 15px;
+  }
+  
+  .control-btn.lanzar {
+    max-width: none;
+  }
+  
+  .controles-secundarios {
+    justify-content: space-around;
+  }
+  
+  .control-btn-secundario {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .instruccion {
+    padding: 10px 15px;
+    margin-bottom: 8px;
+  }
+  
+  .icono-instruccion {
+    font-size: 1rem;
+  }
+  
+  .texto-instruccion {
+    font-size: 0.8rem;
+  }
+  
+  .indicadores-estado {
+    gap: 6px;
+  }
+  
+  .indicador-caracteristica {
+    font-size: 0.7rem;
+  }
+  
+  .texto-estado {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .controles-juego {
+    padding: 10px;
+  }
+  
+  .control-btn {
+    min-height: 45px;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .icono-boton {
+    font-size: 1.1rem;
+  }
+  
+  .texto-boton {
+    font-size: 0.7rem;
+  }
+  
+  .consejos-dinamicos {
+    display: none; /* Ocultar en pantallas muy pequeñas */
+  }
+}
+
+/* Orientación horizontal */
+@media (max-height: 500px) and (orientation: landscape) {
+  .controles-juego {
+    padding: 8px 15px;
+    gap: 8px;
+  }
+  
+  .controles-principales {
+    flex-direction: row;
+    gap: 8px;
+  }
+  
+  .control-btn {
+    min-width: 80px;
+    min-height: 40px;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+  
+  .icono-boton {
+    font-size: 1rem;
+  }
+  
+  .texto-boton {
+    font-size: 0.7rem;
+  }
+  
+  .instrucciones-controles {
+    display: none; /* Ocultar para ahorrar espacio */
+  }
+  
+  .consejos-dinamicos {
+    display: none;
+  }
+  
+  .indicadores-estado {
+    flex-direction: row;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* Optimizaciones de rendimiento */
+@media (prefers-reduced-motion: reduce) {
+  .control-btn,
+  .control-btn-secundario,
+  .instruccion,
+  .consejo,
+  .punto-estado,
+  .indicador-pulse,
+  .efecto-presion {
+    animation: none;
+    transition: none;
+  }
+  
+  .control-btn:hover,
+  .control-btn-secundario:hover {
+    transform: none;
+  }
+  
+  .control-btn::before {
+    display: none;
+  }
+}
+
+/* Modo de contraste alto */
+@media (prefers-contrast: high) {
+  .control-btn {
+    border: 3px solid #FFFFFF;
+  }
+  
+  .control-btn.deshabilitado {
+    border-color: #666666;
+  }
+  
+  .control-btn-secundario {
+    border: 3px solid #FFFFFF;
+  }
+  
+  .instruccion {
+    border: 2px solid #FFFFFF;
+  }
+  
+  .instruccion.critica {
+    border-color: #FF0000;
+    background: #800000;
+  }
+  
+  .consejo {
+    border: 2px solid #FFFF00;
+    background: #333300;
+  }
+}

@@ -1,0 +1,643 @@
+/**
+ * MedidorTension.css - Estilos para el medidor de tensión del sedal
+ * Diseño moderno con efectos visuales y animaciones fluidas
+ */
+
+.medidor-tension {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 280px;
+  background: rgba(0, 20, 40, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.medidor-tension.vibrando {
+  animation: vibrarMedidor 0.1s infinite alternate;
+}
+
+@keyframes vibrarMedidor {
+  0% { transform: translateX(0) translateY(0); }
+  25% { transform: translateX(-2px) translateY(1px); }
+  50% { transform: translateX(2px) translateY(-1px); }
+  75% { transform: translateX(-1px) translateY(2px); }
+  100% { transform: translateX(1px) translateY(-2px); }
+}
+
+/* Título del medidor */
+.titulo-medidor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.icono-sedal {
+  font-size: 1.2rem;
+  filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.6));
+}
+
+.texto-titulo {
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Medidor circular principal */
+.contenedor-medidor-circular {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 20px;
+}
+
+.medidor-circular {
+  width: 100%;
+  height: 100%;
+  transform: rotate(0deg);
+}
+
+.arco-tension {
+  transition: stroke-dashoffset 0.3s ease;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.3));
+}
+
+.aguja-medidor {
+  transition: all 0.2s ease;
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.5));
+}
+
+.zona-peligro {
+  animation: parpadearPeligro 0.5s infinite alternate;
+}
+
+@keyframes parpadearPeligro {
+  0% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+/* Valor central */
+.valor-central {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.numero-tension {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  transition: color 0.3s ease;
+}
+
+.unidad-tension {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  margin-top: -5px;
+}
+
+/* Barra lineal de tensión */
+.barra-tension-lineal {
+  margin-bottom: 15px;
+}
+
+.etiquetas-barra {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.contenedor-barra {
+  position: relative;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.relleno-barra {
+  height: 100%;
+  border-radius: 6px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.3),
+    0 0 8px rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.relleno-barra::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  animation: brilloBarra 2s ease-in-out infinite;
+}
+
+@keyframes brilloBarra {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.marcador-zona {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.6);
+  transform: translateX(-50%);
+}
+
+.marcador-zona.critico {
+  background: #FF4444;
+  width: 3px;
+  box-shadow: 0 0 6px #FF4444;
+}
+
+/* Mensaje de estado */
+.mensaje-tension {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.mensaje-tension.critico {
+  background: rgba(255, 68, 68, 0.2);
+  border-color: #FF4444;
+  animation: parpadearMensaje 1s infinite alternate;
+}
+
+@keyframes parpadearMensaje {
+  0% { 
+    background: rgba(255, 68, 68, 0.2);
+    box-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
+  }
+  100% { 
+    background: rgba(255, 68, 68, 0.4);
+    box-shadow: 0 0 20px rgba(255, 68, 68, 0.6);
+  }
+}
+
+.icono-mensaje {
+  font-size: 1.1rem;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+}
+
+.texto-mensaje {
+  flex: 1;
+  font-size: 0.9rem;
+  color: white;
+  font-weight: 500;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Gráfico de historial */
+.grafico-historial {
+  margin-bottom: 15px;
+}
+
+.titulo-grafico {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.contenedor-grafico {
+  height: 60px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 5px;
+}
+
+.svg-grafico {
+  width: 100%;
+  height: 100%;
+}
+
+/* Alerta crítica */
+.alerta-critica {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2000;
+  animation: aparecerAlerta 0.3s ease-out;
+}
+
+@keyframes aparecerAlerta {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.contenido-alerta {
+  background: linear-gradient(135deg, #FF4444, #CC0000);
+  color: white;
+  padding: 20px 30px;
+  border-radius: 16px;
+  border: 3px solid #FFAA00;
+  box-shadow: 
+    0 0 30px rgba(255, 68, 68, 0.8),
+    inset 0 2px 4px rgba(255, 255, 255, 0.2);
+  text-align: center;
+  animation: pulsarAlerta 0.8s ease-in-out infinite;
+}
+
+@keyframes pulsarAlerta {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 
+      0 0 30px rgba(255, 68, 68, 0.8),
+      inset 0 2px 4px rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 
+      0 0 40px rgba(255, 68, 68, 1),
+      inset 0 2px 4px rgba(255, 255, 255, 0.3);
+  }
+}
+
+.icono-alerta {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  animation: rotarAlerta 2s linear infinite;
+}
+
+@keyframes rotarAlerta {
+  0% { transform: rotate(-10deg); }
+  25% { transform: rotate(10deg); }
+  50% { transform: rotate(-10deg); }
+  75% { transform: rotate(10deg); }
+  100% { transform: rotate(-10deg); }
+}
+
+.texto-alerta {
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  margin-bottom: 5px;
+}
+
+.subtexto-alerta {
+  font-size: 1rem;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+/* Acciones rápidas */
+.acciones-rapidas {
+  display: flex;
+  gap: 10px;
+}
+
+.indicador-accion {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.indicador-accion:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.indicador-accion.recoger:hover {
+  border-color: #4CAF50;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.indicador-accion.soltar:hover {
+  border-color: #FF9800;
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+}
+
+.icono-accion {
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+
+.texto-accion {
+  font-size: 0.8rem;
+  color: white;
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+
+.efecto-tension {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 400;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .medidor-tension {
+    position: fixed;
+    top: auto;
+    bottom: 120px;
+    right: 15px;
+    left: 15px;
+    width: auto;
+    max-width: 300px;
+    margin: 0 auto;
+    padding: 15px;
+  }
+  
+  .contenedor-medidor-circular {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .numero-tension {
+    font-size: 2rem;
+  }
+  
+  .unidad-tension {
+    font-size: 0.9rem;
+  }
+  
+  .texto-titulo {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .medidor-tension {
+    bottom: 100px;
+    padding: 12px;
+  }
+  
+  .contenedor-medidor-circular {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 15px;
+  }
+  
+  .numero-tension {
+    font-size: 1.6rem;
+  }
+  
+  .unidad-tension {
+    font-size: 0.8rem;
+  }
+  
+  .titulo-medidor {
+    margin-bottom: 12px;
+  }
+  
+  .icono-sedal {
+    font-size: 1rem;
+  }
+  
+  .texto-titulo {
+    font-size: 0.8rem;
+  }
+  
+  .mensaje-tension {
+    padding: 8px;
+    margin-bottom: 12px;
+  }
+  
+  .texto-mensaje {
+    font-size: 0.8rem;
+  }
+  
+  .icono-mensaje {
+    font-size: 1rem;
+  }
+  
+  .grafico-historial {
+    margin-bottom: 12px;
+  }
+  
+  .contenedor-grafico {
+    height: 50px;
+  }
+  
+  .acciones-rapidas {
+    gap: 8px;
+  }
+  
+  .indicador-accion {
+    padding: 8px;
+  }
+  
+  .icono-accion {
+    font-size: 1rem;
+  }
+  
+  .texto-accion {
+    font-size: 0.7rem;
+  }
+  
+  .efecto-tension {
+    font-size: 0.6rem;
+  }
+  
+  .alerta-critica .contenido-alerta {
+    padding: 15px 20px;
+    margin: 0 20px;
+  }
+  
+  .icono-alerta {
+    font-size: 2.5rem;
+    margin-bottom: 8px;
+  }
+  
+  .texto-alerta {
+    font-size: 1.2rem;
+  }
+  
+  .subtexto-alerta {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .medidor-tension {
+    bottom: 90px;
+    padding: 10px;
+  }
+  
+  .contenedor-medidor-circular {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .numero-tension {
+    font-size: 1.4rem;
+  }
+  
+  .grafico-historial {
+    display: none; /* Ocultar en pantallas muy pequeñas */
+  }
+  
+  .acciones-rapidas {
+    flex-direction: column;
+    gap: 6px;
+  }
+}
+
+/* Orientación horizontal */
+@media (max-height: 500px) and (orientation: landscape) {
+  .medidor-tension {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    bottom: auto;
+    left: auto;
+    width: 200px;
+    max-width: none;
+    padding: 10px;
+  }
+  
+  .contenedor-medidor-circular {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 10px;
+  }
+  
+  .numero-tension {
+    font-size: 1.2rem;
+  }
+  
+  .unidad-tension {
+    font-size: 0.7rem;
+  }
+  
+  .grafico-historial {
+    display: none;
+  }
+  
+  .acciones-rapidas {
+    gap: 5px;
+  }
+  
+  .indicador-accion {
+    padding: 5px;
+  }
+  
+  .alerta-critica .contenido-alerta {
+    padding: 10px 15px;
+  }
+  
+  .icono-alerta {
+    font-size: 2rem;
+    margin-bottom: 5px;
+  }
+  
+  .texto-alerta {
+    font-size: 1rem;
+  }
+  
+  .subtexto-alerta {
+    font-size: 0.8rem;
+  }
+}
+
+/* Optimizaciones de rendimiento */
+@media (prefers-reduced-motion: reduce) {
+  .medidor-tension.vibrando,
+  .arco-tension,
+  .aguja-medidor,
+  .zona-peligro,
+  .relleno-barra::after,
+  .mensaje-tension.critico,
+  .contenido-alerta,
+  .icono-alerta {
+    animation: none;
+  }
+  
+  .indicador-accion:hover {
+    transform: none;
+  }
+  
+  .alerta-critica {
+    animation: none;
+  }
+}
+
+/* Modo de contraste alto */
+@media (prefers-contrast: high) {
+  .medidor-tension {
+    background: rgba(0, 0, 0, 0.95);
+    border: 3px solid #FFFFFF;
+  }
+  
+  .contenedor-barra {
+    background: #000000;
+    border: 2px solid #FFFFFF;
+  }
+  
+  .mensaje-tension {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #FFFFFF;
+  }
+  
+  .mensaje-tension.critico {
+    background: #FF0000;
+    border-color: #FFFF00;
+  }
+  
+  .indicador-accion {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #FFFFFF;
+  }
+}
+
+/* Modo oscuro */
+@media (prefers-color-scheme: dark) {
+  .medidor-tension {
+    background: rgba(0, 10, 20, 0.98);
+  }
+  
+  .titulo-medidor {
+    border-bottom-color: rgba(255, 255, 255, 0.3);
+  }
+}

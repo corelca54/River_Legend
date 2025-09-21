@@ -1,0 +1,1089 @@
+/**
+ * AreaPesca.css - Estilos para el área de pesca
+ * Animaciones y efectos visuales para la experiencia de pesca
+ */
+
+.area-pesca {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: calc(100vh - 200px);
+  overflow: hidden;
+  /* Imagen de fondo como respaldo - usando la imagen sin marca de agua */
+  background-image: url('/assets/imagenes/fondos/fondoRio.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Remover el overlay que causaba la cuadrícula */
+.area-pesca::before {
+  display: none;
+}
+
+/* Superficie del agua */
+.superficie-agua {
+  position: absolute;
+  top: 15%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.6),
+    rgba(173, 216, 230, 0.8),
+    rgba(255, 255, 255, 0.6)
+  );
+  box-shadow: 0 2px 10px rgba(135, 206, 235, 0.5);
+  transition: transform 0.1s ease;
+}
+
+.efecto-chapuzon {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  border: 3px solid rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  animation: chapuzon 1s ease-out;
+}
+
+@keyframes chapuzon {
+  0% {
+    width: 10px;
+    height: 10px;
+    opacity: 1;
+  }
+  100% {
+    width: 80px;
+    height: 80px;
+    opacity: 0;
+  }
+}
+
+/* Caña de pescar */
+.contenedor-caña {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: 200px;
+  height: 300px;
+  z-index: 10;
+}
+
+.caña-pescar {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mango-caña {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 8px;
+  height: 80px;
+  background: linear-gradient(180deg, #8B4513, #654321);
+  border-radius: 4px;
+  box-shadow: 
+    inset 2px 0 4px rgba(139, 69, 19, 0.3),
+    2px 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.mango-caña::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: -2px;
+  width: 12px;
+  height: 30px;
+  background: linear-gradient(180deg, #2F4F4F, #1C1C1C);
+  border-radius: 6px;
+}
+
+.cuerpo-caña {
+  position: absolute;
+  bottom: 80px;
+  left: 2px;
+  width: 4px;
+  height: 180px;
+  background: linear-gradient(180deg, #CD853F, #8B4513);
+  border-radius: 2px;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.punta-caña {
+  position: absolute;
+  bottom: 260px;
+  left: 3px;
+  width: 2px;
+  height: 40px;
+  background: linear-gradient(180deg, #FFD700, #CD853F);
+  border-radius: 1px;
+  box-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
+}
+
+.carrete {
+  position: absolute;
+  bottom: 60px;
+  left: -8px;
+  width: 24px;
+  height: 24px;
+  background: radial-gradient(circle, #C0C0C0, #808080);
+  border-radius: 50%;
+  border: 2px solid #2F4F4F;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.4),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3);
+}
+
+.carrete::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  background: #2F4F4F;
+  border-radius: 50%;
+}
+
+.carrete.girando {
+  animation: girarCarrete 2s linear infinite;
+}
+
+@keyframes girarCarrete {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Sedal */
+.contenedor-sedal {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.sedal-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.linea-sedal {
+  filter: drop-shadow(0 0 2px rgba(230, 230, 250, 0.8));
+  transition: stroke-width 0.3s ease;
+}
+
+.linea-sedal.tension {
+  stroke: #FF6B6B;
+  stroke-width: 0.5;
+  animation: vibrarSedal 0.2s infinite alternate;
+}
+
+@keyframes vibrarSedal {
+  0% { stroke-width: 0.3; }
+  100% { stroke-width: 0.7; }
+}
+
+/* Señuelo */
+.señuelo {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  z-index: 8;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.señuelo.cayendo {
+  animation: caerSenuelo 3s ease-in;
+}
+
+.señuelo.luchando {
+  animation: luchaSenuelo 0.3s infinite alternate;
+}
+
+@keyframes caerSenuelo {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(180deg) scale(1.2);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg) scale(1);
+  }
+}
+
+@keyframes luchaSenuelo {
+  0% {
+    transform: translate(-50%, -50%) rotate(-5deg) scale(1);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(5deg) scale(1.1);
+  }
+}
+
+.anzuelo {
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle, #FFD700, #FFA500);
+  border-radius: 50%;
+  border: 2px solid #8B4513;
+  box-shadow: 
+    0 0 8px rgba(255, 215, 0, 0.8),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3);
+  position: relative;
+}
+
+.anzuelo::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-top: 6px solid #8B4513;
+}
+
+.carnada {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(circle, #FF6B6B, #DC143C);
+  border-radius: 50%;
+  box-shadow: 0 0 4px rgba(255, 107, 107, 0.6);
+}
+
+.brillo-señuelo {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.3) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  animation: brillarSenuelo 2s ease-in-out infinite;
+}
+
+@keyframes brillarSenuelo {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.2); }
+}
+
+/* Pez luchando con animaciones realistas */
+.pez-luchando-realista {
+  position: absolute;
+  z-index: 20;
+}
+
+.sedal-tenso {
+  filter: drop-shadow(0 0 4px rgba(230, 230, 250, 0.8));
+}
+
+.linea-sedal-tension {
+  animation: vibracionSedal 0.1s infinite alternate;
+}
+
+@keyframes vibracionSedal {
+  0% { stroke-width: 2; }
+  100% { stroke-width: 4; }
+}
+
+.contenedor-pez-realista {
+  position: relative;
+  transform-origin: center;
+}
+
+.imagen-pez-luchando {
+  object-fit: contain;
+  border-radius: 12px;
+  filter: brightness(1.2) contrast(1.1) saturate(1.2) drop-shadow(0 0 20px rgba(255, 255, 255, 0.4));
+  transition: all 0.1s ease;
+}
+
+@keyframes luchaPezRealista {
+  0% { 
+    transform: rotate(-15deg) translateY(0) translateX(-5px);
+    filter: brightness(1.2) contrast(1.1) saturate(1.2) drop-shadow(0 0 20px rgba(255, 255, 255, 0.4));
+  }
+  50% {
+    transform: rotate(5deg) translateY(-8px) translateX(3px);
+    filter: brightness(1.3) contrast(1.2) saturate(1.3) drop-shadow(0 0 25px rgba(255, 255, 255, 0.6));
+  }
+  100% { 
+    transform: rotate(15deg) translateY(-3px) translateX(-2px);
+    filter: brightness(1.2) contrast(1.1) saturate(1.2) drop-shadow(0 0 20px rgba(255, 255, 255, 0.4));
+  }
+}
+
+@keyframes saltosPez {
+  0%, 90%, 100% { transform: translateY(0); }
+  10% { transform: translateY(-15px); }
+}
+
+/* Salpicaduras de agua */
+.salpicaduras-agua {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  pointer-events: none;
+}
+
+.gota-agua {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  background: radial-gradient(circle, rgba(173, 216, 230, 0.8), rgba(135, 206, 235, 0.6));
+  border-radius: 50%;
+  animation: salpicadura 0.8s ease-out infinite;
+  transform-origin: center;
+}
+
+@keyframes salpicadura {
+  0% {
+    transform: translate(-50%, -50%) rotate(var(--angulo)) translateX(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(var(--angulo)) translateX(40px) scale(0);
+    opacity: 0;
+  }
+}
+
+/* Ondas en el agua */
+.ondas-lucha {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+}
+
+.onda-agua {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(173, 216, 230, 0.6);
+  border-radius: 50%;
+  animation: expandirOnda 1.5s ease-out infinite;
+}
+
+@keyframes expandirOnda {
+  0% {
+    width: 20px;
+    height: 20px;
+    opacity: 0.8;
+  }
+  100% {
+    width: 120px;
+    height: 120px;
+    opacity: 0;
+  }
+}
+.pez-luchando {
+  position: absolute;
+  z-index: 15;
+  animation: movimientoPez 0.8s infinite alternate;
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.7));
+}
+
+.contenedor-pez-imagen {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imagen-pez-real {
+  max-width: 150px;
+  max-height: 100px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  filter: brightness(1.1) contrast(1.1);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.pez-emoji-fallback {
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
+  animation: rebotePez 1s infinite;
+}
+
+@keyframes rebotePez {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.linea-anzuelo {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  width: 2px;
+  height: 20px;
+  background: #E6E6FA;
+  transform: translateX(-50%);
+  box-shadow: 0 0 5px rgba(230, 230, 250, 0.8);
+}
+
+@keyframes movimientoPez {
+  0% { 
+    transform: translate(-50%, -50%) rotate(-8deg) scale(1);
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.7));
+  }
+  100% { 
+    transform: translate(-50%, -50%) rotate(8deg) scale(1.05);
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.9));
+  }
+}
+
+.cuerpo-pez {
+  width: 40px;
+  height: 24px;
+  border-radius: 50% 20% 50% 20%;
+  position: relative;
+  box-shadow: 
+    0 0 12px rgba(0, 0, 0, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.2);
+  background-size: 200% 200%;
+  animation: latirCorazonPez 1s ease-in-out infinite;
+}
+
+@keyframes latirCorazonPez {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.ojo-pez {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle, #000 40%, #FFF 50%);
+  border-radius: 50%;
+  animation: parpadearOjo 3s infinite;
+}
+
+@keyframes parpadearOjo {
+  0%, 90%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+
+.aleta-dorsal {
+  position: absolute;
+  top: -8px;
+  left: 8px;
+  width: 20px;
+  height: 12px;
+  background: inherit;
+  border-radius: 50% 50% 20% 20%;
+  opacity: 0.8;
+  animation: movimientoAleta 0.8s ease-in-out infinite alternate;
+}
+
+.aleta-ventral {
+  position: absolute;
+  bottom: -6px;
+  left: 12px;
+  width: 15px;
+  height: 8px;
+  background: inherit;
+  border-radius: 20% 20% 50% 50%;
+  opacity: 0.8;
+  animation: movimientoAleta 0.6s ease-in-out infinite alternate-reverse;
+}
+
+.aleta-cola {
+  position: absolute;
+  top: 50%;
+  left: -12px;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 20px;
+  background: inherit;
+  border-radius: 50% 20% 50% 20%;
+  opacity: 0.9;
+  animation: coletearPez 0.4s ease-in-out infinite alternate;
+}
+
+@keyframes movimientoAleta {
+  0% { transform: rotate(-5deg); }
+  100% { transform: rotate(5deg); }
+}
+
+@keyframes coletearPez {
+  0% { transform: translateY(-50%) rotate(-15deg); }
+  100% { transform: translateY(-50%) rotate(15deg); }
+}
+
+.patron-escamas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.3) 2px, transparent 3px),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.2) 2px, transparent 3px),
+    radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.3) 2px, transparent 3px);
+  background-size: 8px 8px;
+  border-radius: inherit;
+  opacity: 0.6;
+}
+
+/* Partículas de lucha */
+.particulas-lucha {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  pointer-events: none;
+}
+
+.particula {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  background: radial-gradient(circle, #87CEEB, #4682B4);
+  border-radius: 50%;
+  animation: particulaLucha 1s infinite;
+  transform-origin: center;
+}
+
+@keyframes particulaLucha {
+  0% {
+    transform: translate(-50%, -50%) rotate(var(--direccion)) translateX(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(var(--direccion)) translateX(30px) scale(0);
+    opacity: 0;
+  }
+}
+
+/* Información flotante del pez */
+.info-flotante-pez {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  text-align: center;
+  white-space: nowrap;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  animation: flotarInfo 2s ease-in-out infinite;
+}
+
+@keyframes flotarInfo {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-3px); }
+}
+
+.nombre-pez {
+  font-weight: 600;
+  color: #FFD700;
+}
+
+.tiempo-lucha {
+  font-size: 0.6rem;
+  opacity: 0.8;
+}
+
+/* Burbujas */
+.contenedor-burbujas {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.burbuja {
+  position: absolute;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.6) 0%,
+    rgba(173, 216, 230, 0.4) 50%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  border-radius: 50%;
+  animation: subirBurbuja linear infinite;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+@keyframes subirBurbuja {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(-50vh) scale(1.2);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-100vh) scale(0.8);
+    opacity: 0;
+  }
+}
+
+/* Indicadores de profundidad */
+.indicadores-profundidad {
+  position: absolute;
+  right: 10px;
+  top: 20%;
+  height: 60%;
+  z-index: 4;
+}
+
+.marca-profundidad {
+  position: absolute;
+  right: 0;
+  width: 40px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.marca-profundidad.activa {
+  background: linear-gradient(90deg, #FFD700, #FFA500);
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+  width: 50px;
+}
+
+.numero-profundidad {
+  position: absolute;
+  right: 55px;
+  top: -8px;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* Peces decorativos nadando de fondo */
+.peces-decorativos {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.pez-decorativo {
+  position: absolute;
+  top: var(--profundidad);
+  left: -50px;
+  font-size: calc(1.5rem * var(--tamaño));
+  opacity: 0.6;
+  filter: blur(1px);
+  animation: nadarHorizontal var(--velocidad) linear infinite;
+  animation-delay: var(--delay);
+  transform: scaleX(-1); /* Que naden hacia la derecha */
+}
+
+@keyframes nadarHorizontal {
+  0% {
+    left: -50px;
+    transform: scaleX(-1) translateY(0);
+  }
+  25% {
+    transform: scaleX(-1) translateY(-10px);
+  }
+  50% {
+    transform: scaleX(-1) translateY(5px);
+  }
+  75% {
+    transform: scaleX(-1) translateY(-5px);
+  }
+  100% {
+    left: calc(100vw + 50px);
+    transform: scaleX(-1) translateY(0);
+  }
+}
+.efectos-ambientales {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.rayos-sol {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+}
+
+.rayo-sol {
+  position: absolute;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0.2) 30%,
+    rgba(255, 255, 255, 0.1) 60%,
+    transparent 100%
+  );
+  animation: ondularRayo 4s ease-in-out infinite;
+  filter: blur(1px);
+}
+
+@keyframes ondularRayo {
+  0%, 100% {
+    transform: translateX(0) scaleY(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateX(10px) scaleY(1.1);
+    opacity: 0.8;
+  }
+}
+
+.particulas-agua {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+}
+
+.particula-agua {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  animation: flotarParticulaAgua linear infinite;
+}
+
+@keyframes flotarParticulaAgua {
+  0% {
+    transform: translateY(100vh) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-10vh) translateX(20px);
+    opacity: 0;
+  }
+}
+
+/* Estados del juego */
+.mensaje-estado-area {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 15;
+}
+
+.icono-espera {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  animation: balanceoPesca 2s ease-in-out infinite;
+}
+
+@keyframes balanceoPesca {
+  0%, 100% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
+}
+
+.texto-espera {
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 500;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 10px 20px;
+  border-radius: 25px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.indicador-pescando {
+  position: absolute;
+  bottom: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+}
+
+.ondas-sonar {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.onda-sonar {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 215, 0, 0.6);
+  border-radius: 50%;
+  animation: ondaSonar 2s ease-out infinite;
+}
+
+@keyframes ondaSonar {
+  0% {
+    width: 20px;
+    height: 20px;
+    opacity: 1;
+  }
+  100% {
+    width: 120px;
+    height: 120px;
+    opacity: 0;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .contenedor-caña {
+    width: 150px;
+    height: 200px;
+    bottom: 15px;
+    left: 15px;
+  }
+  
+  .cuerpo-caña {
+    height: 120px;
+  }
+  
+  .punta-caña {
+    bottom: 180px;
+    height: 30px;
+  }
+  
+  .indicadores-profundidad {
+    right: 5px;
+  }
+  
+  .marca-profundidad {
+    width: 30px;
+  }
+  
+  .numero-profundidad {
+    right: 35px;
+    font-size: 0.6rem;
+  }
+  
+  .pez-luchando {
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  
+  .cuerpo-pez {
+    width: 32px;
+    height: 20px;
+  }
+  
+  .info-flotante-pez {
+    font-size: 0.6rem;
+    padding: 2px 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contenedor-caña {
+    width: 120px;
+    height: 160px;
+    bottom: 10px;
+    left: 10px;
+  }
+  
+  .mango-caña {
+    width: 6px;
+    height: 60px;
+  }
+  
+  .cuerpo-caña {
+    bottom: 60px;
+    width: 3px;
+    height: 90px;
+  }
+  
+  .punta-caña {
+    bottom: 150px;
+    width: 1.5px;
+    height: 20px;
+  }
+  
+  .carrete {
+    width: 18px;
+    height: 18px;
+    bottom: 45px;
+    left: -6px;
+  }
+  
+  .señuelo {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .anzuelo {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .carnada {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .icono-espera {
+    font-size: 2rem;
+  }
+  
+  .texto-espera {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+  }
+  
+  .particulas-lucha {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .rayos-sol {
+    display: none; /* Optimizar rendimiento en móviles pequeños */
+  }
+}
+
+@media (max-width: 320px) {
+  .contenedor-caña {
+    width: 100px;
+    height: 140px;
+  }
+  
+  .indicadores-profundidad {
+    display: none; /* Ocultar en pantallas muy pequeñas */
+  }
+  
+  .efectos-ambientales {
+    display: none; /* Optimizar rendimiento */
+  }
+}
+
+/* Orientación horizontal */
+@media (max-height: 500px) and (orientation: landscape) {
+  .contenedor-caña {
+    width: 100px;
+    height: 120px;
+    bottom: 5px;
+    left: 5px;
+  }
+  
+  .mensaje-estado-area {
+    top: 40%;
+  }
+  
+  .icono-espera {
+    font-size: 2rem;
+    margin-bottom: 5px;
+  }
+  
+  .texto-espera {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+  }
+}
+
+/* Optimizaciones de rendimiento */
+@media (prefers-reduced-motion: reduce) {
+  .caña-pescar,
+  .señuelo,
+  .pez-luchando,
+  .burbuja,
+  .particula,
+  .onda-sonar,
+  .rayo-sol,
+  .particula-agua {
+    animation: none;
+  }
+  
+  .carrete.girando {
+    animation: none;
+  }
+  
+  .linea-sedal.tension {
+    animation: none;
+  }
+}
+
+/* Modo de contraste alto */
+@media (prefers-contrast: high) {
+  .superficie-agua {
+    background: #FFFFFF;
+  }
+  
+  .señuelo,
+  .anzuelo {
+    border: 2px solid #000000;
+  }
+  
+  .indicadores-profundidad .marca-profundidad.activa {
+    background: #FFFF00;
+  }
+  
+  .texto-espera {
+    background: #000000;
+    border-color: #FFFFFF;
+  }
+}
