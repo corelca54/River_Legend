@@ -1,0 +1,753 @@
+/**
+ * ModalCapturaPez.css - Estilos para modal estilo Fishing Clash
+ * Incluye animaciones 3D, efectos de partículas y transiciones suaves
+ */
+
+.modal-captura-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: aparecerOverlay 0.5s ease-out;
+}
+
+@keyframes aparecerOverlay {
+  0% {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    backdrop-filter: blur(10px);
+  }
+}
+
+.modal-captura-container {
+  position: relative;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  background: linear-gradient(135deg, 
+    rgba(0, 30, 60, 0.98) 0%, 
+    rgba(0, 50, 100, 0.95) 50%, 
+    rgba(0, 70, 140, 0.98) 100%);
+  border-radius: 25px;
+  border: 3px solid rgba(255, 215, 0, 0.4);
+  box-shadow: 
+    0 25px 80px rgba(0, 0, 0, 0.8),
+    inset 0 2px 0 rgba(255, 255, 255, 0.2),
+    0 0 50px rgba(255, 215, 0, 0.3);
+  overflow: hidden;
+  animation: deslizarModal 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+@keyframes deslizarModal {
+  0% {
+    transform: translateY(100px) scale(0.8) rotateX(15deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1) rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+/* Header con celebración */
+.header-captura {
+  position: relative;
+  padding: 25px 20px 15px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.explosion-fuegos {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  pointer-events: none;
+}
+
+.fuego-artificial {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  background: radial-gradient(circle, #FFD700, #FF6B35);
+  border-radius: 50%;
+  animation: explorarFuego 1.5s ease-out infinite;
+  transform-origin: center;
+}
+
+@keyframes explorarFuego {
+  0% {
+    transform: translate(-50%, -50%) rotate(var(--angulo)) translateX(0) scale(1);
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(var(--angulo)) translateX(100px) scale(0);
+    opacity: 0;
+  }
+}
+
+.badge-nuevo-record {
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  background: linear-gradient(135deg, #FF6B35, #F7931E);
+  color: white;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.5);
+  animation: pulsarRecord 1.5s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+@keyframes pulsarRecord {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.5);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(255, 107, 53, 0.8);
+  }
+}
+
+.icono-record {
+  font-size: 1.2rem;
+  animation: rotarTrofeo 2s linear infinite;
+}
+
+@keyframes rotarTrofeo {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.titulo-captura h1 {
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: #FFD700;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+  margin: 0 0 10px 0;
+  animation: pulsarTitulo 2s ease-in-out infinite;
+}
+
+@keyframes pulsarTitulo {
+  0%, 100% {
+    transform: scale(1) rotate(-1deg);
+  }
+  50% {
+    transform: scale(1.05) rotate(1deg);
+  }
+}
+
+.subtitulo-captura {
+  font-size: 1.5rem;
+  color: #87CEEB;
+  font-weight: 600;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+/* Área principal del pez */
+.area-pez-principal {
+  position: relative;
+  padding: 20px;
+  text-align: center;
+}
+
+.contenedor-pez-3d {
+  position: relative;
+  display: inline-block;
+  margin: 0 auto 20px;
+  perspective: 1000px;
+}
+
+.pez-rotando {
+  position: relative;
+  transition: transform 0.1s ease;
+  transform-style: preserve-3d;
+}
+
+.imagen-pez-modal {
+  width: 250px;
+  height: auto;
+  max-height: 180px;
+  object-fit: contain;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 15px;
+  filter: brightness(1.2) contrast(1.1) saturate(1.3);
+  animation: flotarPez 4s ease-in-out infinite;
+}
+
+@keyframes flotarPez {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.pez-emoji-3d {
+  text-align: center;
+  animation: bailarEmoji 3s ease-in-out infinite;
+}
+
+@keyframes bailarEmoji {
+  0%, 100% {
+    transform: scale(1) rotate(-5deg);
+  }
+  33% {
+    transform: scale(1.1) rotate(5deg);
+  }
+  66% {
+    transform: scale(0.95) rotate(-3deg);
+  }
+}
+
+.anzuelo-colgante {
+  position: absolute;
+  top: -30px;
+  left: 80%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.sedal-modal {
+  width: 2px;
+  height: 25px;
+  background: linear-gradient(to bottom, #E6E6FA, #B0C4DE);
+  margin: 0 auto 5px;
+  box-shadow: 0 0 5px rgba(230, 230, 250, 0.8);
+  animation: tensionAnzuelo 2s ease-in-out infinite;
+}
+
+@keyframes tensionAnzuelo {
+  0%, 100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(1.1);
+  }
+}
+
+.anzuelo-dorado {
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(circle, #FFD700, #FFA500);
+  border-radius: 50%;
+  margin: 0 auto;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+  animation: brillarAnzueloModal 1s ease-in-out infinite;
+}
+
+@keyframes brillarAnzueloModal {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 1);
+  }
+}
+
+.particulas-celebracion {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+  pointer-events: none;
+}
+
+.particula-oro {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle, #FFD700, #FFA500);
+  border-radius: 50%;
+  animation: particulaOro 3s ease-out infinite;
+  transform-origin: center;
+}
+
+@keyframes particulaOro {
+  0% {
+    transform: translate(-50%, -50%) rotate(var(--direccion)) translateX(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(var(--direccion)) translateX(150px) scale(0);
+    opacity: 0;
+  }
+}
+
+.badge-rareza-grande {
+  display: inline-block;
+  padding: 12px 25px;
+  border-radius: 25px;
+  font-weight: 800;
+  font-size: 1.1rem;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  animation: pulsarRareza 2s ease-in-out infinite;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+@keyframes pulsarRareza {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.texto-rareza-grande {
+  margin-bottom: 5px;
+  letter-spacing: 2px;
+}
+
+.estrellas-rareza {
+  font-size: 1.2rem;
+  letter-spacing: 3px;
+}
+
+.estrella-rareza {
+  animation: titilarEstrella 1s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * 0.2s);
+}
+
+@keyframes titilarEstrella {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Estadísticas de captura */
+.estadisticas-captura {
+  padding: 0 20px 20px;
+  animation: aparecerStats 0.8s ease-out 0.5s both;
+}
+
+@keyframes aparecerStats {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stats-principales {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.stat-box {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  padding: 15px 10px;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.stat-box:hover::before {
+  left: 100%;
+}
+
+.stat-box:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.stat-icono {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+}
+
+.stat-valor {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #FFD700;
+  margin-bottom: 5px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.stat-etiqueta {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+/* Información adicional */
+.info-adicional {
+  margin-bottom: 20px;
+}
+
+.info-habitat,
+.info-descripcion,
+.info-cientifico {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+}
+
+.info-habitat:hover,
+.info-descripcion:hover,
+.info-cientifico:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.info-titulo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: #87CEEB;
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+.icono-info {
+  font-size: 1.2rem;
+}
+
+.info-contenido {
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.info-cientifico-texto {
+  font-style: italic;
+  color: #DDA0DD;
+  font-weight: 500;
+}
+
+/* Comparación con récords */
+.comparacion-records {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.record-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.record-item:last-child {
+  border-bottom: none;
+}
+
+.record-etiqueta {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+}
+
+.record-valor {
+  color: #FFD700;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* Botones de acción */
+.acciones-captura {
+  display: flex;
+  gap: 12px;
+  padding: 0 20px 25px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.boton-compartir,
+.boton-continuar,
+.boton-coleccion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 15px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  min-width: 140px;
+  justify-content: center;
+}
+
+.boton-compartir {
+  background: linear-gradient(135deg, #4682B4, #87CEEB);
+  color: white;
+}
+
+.boton-continuar {
+  background: linear-gradient(135deg, #2E8B57, #228B22);
+  color: white;
+}
+
+.boton-coleccion {
+  background: linear-gradient(135deg, #9370DB, #8A2BE2);
+  color: white;
+}
+
+.boton-compartir:hover,
+.boton-continuar:hover,
+.boton-coleccion:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.boton-compartir:hover {
+  box-shadow: 0 8px 25px rgba(70, 130, 180, 0.4);
+}
+
+.boton-continuar:hover {
+  box-shadow: 0 8px 25px rgba(46, 139, 87, 0.4);
+}
+
+.boton-coleccion:hover {
+  box-shadow: 0 8px 25px rgba(147, 112, 219, 0.4);
+}
+
+.icono-boton {
+  font-size: 1.1rem;
+}
+
+/* Botón cerrar */
+.boton-cerrar-modal {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.boton-cerrar-modal:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .modal-captura-container {
+    width: 95%;
+    max-height: 95vh;
+    border-radius: 20px;
+  }
+  
+  .header-captura {
+    padding: 20px 15px 10px;
+  }
+  
+  .titulo-captura h1 {
+    font-size: 2.8rem;
+  }
+  
+  .subtitulo-captura {
+    font-size: 1.2rem;
+  }
+  
+  .imagen-pez-modal {
+    width: 200px;
+    max-height: 140px;
+  }
+  
+  .stats-principales {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .stat-box {
+    padding: 12px 8px;
+  }
+  
+  .stat-icono {
+    font-size: 1.5rem;
+  }
+  
+  .stat-valor {
+    font-size: 1.2rem;
+  }
+  
+  .acciones-captura {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .boton-compartir,
+  .boton-continuar,
+  .boton-coleccion {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-captura-container {
+    margin: 10px;
+  }
+  
+  .header-captura {
+    padding: 15px 10px 8px;
+  }
+  
+  .titulo-captura h1 {
+    font-size: 2.2rem;
+  }
+  
+  .subtitulo-captura {
+    font-size: 1rem;
+  }
+  
+  .imagen-pez-modal {
+    width: 160px;
+    max-height: 100px;
+  }
+  
+  .badge-nuevo-record {
+    top: 5px;
+    right: 10px;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+  
+  .stats-principales {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .info-adicional {
+    margin-bottom: 15px;
+  }
+  
+  .info-habitat,
+  .info-descripcion,
+  .info-cientifico {
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+  
+  .info-titulo {
+    font-size: 0.9rem;
+  }
+  
+  .info-contenido {
+    font-size: 0.85rem;
+  }
+}
+
+/* Optimizaciones de rendimiento */
+@media (prefers-reduced-motion: reduce) {
+  .modal-captura-container,
+  .fuego-artificial,
+  .badge-nuevo-record,
+  .icono-record,
+  .titulo-captura h1,
+  .imagen-pez-modal,
+  .pez-emoji-3d,
+  .sedal-modal,
+  .anzuelo-dorado,
+  .particula-oro,
+  .badge-rareza-grande,
+  .estrella-rareza {
+    animation: none;
+  }
+  
+  .boton-compartir:hover,
+  .boton-continuar:hover,
+  .boton-coleccion:hover,
+  .boton-cerrar-modal:hover {
+    transform: none;
+  }
+}
+
+/* Modo de contraste alto */
+@media (prefers-contrast: high) {
+  .modal-captura-container {
+    border: 4px solid #FFFFFF;
+    background: rgba(0, 0, 0, 0.95);
+  }
+  
+  .stat-box {
+    border: 2px solid #FFFFFF;
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
+  .info-habitat,
+  .info-descripcion,
+  .info-cientifico {
+    border: 1px solid #FFFFFF;
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .boton-compartir,
+  .boton-continuar,
+  .boton-coleccion {
+    border: 2px solid #FFFFFF;
+  }
+}

@@ -18,7 +18,7 @@ export const PECES_COLOMBIANOS = {
     puntos: 150,
     color: "#DAA520",
     comportamiento: "activo",
-    imagen: "/assets/imagenes/peces/Bocachico.png", // Nombre exacto del archivo
+    imagen: "/assets/imagenes/peces/Bocachico.png", // <--- CORREGIDO
     temporadaOptima: "Marzo - Mayo",
     profundidadOptima: { minima: 1, maxima: 8 }, // metros
     carnada: ["lombriz", "maíz", "yuca"],
@@ -39,7 +39,7 @@ export const PECES_COLOMBIANOS = {
     puntos: 2500,
     color: "#8B0000",
     comportamiento: "territorial",
-    imagen: "/src/imagenes/peces/Arapaima.png", // Nombre exacto del archivo
+    imagen: "/assets/imagenes/peces/Arapaima.png", // <--- CORREGIDO (y asegúrate de mover la imagen a public/assets/images/peces/)
     temporadaOptima: "Junio - Agosto",
     profundidadOptima: { minima: 3, maxima: 15 },
     carnada: ["pez vivo", "camarón", "rana"],
@@ -60,7 +60,7 @@ export const PECES_COLOMBIANOS = {
     puntos: 900,
     color: "#696969",
     comportamiento: "nocturno",
-    imagen: "/assets/imagenes/peces/Bagre rayado.png", // Nombre exacto del archivo
+    imagen: "/assets/imagenes/peces/Bagre rayado.png", // <--- CORREGIDO
     temporadaOptima: "Diciembre - Febrero",
     profundidadOptima: { minima: 5, maxima: 20 },
     carnada: ["pescado", "camarón", "lombriz"],
@@ -81,7 +81,7 @@ export const PECES_COLOMBIANOS = {
     puntos: 400,
     color: "#C0C0C0",
     comportamiento: "rápido",
-    imagen: "/assets/imagenes/peces/Sábalo.png", // Nombre exacto del archivo
+    imagen: "/assets/imagenes/peces/Sábalo.png", // <--- CORREGIDO
     temporadaOptima: "Abril - Junio",
     profundidadOptima: { minima: 2, maxima: 12 },
     carnada: ["insectos", "frutas", "gusanos"],
@@ -102,7 +102,7 @@ export const PECES_COLOMBIANOS = {
     puntos: 250,
     color: "#F0E68C",
     comportamiento: "esquivo",
-    imagen: "/assets/imagenes/peces/Sabaleta.png", // Nombre exacto del archivo
+    imagen: "/assets/imagenes/peces/Sabaleta.png", // <--- CORREGIDO
     temporadaOptima: "Septiembre - Noviembre",
     profundidadOptima: { minima: 1, maxima: 6 },
     carnada: ["moscas", "pequeños peces", "larvas"],
@@ -123,7 +123,7 @@ export const PECES_COLOMBIANOS = {
     puntos: 300,
     color: "#708090",
     comportamiento: "territorial",
-    imagen: "/assets/imagenes/peces/dorado.png", // Usando dorado.png para nicuro
+    imagen: "/assets/imagenes/peces/dorado.png", // <--- CORREGIDO
     temporadaOptima: "Todo el año",
     profundidadOptima: { minima: 2, maxima: 10 },
     carnada: ["lombriz", "camarón", "masa"],
@@ -144,7 +144,7 @@ export const PECES_COLOMBIANOS = {
     puntos: 150,
     color: "#A0522D",
     comportamiento: "pasivo",
-    imagen: "/assets/imagenes/peces/Bocachico.png", // Usando Bocachico.png para corroncho
+    imagen: "/assets/imagenes/peces/Bocachico.png", // <--- CORREGIDO (usando Bocachico, asegúrate de que sea intencional)
     temporadaOptima: "Julio - Septiembre",
     profundidadOptima: { minima: 0.5, maxima: 5 },
     carnada: ["algas", "materia vegetal", "pequeños invertebrados"],
@@ -165,7 +165,7 @@ export const PECES_COLOMBIANOS = {
     puntos: 200,
     color: "#4169E1",
     comportamiento: "agresivo",
-    imagen: "/assets/imagenes/peces/Perca.png", // Nombre exacto del archivo
+    imagen: "/assets/imagenes/peces/Perca.png", // <--- CORREGIDO
     temporadaOptima: "Enero - Marzo",
     profundidadOptima: { minima: 1, maxima: 8 },
     carnada: ["pequeños peces", "insectos", "crustáceos"],
@@ -186,7 +186,7 @@ export const PECES_COLOMBIANOS = {
     puntos: 1500,
     color: "#FFD700",
     comportamiento: "agresivo",
-    imagen: "/assets/imagenes/peces/Pavón.png", // Nombre exacto del archivo
+    imagen: "/assets/imagenes/peces/Pavón.png", // <--- CORREGIDO
     temporadaOptima: "Febrero - Abril",
     profundidadOptima: { minima: 2, maxima: 15 },
     carnada: ["señuelos", "peces vivos", "camarones"],
@@ -207,7 +207,7 @@ export const PECES_COLOMBIANOS = {
     puntos: 280,
     color: "#FFE4B5",
     comportamiento: "territorial",
-    imagen: "/assets/imagenes/peces/trucha_mariposa.png", // Nombre exacto del archivo
+    imagen: "/assets/imagenes/peces/trucha_mariposa.png", // <--- CORREGIDO (usando trucha_mariposa, asegúrate de que sea intencional)
     temporadaOptima: "Mayo - Julio",
     profundidadOptima: { minima: 1, maxima: 10 },
     carnada: ["lombrices", "masa", "pequeños peces"],

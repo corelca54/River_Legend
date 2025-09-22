@@ -1,409 +1,1065 @@
-/**
- * FishingGame.css - Estilos principales del juego de pesca
- * Diseño optimizado para mobile-first con experiencia inmersiva
- */
+/* ========================================================================== */
+/* ESTILOS GLOBALES Y CONTENEDOR PRINCIPAL */
+/* ========================================================================== */
 
-/* Variables CSS para consistencia y mantenibilidad */
-:root {
-  --color-primario: #2E8B57;
-  --color-secundario: #4682B4;
-  --color-acento: #FFD700;
-  --color-peligro: #DC143C;
-  --color-exito: #228B22;
-  --color-advertencia: #FF8C00;
-  --color-texto-claro: #FFFFFF;
-  --color-texto-oscuro: #2F4F4F;
-  --color-fondo-overlay: rgba(0, 30, 60, 0.8);
-  --color-fondo-glass: rgba(255, 255, 255, 0.1);
-  --border-radius-pequeno: 8px;
-  --border-radius-mediano: 12px;
-  --border-radius-grande: 20px;
-  --sombra-suave: 0 4px 20px rgba(0, 0, 0, 0.3);
-  --sombra-fuerte: 0 8px 32px rgba(0, 0, 0, 0.5);
-  --transicion-suave: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --fuente-principal: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-}
-
-/* Reset y configuración base */
-* {
-  margin: 0;
-  padding: 0;
+/* Establece el box-sizing globalmente para facilitar el diseño. */
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
-/* Contenedor principal del juego */
-.juego-pesca {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  font-family: var(--fuente-principal);
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  touch-action: manipulation;
-  background: linear-gradient(180deg, #001122 0%, #003366 50%, #004488 100%);
+/* Oculta las barras de desplazamiento, define una fuente base y un color de fondo para el cuerpo. */
+body {
+  overflow: hidden; /* Evita scroll no deseado. */
+  font-family: 'Montserrat', sans-serif; /* Fuente moderna y legible, similar a juegos. */
+  background-color: #0d1a26; /* Fondo oscuro para contraste. */
+  color: #ecf0f1; /* Texto claro por defecto. */
 }
 
-/* Interfaz principal del juego */
+/* Contenedor principal del juego. Ocupa toda la pantalla. */
+.juego-pesca {
+  position: relative; /* Contexto para elementos posicionados absolutamente. */
+  width: 100vw; /* Ancho completo del viewport. */
+  height: 100vh; /* Alto completo del viewport. */
+  display: flex; /* Utiliza flexbox para organizar los hijos. */
+  flex-direction: column; /* Apila los hijos verticalmente. */
+  justify-content: space-between; /* Distribuye el espacio verticalmente. */
+  align-items: center; /* Centra los elementos horizontalmente. */
+  overflow: hidden; /* Asegura que nada se desborde del contenedor. */
+  background: radial-gradient(circle at center, #1a3a5a 0%, #0d1a26 100%); /* Degradado sutil. */
+}
+
+/* Interfaz de usuario principal, superpuesta sobre el fondo. */
 .interfaz-juego {
-  position: relative;
+  position: absolute; /* Superpone sobre el video de fondo. */
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
+  display: flex; /* Usa flexbox para su diseño. */
+  flex-direction: column; /* Elementos apilados verticalmente. */
+  justify-content: space-between; /* Espacio entre los paneles superior, central y controles. */
+  padding: 15px; /* Relleno alrededor de la interfaz. */
+  pointer-events: none; /* Permite clicks "atravesar" esta capa, excepto en elementos interactivos. */
+  z-index: 10; /* Asegura que la interfaz esté por encima del video de fondo. */
+}
+
+/* ========================================================================== */
+/* PANELES DE UI (SUPERIOR, CENTRAL, CONTROLES) */
+/* ========================================================================== */
+
+/* Panel superior (Estadísticas del jugador). */
+.panel-superior {
+  pointer-events: auto; /* Permite la interacción. */
+  width: 100%; /* Ocupa todo el ancho. */
+  display: flex; /* Flexbox para sus componentes internos (EstadisticasJugador). */
+  justify-content: flex-start; /* Alinea los elementos a la izquierda. */
+  padding-bottom: 10px; /* Pequeño espacio inferior. */
+  z-index: 100; /* Asegura que esté por encima de otros elementos. */
+}
+
+/* Área central de pesca. Contiene el señuelo, peces y panel de lucha. */
+.area-central-pesca {
+  position: relative; /* Contexto de posicionamiento para sus hijos. */
+  flex-grow: 1; /* Permite que ocupe el espacio disponible. */
+  width: 100%;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(
-    180deg, 
-    rgba(0, 50, 100, 0.2) 0%, 
-    rgba(0, 30, 60, 0.4) 50%, 
-    rgba(0, 20, 40, 0.6) 100%
-  );
-  z-index: 1;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none; /* Permite la interacción con el área de juego real, no con este div. */
+  overflow: hidden; /* Evita que los elementos internos se desborden. */
 }
 
-/* Panel superior */
-.panel-superior {
-  padding: 15px 20px;
-  background: var(--color-fondo-overlay);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border-bottom: 2px solid var(--color-fondo-glass);
-  box-shadow: var(--sombra-suave);
+/* Panel de información del pez durante la lucha. */
+.panel-info-lucha {
+  position: absolute; /* Posicionado sobre el área de pesca. */
+  top: 50%; /* Centrado verticalmente. */
+  left: 50%; /* Centrado horizontalmente. */
+  transform: translate(-50%, -50%); /* Ajuste final para centrado perfecto. */
+  background-color: rgba(18, 52, 86, 0.95); /* Fondo azul oscuro semitransparente. */
+  border: 2px solid #3498db; /* Borde azul brillante. */
+  border-radius: 15px; /* Bordes redondeados. */
+  padding: 20px 25px; /* Relleno interno. */
+  color: #e0f2f7; /* Texto claro. */
+  text-align: center; /* Centra el texto. */
+  box-shadow: 0 0 20px rgba(52, 152, 219, 0.6), inset 0 0 10px rgba(52, 152, 219, 0.4); /* Sombra exterior e interior. */
+  pointer-events: none; /* No interactuable para no interferir con el juego. */
+  z-index: 150; /* Por encima de otros elementos de la UI. */
+  opacity: 0; /* Inicialmente invisible. */
+  animation: fadeInPop 0.3s ease-out forwards; /* Animación de aparición. */
 }
 
-/* Área central de pesca */
-.area-central-pesca {
-  flex: 1;
+.panel-info-lucha.visible {
+    opacity: 1;
+}
+
+/* Animación para que el panel de información aparezca. */
+@keyframes fadeInPop {
+  0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+/* Encabezado del panel de información de lucha. */
+.panel-info-lucha .header-info-lucha {
+  display: flex; /* Usa flexbox para el nombre y rareza. */
+  justify-content: center; /* Centra los elementos horizontalmente. */
+  align-items: center; /* Centra los elementos verticalmente. */
+  margin-bottom: 15px; /* Espacio inferior. */
+  gap: 10px; /* Espacio entre el nombre y la insignia. */
+}
+
+/* Título del nombre del pez. */
+.panel-info-lucha h3 {
+  font-size: 1.8rem; /* Tamaño de la fuente. */
+  color: #f1c40f; /* Color amarillo dorado. */
+  text-shadow: 0 0 8px rgba(241, 196, 15, 0.7); /* Sombra brillante. */
+  margin: 0; /* Elimina margen por defecto. */
+}
+
+/* Insignia de rareza del pez. */
+.rareza-badge {
+  padding: 5px 12px; /* Relleno interno. */
+  border-radius: 20px; /* Bordes muy redondeados. */
+  font-size: 0.8rem; /* Tamaño de la fuente. */
+  font-weight: bold; /* Negrita. */
+  text-transform: uppercase; /* Texto en mayúsculas. */
+  letter-spacing: 0.5px; /* Espaciado entre letras. */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Sombra para el badge. */
+}
+
+/* Contenedor de las estadísticas individuales durante la lucha. */
+.stats-lucha {
+  display: grid; /* Usa grid para organizar las estadísticas. */
+  grid-template-columns: repeat(2, 1fr); /* Dos columnas de igual ancho. */
+  gap: 10px 20px; /* Espacio entre filas y columnas. */
+  margin-top: 15px; /* Espacio superior. */
+}
+
+/* Ítem individual de estadística. */
+.stat-lucha {
+  display: flex; /* Flexbox para la etiqueta y el valor. */
+  justify-content: space-between; /* Etiqueta a la izquierda, valor a la derecha. */
+  align-items: center; /* Centra verticalmente. */
+  padding: 5px 0; /* Relleno vertical. */
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.2); /* Línea divisoria. */
+}
+
+.stat-lucha:last-child {
+  border-bottom: none; /* Elimina la línea en el último elemento. */
+}
+
+.stat-lucha .label {
+  font-weight: bold; /* Etiqueta en negrita. */
+  color: #bdc3c7; /* Color gris claro. */
+  font-size: 0.95rem; /* Tamaño de la fuente. */
+}
+
+.stat-lucha .valor, .stat-lucha .valor-habitat {
+  font-weight: 600; /* Un poco más de negrita. */
+  color: #ecf0f1; /* Texto blanco. */
+  font-size: 1rem; /* Tamaño de la fuente. */
+}
+
+.stat-lucha .valor-habitat {
+  background-color: rgba(52, 152, 219, 0.3); /* Fondo azul semitransparente para hábitat. */
+  padding: 3px 8px;
+  border-radius: 5px;
+}
+
+/* Panel de controles (botones de acción). */
+.panel-controles {
+  pointer-events: auto; /* Permite la interacción. */
+  width: 100%;
+  display: flex; /* Flexbox para los botones. */
+  justify-content: center; /* Centra los botones. */
+  gap: 20px; /* Espacio entre botones. */
+  padding-top: 10px; /* Espacio superior. */
+  z-index: 100; /* Por encima de otros elementos. */
+}
+
+/* ========================================================================== */
+/* MENSAJES DE ESTADO Y BOTONES FLOTANTES */
+/* ========================================================================== */
+
+/* Contenedor del mensaje de estado del juego. */
+.mensaje-estado {
+  position: absolute; /* Posicionado sobre la interfaz. */
+  top: 150px; /* Posición desde arriba. */
+  left: 50%; /* Centrado horizontalmente. */
+  transform: translateX(-50%); /* Ajuste final para centrado. */
+  background-color: rgba(44, 62, 80, 0.85); /* Fondo azul oscuro semitransparente. */
+  color: #ecf0f1; /* Texto blanco. */
+  padding: 12px 25px; /* Relleno. */
+  border-radius: 30px; /* Bordes muy redondeados. */
+  font-size: 1.1rem; /* Tamaño de la fuente. */
+  font-weight: 500; /* Grosor de la fuente. */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); /* Sombra. */
+  pointer-events: none; /* No interactuable. */
+  z-index: 110; /* Por encima de la mayoría de elementos. */
+  animation: fadeInOutMessage 5s ease-in-out forwards; /* Animación de aparición y desaparición. */
+  min-width: 300px; /* Ancho mínimo para legibilidad. */
+  text-align: center; /* Centra el texto. */
+}
+
+/* Animación para el mensaje de estado (aparecer y desaparecer). */
+@keyframes fadeInOutMessage {
+  0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+  10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+}
+
+/* Estilo para el texto dentro del mensaje de estado. */
+.mensaje-estado .texto-estado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Estilo específico para mensajes de error (pez perdido). */
+.mensaje-estado .texto-estado.error {
+  color: #e74c3c; /* Color rojo de error. */
+  font-weight: bold;
+}
+
+/* Contenedor de botones flotantes (Colección, Estadísticas, Configuración). */
+.botones-flotantes {
+  position: absolute; /* Posicionado libremente. */
+  top: 20px; /* Desde arriba. */
+  right: 20px; /* Desde la derecha. */
+  display: flex; /* Flexbox para los botones. */
+  flex-direction: column; /* Apilados verticalmente. */
+  gap: 10px; /* Espacio entre botones. */
+  pointer-events: auto; /* Permite interacción. */
+  z-index: 100; /* Por encima de otros elementos. */
+}
+
+/* Estilo base para los botones flotantes. */
+.boton-coleccion, .boton-estadisticas, .boton-configuracion {
+  background-color: rgba(52, 73, 94, 0.8); /* Fondo gris azulado semitransparente. */
+  color: #ecf0f1; /* Texto blanco. */
+  border: none;
+  border-radius: 10px; /* Bordes redondeados. */
+  padding: 10px 15px; /* Relleno. */
+  font-size: 0.9rem; /* Tamaño de la fuente. */
+  font-weight: 600; /* Negrita. */
+  cursor: pointer;
+  display: flex; /* Flexbox para el ícono, texto y contador. */
+  align-items: center; /* Centra verticalmente. */
+  gap: 8px; /* Espacio entre elementos. */
+  transition: all 0.2s ease; /* Transición suave. */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Sombra. */
+  min-width: 140px; /* Ancho mínimo. */
+  justify-content: space-between; /* Espacio entre elementos internos. */
+}
+
+.boton-coleccion:hover, .boton-estadisticas:hover, .boton-configuracion:hover {
+  background-color: rgba(44, 62, 80, 0.95); /* Fondo más oscuro al pasar el ratón. */
+  transform: translateX(-5px); /* Pequeño desplazamiento a la izquierda. */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4); /* Sombra más intensa. */
+}
+
+.icono-boton {
+  font-size: 1.2rem; /* Tamaño del ícono. */
+  line-height: 1; /* Asegura la alineación. */
+}
+
+.texto-boton {
+  flex-grow: 1; /* Permite que el texto ocupe el espacio restante. */
+  text-align: left; /* Alinea el texto a la izquierda. */
+}
+
+.contador-boton {
+  background-color: #3498db; /* Fondo azul para el contador. */
+  color: white;
+  padding: 2px 8px;
+  border-radius: 15px; /* Bordes redondeados. */
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+/* ========================================================================== */
+/* MODAL DE CAPTURA REALISTA (NUEVO) */
+/* ========================================================================== */
+
+/* Contenedor del modal de captura. */
+.modal-captura-pez-overlay {
+  position: fixed; /* Fijo en la pantalla. */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro semitransparente. */
+  display: flex; /* Centra el contenido. */
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Muy por encima de todo. */
+  backdrop-filter: blur(5px); /* Efecto de desenfoque en el fondo. */
+  opacity: 0; /* Invisible por defecto. */
+  visibility: hidden; /* Oculto por defecto. */
+  transition: opacity 0.3s ease, visibility 0.3s ease; /* Transición suave. */
+}
+
+.modal-captura-pez-overlay.visible {
+  opacity: 1; /* Visible cuando se activa. */
+  visibility: visible;
+}
+
+/* Contenido principal del modal. */
+.modal-captura-contenido {
+  background: linear-gradient(to bottom right, #1a3a5a, #0d1a26); /* Degradado de fondo. */
+  border: 4px solid #f1c40f; /* Borde dorado brillante. */
+  border-radius: 20px; /* Bordes redondeados. */
+  padding: 40px; /* Relleno generoso. */
+  text-align: center;
+  color: #ecf0f1;
+  max-width: 600px; /* Ancho máximo. */
+  width: 90%; /* Ancho responsivo. */
+  box-shadow: 0 0 40px rgba(241, 196, 15, 0.8), inset 0 0 20px rgba(241, 196, 15, 0.5); /* Sombra intensa. */
+  transform: scale(0.8); /* Empieza más pequeño. */
+  opacity: 0; /* Invisible. */
+  animation: modalPopIn 0.4s ease-out forwards; /* Animación de aparición. */
   position: relative;
+  overflow: hidden; /* Asegura que el confetti y destellos no se desborden. */
+}
+
+/* Animación para la aparición del modal. */
+@keyframes modalPopIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Botón de cerrar el modal. */
+.modal-cerrar-btn {
+  position: absolute; /* Posicionado en la esquina. */
+  top: 15px;
+  right: 15px;
+  background: none; /* Sin fondo. */
+  border: none;
+  color: #ecf0f1;
+  font-size: 2rem; /* Tamaño grande para el ícono de cerrar. */
+  cursor: pointer;
+  transition: color 0.2s ease;
+  padding: 5px;
+  line-height: 1;
+}
+
+.modal-cerrar-btn:hover {
+  color: #e74c3c; /* Color rojo al pasar el ratón. */
+}
+
+/* Título del modal. */
+.modal-captura-contenido h2 {
+  font-size: 3rem; /* Título grande. */
+  color: #f1c40f;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px rgba(241, 196, 15, 0.9);
+}
+
+/* Contenedor para la imagen del pez. */
+.modal-pez-imagen-container {
+  width: 100%;
+  height: 200px; /* Altura fija para la imagen. */
+  background-color: rgba(255, 255, 255, 0.05); /* Fondo sutil. */
+  border-radius: 10px;
+  margin-bottom: 25px;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding: 10px;
-  min-height: calc(100vh - 200px); /* Usar casi toda la pantalla */
-  width: 100%;
+  align-items: center;
+  overflow: hidden;
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.1);
 }
 
-/* Panel de controles */
-.panel-controles {
+.modal-pez-imagen {
+  max-width: 90%; /* Asegura que la imagen se ajuste. */
+  max-height: 90%;
+  object-fit: contain; /* Mantiene la proporción. */
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5)); /* Sombra brillante. */
+}
+
+/* Nombre del pez en el modal. */
+.modal-pez-nombre {
+  font-size: 2.5rem; /* Nombre grande y prominente. */
+  color: #3498db; /* Color azul. */
+  margin-bottom: 10px;
+  text-shadow: 0 0 8px rgba(52, 152, 219, 0.7);
+}
+
+/* Rarity badge en el modal. */
+.modal-rareza-badge {
+  padding: 8px 18px;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 25px;
+  display: inline-block; /* Para que ocupe solo el ancho necesario. */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* Contenedor de estadísticas detalladas del pez. */
+.modal-pez-stats {
+  display: grid; /* Grid para organizar estadísticas. */
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Columnas autoajustables. */
+  gap: 15px; /* Espacio entre las estadísticas. */
+  margin-bottom: 30px;
+  background-color: rgba(0, 0, 0, 0.2); /* Fondo sutil. */
+  border-radius: 10px;
   padding: 20px;
-  background: var(--color-fondo-overlay);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border-top: 2px solid var(--color-fondo-glass);
-  box-shadow: var(--sombra-suave);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Mensaje de estado del juego */
-.mensaje-estado {
+.modal-stat-item {
+  background-color: rgba(255, 255, 255, 0.08); /* Fondo claro para cada ítem. */
+  border-radius: 8px;
+  padding: 10px 15px;
+  text-align: left;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border-left: 3px solid #3498db; /* Borde lateral azul. */
+}
+
+.modal-stat-item .label {
+  display: block; /* Etiqueta en una nueva línea. */
+  font-size: 0.85rem;
+  color: #bdc3c7;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.modal-stat-item .valor {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #e0f2f7;
+}
+
+/* Sección de recompensas. */
+.modal-recompensas {
+  display: flex; /* Flexbox para puntos y experiencia. */
+  justify-content: center;
+  gap: 30px; /* Espacio entre las recompensas. */
+  margin-bottom: 30px;
+}
+
+.modal-recompensa-item {
+  display: flex; /* Flexbox para ícono y valor. */
+  align-items: center;
+  gap: 10px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #2ecc71; /* Color verde para recompensas. */
+  text-shadow: 0 0 8px rgba(46, 204, 113, 0.7);
+}
+
+.modal-recompensa-item.exp {
+  color: #9b59b6; /* Color púrpura para experiencia. */
+  text-shadow: 0 0 8px rgba(155, 89, 182, 0.7);
+}
+
+.modal-nuevo-record {
+  background-color: #f1c40f; /* Fondo dorado para nuevo récord. */
+  color: #1a3a5a; /* Texto oscuro. */
+  padding: 8px 15px;
+  border-radius: 25px;
+  font-weight: bold;
+  margin-top: -15px; /* Superpone un poco sobre la sección anterior. */
+  margin-bottom: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  display: inline-block;
+  animation: pulse 1.5s infinite ease-in-out; /* Animación de pulsación. */
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Botón principal de acción en el modal. */
+.modal-boton-accion {
+  background: linear-gradient(to right, #2ecc71, #27ae60);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 50px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  letter-spacing: 0.5px;
+}
+
+.modal-boton-accion:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+.modal-boton-accion:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* ========================================================================== */
+/* EFECTOS VISUALES GLOBALES (LUCHA Y CELEBRACIÓN) */
+/* ========================================================================== */
+
+/* Contenedor para efectos globales durante la lucha. */
+.efectos-lucha-globales {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 50; /* Por debajo de la UI principal pero por encima del fondo. */
+  overflow: hidden;
+}
+
+/* Efecto de vibración de pantalla. */
+.vibración-pantalla {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 0, 0, 0.1); /* Tinte rojo sutil. */
+  opacity: 0; /* Invisible por defecto. */
+  animation: screenShake 0.1s infinite alternate; /* Animación de vibración. */
+}
+
+/* Animación de vibración de pantalla. */
+@keyframes screenShake {
+  0% { transform: translate(0, 0); opacity: 0.1; }
+  25% { transform: translate(2px, 2px); opacity: 0.15; }
+  50% { transform: translate(-2px, 2px); opacity: 0.1; }
+  75% { transform: translate(2px, -2px); opacity: 0.15; }
+  100% { transform: translate(-2px, -2px); opacity: 0.1; }
+}
+
+/* Alerta de tensión crítica (aparece en medio de la pantalla). */
+.alerta-tension-critica {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 10;
-  pointer-events: none;
-}
-
-.texto-estado {
-  background: var(--color-fondo-overlay);
-  color: var(--color-texto-claro);
-  padding: 15px 30px;
-  border-radius: var(--border-radius-grande);
-  font-size: 1.2rem;
-  font-weight: 600;
-  border: 2px solid var(--color-fondo-glass);
+  background-color: rgba(231, 76, 60, 0.95); /* Fondo rojo intenso. */
+  border: 3px solid #c0392b;
+  border-radius: 20px;
+  padding: 25px 35px;
   text-align: center;
-  white-space: nowrap;
-  box-shadow: var(--sombra-fuerte);
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-  animation: pulsoEstado 2s ease-in-out infinite;
+  color: white;
+  box-shadow: 0 0 30px rgba(231, 76, 60, 0.8), inset 0 0 15px rgba(231, 76, 60, 0.5);
+  animation: criticalPulse 0.8s infinite alternate, fadeInOutAlert 3s forwards; /* Pulsación y fade in/out. */
+  z-index: 200; /* Muy por encima. */
+  font-weight: bold;
+  letter-spacing: 1px;
 }
 
-.texto-estado.error {
-  background: rgba(220, 20, 60, 0.95);
-  border-color: var(--color-peligro);
-  animation: vibrarError 0.5s ease-in-out infinite alternate;
+/* Animación de pulsación para la alerta crítica. */
+@keyframes criticalPulse {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  100% { transform: translate(-50%, -50%) scale(1.05); }
 }
 
-/* Botones flotantes */
-.boton-coleccion,
-.boton-estadisticas {
-  position: fixed;
-  right: 20px;
-  padding: 12px 18px;
-  background: linear-gradient(135deg, var(--color-secundario), #87CEEB);
-  color: var(--color-texto-claro);
-  border: none;
-  border-radius: var(--border-radius-grande);
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: var(--sombra-suave);
-  transition: var(--transicion-suave);
-  z-index: 100;
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--color-fondo-glass);
+/* Animación de aparecer y desaparecer para la alerta crítica. */
+@keyframes fadeInOutAlert {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
-.boton-coleccion {
-  bottom: 80px;
+.icono-alerta-grande {
+  font-size: 4rem; /* Ícono muy grande. */
+  margin-bottom: 10px;
+  animation: bounce 0.8s infinite alternate; /* Animación de rebote para el ícono. */
 }
 
-.boton-estadisticas {
-  bottom: 20px;
+@keyframes bounce {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-10px); }
 }
 
-.boton-coleccion:hover,
-.boton-estadisticas:hover {
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 8px 25px rgba(70, 130, 180, 0.6);
-  background: linear-gradient(135deg, #87CEEB, var(--color-secundario));
+.texto-alerta-grande {
+  font-size: 2.5rem; /* Texto principal grande. */
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
 }
 
-.boton-coleccion:active,
-.boton-estadisticas:active {
-  transform: translateY(-1px) scale(1.02);
+.subtexto-alerta {
+  font-size: 1.2rem; /* Subtexto. */
+  margin-top: 5px;
+  color: #fbdada;
 }
 
-/* Animaciones */
-@keyframes pulsoEstado {
-  0%, 100% { 
-    transform: translate(-50%, -50%) scale(1); 
-    opacity: 0.9; 
-  }
-  50% { 
-    transform: translate(-50%, -50%) scale(1.02); 
-    opacity: 1; 
-  }
-}
-
-@keyframes vibrarError {
-  0% { 
-    transform: translate(-50%, -50%) translateX(0); 
-  }
-  100% { 
-    transform: translate(-50%, -50%) translateX(-3px); 
-  }
-}
-
-@keyframes aparecer {
-  from { 
-    opacity: 0; 
-    transform: scale(0.8) translateY(20px); 
-  }
-  to { 
-    opacity: 1; 
-    transform: scale(1) translateY(0); 
-  }
-}
-
-@keyframes brillar {
-  0%, 100% { 
-    box-shadow: var(--sombra-suave); 
-  }
-  50% { 
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), var(--sombra-suave); 
-  }
-}
-
-/* Efectos de vidrio esmerilado */
-.efecto-vidrio {
-  background: var(--color-fondo-glass);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: var(--sombra-suave);
-}
-
-/* Estados de carga y transiciones */
-.cargando {
-  opacity: 0.7;
-  pointer-events: none;
-  position: relative;
-}
-
-.cargando::after {
-  content: '';
+/* Contenedor para efectos globales de celebración. */
+.efectos-celebracion-globales {
   position: absolute;
-  top: 50%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden; /* Muy importante para el confetti. */
+  z-index: 990; /* Por debajo del modal de captura, pero por encima de todo lo demás. */
+}
+
+/* Contenedor de las piezas de confetti. */
+.confetti-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Pieza individual de confetti. */
+.confetti-piece {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  opacity: 0;
+  animation: fallConfetti 3s ease-in forwards; /* Animación de caída. */
+}
+
+/* Animación de caída del confetti. */
+@keyframes fallConfetti {
+  0% { transform: translateY(-100px) rotateZ(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translateY(110vh) rotateZ(720deg); opacity: 0; }
+}
+
+/* Destello de captura (fondo que brilla). */
+.destello-captura {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(255, 255, 200, 0.7) 0%, rgba(255, 255, 255, 0) 70%);
+  opacity: 0;
+  animation: flashCapture 1.5s ease-out forwards; /* Animación de destello. */
+}
+
+/* Animación de destello de captura. */
+@keyframes flashCapture {
+  0% { opacity: 0; transform: scale(0.5); }
+  20% { opacity: 1; transform: scale(1.5); }
+  100% { opacity: 0; transform: scale(2); }
+}
+
+/* ========================================================================== */
+/* INDICADORES DE PROGRESO (LANZAMIENTO, ESPERA) */
+/* ========================================================================== */
+
+/* Contenedor de indicadores de progreso. */
+.indicadores-progreso {
+  position: absolute;
+  bottom: 20%; /* Posición desde abajo. */
   left: 50%;
-  width: 20px;
-  height: 20px;
-  margin: -10px 0 0 -10px;
-  border: 2px solid var(--color-fondo-glass);
-  border-top: 2px solid var(--color-acento);
+  transform: translateX(-50%);
+  width: 80%; /* Ancho. */
+  max-width: 400px; /* Ancho máximo. */
+  text-align: center;
+  pointer-events: none;
+  z-index: 80;
+}
+
+/* Estilos para la barra de progreso. */
+.barra-progreso {
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  height: 15px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.relleno-progreso {
+  height: 100%;
+  width: 0%; /* Empieza vacío. */
+  background-color: #3498db; /* Color azul de progreso. */
+  transition: width 0.3s ease; /* Transición para el relleno. */
+}
+
+.relleno-progreso.lanzando {
+  animation: fillProgress 3s linear forwards; /* Animación de llenado para el lanzamiento. */
+}
+
+@keyframes fillProgress {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+.texto-progreso {
+  font-size: 1.1rem;
+  color: #e0f2f7;
+  font-weight: 500;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* Animación de espera (puntos pulsantes). */
+.animacion-espera {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.dot-espera {
+  width: 12px;
+  height: 12px;
+  background-color: #f1c40f;
   border-radius: 50%;
-  animation: girar 1s linear infinite;
+  opacity: 0.3;
+  animation: dotPulse 1.4s infinite ease-in-out; /* Animación de pulsación para los puntos. */
 }
 
-@keyframes girar {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.dot-espera:nth-child(2) {
+  animation-delay: 0.2s; /* Retraso para el segundo punto. */
 }
 
-/* Responsive Design */
+.dot-espera:nth-child(3) {
+  animation-delay: 0.4s; /* Retraso para el tercer punto. */
+}
 
-/* Tablets */
+@keyframes dotPulse {
+  0%, 100% { transform: scale(0.8); opacity: 0.3; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+
+/* ========================================================================== */
+/* INFO RÁPIDA (PUNTUACIÓN, NIVEL, PECES CAPTURADOS) */
+/* ========================================================================== */
+
+/* Panel de información rápida, en la esquina superior izquierda. */
+.info-rapida {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background-color: rgba(18, 52, 86, 0.85); /* Fondo azul oscuro semitransparente. */
+  border-radius: 10px;
+  padding: 10px 15px;
+  display: flex; /* Flexbox para los ítems. */
+  gap: 15px; /* Espacio entre ítems. */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  pointer-events: none; /* No interactuable. */
+  z-index: 100;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #e0f2f7;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.info-icono {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.info-valor {
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* ========================================================================== */
+/* TUTORIAL OVERLAY PARA NUEVOS USUARIOS */
+/* ========================================================================== */
+
+/* Contenedor del tutorial (fondo oscuro). */
+.tutorial-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85); /* Fondo muy oscuro. */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Por encima de todo. */
+  pointer-events: auto; /* Permite interacción con el tutorial (para cerrarlo, etc.). */
+}
+
+/* Burbuja del tutorial. */
+.tutorial-bubble {
+  background: linear-gradient(to bottom, #1a3a5a, #0d1a26); /* Degradado. */
+  border: 3px solid #f1c40f; /* Borde dorado. */
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(241, 196, 15, 0.7);
+  animation: tutorialPopIn 0.5s ease-out forwards; /* Animación de aparición. */
+}
+
+@keyframes tutorialPopIn {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.tutorial-titulo {
+  font-size: 2.5rem;
+  color: #3498db;
+  margin-bottom: 20px;
+  text-shadow: 0 0 8px rgba(52, 152, 219, 0.7);
+  font-weight: bold;
+}
+
+.tutorial-texto {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin-bottom: 25px;
+  color: #ecf0f1;
+}
+
+.tutorial-pasos {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 15px 20px;
+  margin-top: 20px;
+}
+
+.tutorial-pasos .paso {
+  font-size: 1rem;
+  color: #bdc3c7;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.tutorial-pasos .paso::before {
+  content: '👉'; /* Ícono de flecha. */
+  font-size: 1.2em;
+  line-height: 1;
+}
+
+.tutorial-pasos .paso:last-child {
+  margin-bottom: 0;
+}
+
+/* ========================================================================== */
+/* ESTILOS RESPONSIVOS PARA DISPOSITIVOS MÓVILES */
+/* ========================================================================== */
+
 @media (max-width: 768px) {
-  .panel-superior,
-  .panel-controles {
-    padding: 12px 15px;
+  .juego-pesca {
+    padding: 10px; /* Reduce el padding general. */
   }
-  
-  .area-central-pesca {
-    padding: 15px;
-  }
-  
-  .texto-estado {
-    font-size: 1.1rem;
-    padding: 12px 24px;
-  }
-  
-  .boton-coleccion,
-  .boton-estadisticas {
-    padding: 10px 16px;
-    font-size: 0.9rem;
-    right: 15px;
-  }
-  
-  .boton-coleccion {
-    bottom: 70px;
-  }
-  
-  .boton-estadisticas {
-    bottom: 15px;
-  }
-}
 
-/* Móviles */
-@media (max-width: 480px) {
-  .panel-superior,
-  .panel-controles {
-    padding: 10px 12px;
-  }
-  
-  .area-central-pesca {
+  .interfaz-juego {
     padding: 10px;
   }
-  
-  .texto-estado {
+
+  .panel-superior {
+    justify-content: center; /* Centra las estadísticas en móviles. */
+  }
+
+  /* Reducir tamaño de fuente en estadísticas del jugador para que quepan. */
+  .estadisticas-jugador { /* Clase asumida del componente EstadisticasJugador */
+    font-size: 0.9rem;
+    padding: 8px 15px;
+    flex-wrap: wrap; /* Permite que los ítems se envuelvan. */
+    justify-content: center;
+    gap: 10px;
+  }
+  .estadisticas-jugador .stat-item {
+      flex-basis: 45%; /* Dos ítems por fila. */
+      justify-content: center;
+  }
+
+
+  .panel-info-lucha {
+    padding: 15px;
+    max-width: 95%;
+  }
+
+  .panel-info-lucha h3 {
+    font-size: 1.5rem;
+  }
+
+  .rareza-badge {
+    padding: 4px 10px;
+    font-size: 0.75rem;
+  }
+
+  .stats-lucha {
+    grid-template-columns: 1fr; /* Una sola columna en móviles. */
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .stat-lucha .label, .stat-lucha .valor, .stat-lucha .valor-habitat {
+    font-size: 0.9rem;
+  }
+
+  .panel-controles {
+    flex-direction: column; /* Botones apilados verticalmente. */
+    gap: 10px;
+  }
+
+  .boton-accion { /* Asumido del componente ControlesJuego */
+    width: 100%; /* Ocupa todo el ancho disponible. */
+    font-size: 1.1rem;
+    padding: 12px 20px;
+  }
+
+  .mensaje-estado {
+    top: 100px; /* Ajusta la posición para móviles. */
     font-size: 1rem;
     padding: 10px 20px;
-    max-width: 90vw;
-    word-wrap: break-word;
+    min-width: unset; /* Elimina el ancho mínimo. */
+    width: 90%;
   }
-  
-  .boton-coleccion,
-  .boton-estadisticas {
-    padding: 8px 12px;
-    font-size: 0.85rem;
-    right: 10px;
-  }
-  
-  .boton-coleccion {
-    bottom: 60px;
-  }
-  
-  .boton-estadisticas {
-    bottom: 10px;
-  }
-}
 
-/* Pantallas muy pequeñas */
-@media (max-width: 320px) {
-  .texto-estado {
-    font-size: 0.9rem;
-    padding: 8px 16px;
+  .botones-flotantes {
+    top: 10px;
+    right: 10px;
+    flex-direction: row; /* Botones flotantes en fila en móviles. */
+    flex-wrap: wrap; /* Permite que se envuelvan si hay muchos. */
+    justify-content: flex-end; /* Alinea a la derecha. */
+    gap: 8px;
   }
-  
-  .boton-coleccion,
-  .boton-estadisticas {
-    padding: 6px 10px;
+
+  .boton-coleccion, .boton-estadisticas, .boton-configuracion {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    min-width: unset;
+    flex-grow: 1;
+    justify-content: center;
+  }
+  .boton-coleccion .texto-boton, .boton-estadisticas .texto-boton, .boton-configuracion .texto-boton {
+      display: none; /* Oculta el texto para solo mostrar ícono y contador */
+  }
+  .icono-boton {
+      font-size: 1.1rem;
+  }
+  .contador-boton {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+  }
+
+  /* Ajustes para el modal de captura en móviles. */
+  .modal-captura-contenido {
+    padding: 25px;
+    border-radius: 15px;
+  }
+
+  .modal-captura-contenido h2 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+  }
+
+  .modal-pez-imagen-container {
+    height: 150px;
+    margin-bottom: 20px;
+  }
+
+  .modal-pez-nombre {
+    font-size: 2rem;
+    margin-bottom: 8px;
+  }
+
+  .modal-rareza-badge {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
+
+  .modal-pez-stats {
+    grid-template-columns: 1fr; /* Una sola columna. */
+    gap: 10px;
+    padding: 15px;
+    margin-bottom: 25px;
+  }
+
+  .modal-stat-item .label {
     font-size: 0.8rem;
   }
-}
 
-/* Orientación horizontal en móviles */
-@media (max-height: 500px) and (orientation: landscape) {
-  .panel-superior,
-  .panel-controles {
-    padding: 8px 15px;
+  .modal-stat-item .valor {
+    font-size: 1.1rem;
   }
-  
-  .area-central-pesca {
-    padding: 10px 15px;
+
+  .modal-recompensas {
+    flex-direction: column; /* Recompensas apiladas. */
+    gap: 15px;
+    margin-bottom: 25px;
   }
-  
-  .texto-estado {
+
+  .modal-recompensa-item {
+    font-size: 1.2rem;
+  }
+
+  .modal-nuevo-record {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+  }
+
+  .modal-boton-accion {
+    padding: 12px 25px;
+    font-size: 1.1rem;
+  }
+
+  /* Ajustes para la alerta de tensión crítica. */
+  .alerta-tension-critica {
+    padding: 15px 20px;
+    border-radius: 15px;
+  }
+  .icono-alerta-grande {
+      font-size: 3rem;
+  }
+  .texto-alerta-grande {
+      font-size: 1.8rem;
+  }
+  .subtexto-alerta {
+      font-size: 1rem;
+  }
+
+  /* Tutorial en móviles. */
+  .tutorial-bubble {
+    padding: 20px;
+    border-radius: 15px;
+  }
+
+  .tutorial-titulo {
+    font-size: 2rem;
+    margin-bottom: 15px;
+  }
+
+  .tutorial-texto {
     font-size: 1rem;
-    padding: 8px 20px;
+    margin-bottom: 20px;
   }
-}
 
-/* Mejoras de accesibilidad */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  .tutorial-pasos .paso {
+    font-size: 0.9rem;
   }
-}
 
-/* Modo alto contraste */
-@media (prefers-contrast: high) {
-  :root {
-    --color-fondo-overlay: rgba(0, 0, 0, 0.9);
-    --color-fondo-glass: rgba(255, 255, 255, 0.3);
+  /* Info rápida en móviles. */
+  .info-rapida {
+    position: static; /* Vuelve a su posición normal en el flujo. */
+    width: 100%;
+    margin-top: 10px;
+    justify-content: space-around; /* Distribuye los ítems. */
+    background-color: rgba(18, 52, 86, 0.95); /* Mayor opacidad. */
+    border-radius: 0; /* Sin bordes redondeados. */
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.3);
+    padding: 10px 5px;
+    order: -1; /* Lo coloca al principio del flex container padre. */
   }
-  
-  .texto-estado {
-    border-width: 3px;
+  .info-item {
+      font-size: 1rem;
   }
-  
-  .boton-coleccion,
-  .boton-estadisticas {
-    border: 2px solid var(--color-texto-claro);
+  .info-icono {
+      font-size: 1.2rem;
   }
-}
-
-/* Soporte para modo oscuro */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-fondo-overlay: rgba(0, 15, 30, 0.9);
-  }
-}
-
-/* Optimizaciones de rendimiento */
-.juego-pesca * {
-  will-change: auto;
-}
-
-.juego-pesca *:hover,
-.juego-pesca *:focus,
-.juego-pesca *.animando {
-  will-change: transform, opacity;
-}
-
-/* Prevención de zoom en iOS */
-input, button, select, textarea {
-  font-size: 16px;
-}
-
-/* Scroll personalizado para elementos internos */
-.scroll-personalizado::-webkit-scrollbar {
-  width: 6px;
-}
-
-.scroll-personalizado::-webkit-scrollbar-track {
-  background: var(--color-fondo-glass);
-  border-radius: 3px;
-}
-
-.scroll-personalizado::-webkit-scrollbar-thumb {
-  background: var(--color-acento);
-  border-radius: 3px;
-}
-
-.scroll-personalizado::-webkit-scrollbar-thumb:hover {
-  background: #B8860B;
 }
