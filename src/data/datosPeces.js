@@ -18,7 +18,7 @@ export const PECES_COLOMBIANOS = {
     puntos: 150,
     color: "#DAA520",
     comportamiento: "activo",
-    imagen: "/assets/imagenes/peces/Bocachico.png", // <--- CORREGIDO
+    imagen: "/assets/imagenes/peces/Bocachico.png", // CORREGIDO (ruta y nombre exacto)
     temporadaOptima: "Marzo - Mayo",
     profundidadOptima: { minima: 1, maxima: 8 }, // metros
     carnada: ["lombriz", "maíz", "yuca"],
@@ -39,7 +39,7 @@ export const PECES_COLOMBIANOS = {
     puntos: 2500,
     color: "#8B0000",
     comportamiento: "territorial",
-    imagen: "/assets/imagenes/peces/Arapaima.png", // <--- CORREGIDO (y asegúrate de mover la imagen a public/assets/images/peces/)
+    imagen: "/assets/imagenes/peces/Arapaima.png", // CORREGIDO (ruta y nombre exacto - asumiendo Mayúscula)
     temporadaOptima: "Junio - Agosto",
     profundidadOptima: { minima: 3, maxima: 15 },
     carnada: ["pez vivo", "camarón", "rana"],
@@ -60,7 +60,7 @@ export const PECES_COLOMBIANOS = {
     puntos: 900,
     color: "#696969",
     comportamiento: "nocturno",
-    imagen: "/assets/imagenes/peces/Bagre rayado.png", // <--- CORREGIDO
+    imagen: "/assets/imagenes/peces/Bagre rayado.png", // CORREGIDO (ruta y nombre exacto)
     temporadaOptima: "Diciembre - Febrero",
     profundidadOptima: { minima: 5, maxima: 20 },
     carnada: ["pescado", "camarón", "lombriz"],
@@ -81,7 +81,7 @@ export const PECES_COLOMBIANOS = {
     puntos: 400,
     color: "#C0C0C0",
     comportamiento: "rápido",
-    imagen: "/assets/imagenes/peces/Sábalo.png", // <--- CORREGIDO
+    imagen: "/assets/imagenes/peces/Sábalo (1).png", // ¡CORREGIDO! con el "(1)" y ruta exacta
     temporadaOptima: "Abril - Junio",
     profundidadOptima: { minima: 2, maxima: 12 },
     carnada: ["insectos", "frutas", "gusanos"],
@@ -102,7 +102,7 @@ export const PECES_COLOMBIANOS = {
     puntos: 250,
     color: "#F0E68C",
     comportamiento: "esquivo",
-    imagen: "/assets/imagenes/peces/Sabaleta.png", // <--- CORREGIDO
+    imagen: "/assets/imagenes/peces/Sabaleta.png", // ASUME Sabaleta.png existe (no visible en la imagen, pero sigue el patrón)
     temporadaOptima: "Septiembre - Noviembre",
     profundidadOptima: { minima: 1, maxima: 6 },
     carnada: ["moscas", "pequeños peces", "larvas"],
@@ -123,7 +123,7 @@ export const PECES_COLOMBIANOS = {
     puntos: 300,
     color: "#708090",
     comportamiento: "territorial",
-    imagen: "/assets/imagenes/peces/dorado.png", // <--- CORREGIDO
+    imagen: "/assets/imagenes/peces/dorado.png", // CORREGIDO (ruta y nombre exacto - minúscula)
     temporadaOptima: "Todo el año",
     profundidadOptima: { minima: 2, maxima: 10 },
     carnada: ["lombriz", "camarón", "masa"],
@@ -144,7 +144,7 @@ export const PECES_COLOMBIANOS = {
     puntos: 150,
     color: "#A0522D",
     comportamiento: "pasivo",
-    imagen: "/assets/imagenes/peces/Bocachico.png", // <--- CORREGIDO (usando Bocachico, asegúrate de que sea intencional)
+    imagen: "/assets/imagenes/peces/Corroncho.png", // CORREGIDO (ruta y nombre exacto)
     temporadaOptima: "Julio - Septiembre",
     profundidadOptima: { minima: 0.5, maxima: 5 },
     carnada: ["algas", "materia vegetal", "pequeños invertebrados"],
@@ -165,7 +165,7 @@ export const PECES_COLOMBIANOS = {
     puntos: 200,
     color: "#4169E1",
     comportamiento: "agresivo",
-    imagen: "/assets/imagenes/peces/Perca.png", // <--- CORREGIDO
+    imagen: "/assets/imagenes/peces/perca.png", // CORREGIDO (ruta y nombre exacto - minúscula)
     temporadaOptima: "Enero - Marzo",
     profundidadOptima: { minima: 1, maxima: 8 },
     carnada: ["pequeños peces", "insectos", "crustáceos"],
@@ -186,7 +186,7 @@ export const PECES_COLOMBIANOS = {
     puntos: 1500,
     color: "#FFD700",
     comportamiento: "agresivo",
-    imagen: "/assets/imagenes/peces/Pavón.png", // <--- CORREGIDO
+    imagen: "/assets/imagenes/peces/Pavón.png", // CORREGIDO (ruta y nombre exacto)
     temporadaOptima: "Febrero - Abril",
     profundidadOptima: { minima: 2, maxima: 15 },
     carnada: ["señuelos", "peces vivos", "camarones"],
@@ -207,7 +207,7 @@ export const PECES_COLOMBIANOS = {
     puntos: 280,
     color: "#FFE4B5",
     comportamiento: "territorial",
-    imagen: "/assets/imagenes/peces/trucha_mariposa.png", // <--- CORREGIDO (usando trucha_mariposa, asegúrate de que sea intencional)
+    imagen: "/assets/imagenes/peces/trucha_mariposa.png", // CORREGIDO (ruta y nombre exacto - minúscula)
     temporadaOptima: "Mayo - Julio",
     profundidadOptima: { minima: 1, maxima: 10 },
     carnada: ["lombrices", "masa", "pequeños peces"],
@@ -215,17 +215,15 @@ export const PECES_COLOMBIANOS = {
   }
 };
 
-// Función para obtener peces por rareza
+// ... el resto de tu archivo datosPeces.js sigue igual ...
 export const obtenerPecesPorRareza = (rareza) => {
   return Object.values(PECES_COLOMBIANOS).filter(pez => pez.rareza === rareza);
 };
 
-// Función para obtener pez aleatorio
 export const obtenerPezAleatorio = (nivelJugador = 1) => {
   const peces = Object.keys(PECES_COLOMBIANOS);
   const factorNivel = Math.min(nivelJugador / 10, 1);
   
-  // Configuración de rareza local (evitar importación circular)
   const probabilidades = {
     común: 0.6,
     raro: 0.25,
@@ -233,7 +231,6 @@ export const obtenerPezAleatorio = (nivelJugador = 1) => {
     legendario: 0.03
   };
   
-  // Ajustar probabilidades según nivel
   probabilidades.raro += factorNivel * 0.1;
   probabilidades.épico += factorNivel * 0.05;
   probabilidades.legendario += factorNivel * 0.02;
@@ -252,12 +249,10 @@ export const obtenerPezAleatorio = (nivelJugador = 1) => {
     }
   }
   
-  // Fallback: pez común aleatorio
   const pezId = peces[Math.floor(Math.random() * peces.length)];
   return generarInstanciaPez(PECES_COLOMBIANOS[pezId]);
 };
 
-// Función para generar una instancia específica de un pez con valores aleatorios
 export const generarInstanciaPez = (datosPez) => {
   const pesoActual = (
     Math.random() * (datosPez.peso.maximo - datosPez.peso.minimo) + 

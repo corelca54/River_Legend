@@ -51,13 +51,13 @@ const ModalCapturaPez = ({
     const rutasImagenes = {
       bocachico: '/assets/imagenes/peces/Bocachico.png',
       arapaima: '/assets/imagenes/peces/Arapaima.png',
-      bagre: '/assets/imagenes/peces/Bagre_rayado.png',
-      sabalo: '/assets/imagenes/peces/Sabalo.png',
+      bagre: '/assets/imagenes/peces/Bagre rayado.png',
+      sabalo: '/assets/imagenes/peces/Sábalo.png',
       sabaleta: '/assets/imagenes/peces/Sabaleta.png',
       nicuro: '/assets/imagenes/peces/dorado.png',
       corroncho: '/assets/imagenes/peces/Bocachico.png',
-      azulejo: '/assets/imagenes/peces/Perca.png',
-      pavon: '/assets/imagenes/peces/Pavon.png',
+      azulejo: '/assets/imagenes/peces/perca.png',
+      pavon: '/assets/imagenes/peces/Pavón.png',
       mojarra: '/assets/imagenes/peces/trucha_mariposa.png'
     };
     

@@ -250,7 +250,7 @@ const AreaPesca = ({
                 transform: 'translateX(-50%)',
                 width: '2px',
                 height: '25px',
-                background: '#E6E6FA',
+                background: 'none',
                 boxShadow: '0 0 5px rgba(230, 230, 250, 0.8)',
                 zIndex: 10
               }}
@@ -324,7 +324,7 @@ const AreaPesca = ({
                       position: 'absolute',
                       width: '4px',
                       height: '4px',
-                      background: 'rgba(173, 216, 230, 0.8)',
+                      background: 'none',
                       borderRadius: '50%',
                       animation: `salpicadura 0.8s ease-out infinite`,
                       animationDelay: `${i * 0.1}s`,
@@ -335,27 +335,28 @@ const AreaPesca = ({
               </div>
             </div>
 
-            {/* Ondas en el agua donde lucha el pez */}
-            <div className="ondas-lucha">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <div 
-                  key={i}
-                  className="onda-agua"
-                  style={{ 
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    width: `${20 + i * 20}px`,
-                    height: `${20 + i * 20}px`,
-                    border: '2px solid rgba(173, 216, 230, 0.6)',
-                    borderRadius: '50%',
-                    animation: `expandirOnda 1.5s ease-out infinite`,
-                    animationDelay: `${i * 0.3}s`
-                  }}
-                />
-              ))}
-            </div>
+            {/* Efecto de chapoteo realista al luchar */}
+            {estadoJuego === ESTADOS_JUEGO.LUCHANDO && (
+              <div className="efecto-chapoteo-realista">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="gota-chapoteo"
+                    style={{
+                      position: 'absolute',
+                      width: `${6 + Math.random() * 6}px`,
+                      height: `${6 + Math.random() * 6}px`,
+                      background: 'rgba(173,216,230,0.7)',
+                      borderRadius: '50%',
+                      left: `${40 + Math.cos(i * 2 * Math.PI / 8) * 30}px`,
+                      top: `${40 + Math.sin(i * 2 * Math.PI / 8) * 18}px`,
+                      opacity: 0.7,
+                      animation: `chapoteoAgua 0.7s ${i * 0.08}s infinite cubic-bezier(.4,1.6,.6,1)`
+                    }}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         )}
 
@@ -380,7 +381,7 @@ const AreaPesca = ({
                 transform: 'translateX(-50%)',
                 width: '3px',
                 height: '35px',
-                background: 'linear-gradient(to bottom, #E6E6FA, #B0C4DE)',
+                background: 'none',
                 boxShadow: '0 0 8px rgba(230, 230, 250, 0.9)',
                 zIndex: 19
               }}
@@ -485,6 +486,7 @@ const AreaPesca = ({
               height: `${burbuja.tamaño}px`,
               opacity: burbuja.opacidad,
               background: `radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, rgba(173, 216, 230, 0.4) 50%, rgba(255, 255, 255, 0.2) 100%)`,
+              background: 'none',
               border: '1px solid rgba(255, 255, 255, 0.3)',
               borderRadius: '50%',
               animation: `subirBurbuja ${3 / burbuja.velocidad}s linear infinite`

@@ -11,8 +11,12 @@ import './VideoBackground.css';
  * Incluye fallback de imagen y controles de calidad
  */
 const VideoFondo = ({ 
-  src = '/assets/fondos/Video_bucle.mp4',
-  poster = '/assets/fondos/Fondo_rio.jpg',
+  // =========================================================================
+  // RUTAS CORREGIDAS SEGÚN TU ESTRUCTURA DE CARPETAS (public/assets/imagenes/fondos/)
+  // =========================================================================
+  src = '/assets/imagenes/fondos/Video_bucle.mp4', // <--- CORREGIDO para tu estructura
+  poster = '/assets/imagenes/fondos/Fondo_rio.jpg', // <--- CORREGIDO para tu estructura
+  // =========================================================================
   calidad = 'auto' // 'low', 'medium', 'high', 'auto'
 }) => {
   const videoRef = useRef(null);
@@ -56,22 +60,13 @@ const VideoFondo = ({
       } else if (calidad === 'high') {
         video.style.filter = 'contrast(1.1) brightness(0.9)'; // Mejorar calidad
       }
-      
-      // Forzar visibilidad del video
-      video.style.position = 'absolute';
-      video.style.top = '0';
-      video.style.left = '0';
-      video.style.width = '100%';
-      video.style.height = '100%';
-      video.style.objectFit = 'cover';
-      video.style.zIndex = '-2';
     };
 
     // Event listeners
     const onCanPlay = () => {
       setVideoReady(true);
       configurarCalidadVideo();
-      console.log('Video cargado correctamente'); // Debug
+      console.log('Video cargado correctamente desde:', src); // Debug mejorado
     };
 
     const onError = (e) => {
@@ -89,7 +84,6 @@ const VideoFondo = ({
     };
 
     const onPlay = () => {
-      // Optimizar rendimiento durante reproducción
       video.style.willChange = 'auto';
     };
 
@@ -112,7 +106,7 @@ const VideoFondo = ({
       video.removeEventListener('play', onPlay);
       video.removeEventListener('pause', onPause);
     };
-  }, [calidad, lowPowerMode]);
+  }, [calidad, lowPowerMode, src]);
 
   // Manejo de visibilidad de página para optimizar rendimiento
   useEffect(() => {
@@ -139,15 +133,42 @@ const VideoFondo = ({
   // Renderizar imagen de fallback si hay error o dispositivo de baja potencia
   if (videoError || lowPowerMode) {
     return (
-      <div 
-        className="video-fondo-fallback"
-        style={{
-          backgroundImage: `url(${poster})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
-      />
+      <>
+        <div 
+          className="video-fondo-fallback"
+          style={{
+            backgroundImage: `url(${poster})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            width: '100vw',
+            height: '100vh',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            zIndex: -10
+          }}
+        />
+        {videoError && (
+          <div style={{
+            position: 'fixed',
+            top: '20px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: 'rgba(200,0,0,0.85)',
+            color: '#fff',
+            padding: '12px 24px',
+            borderRadius: '8px',
+            zIndex: 1000,
+            fontWeight: 'bold',
+            fontSize: '1.1rem',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+          }}>
+            Error: No se pudo cargar el video de fondo.<br />
+            Verifica que <code>public/assets/imagenes/fondos/Video_bucle.mp4</code> exista y no esté corrupto.
+          </div>
+        )}
+      </>
     );
   }
 
