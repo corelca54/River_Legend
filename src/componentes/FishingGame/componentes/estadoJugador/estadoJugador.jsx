@@ -27,12 +27,13 @@ const EstadisticasJugador = ({
 
   // Formatear números grandes para mejor legibilidad
   const formatearNumero = (numero) => {
+    if (numero == null) return '0';
     if (numero >= 1000000) {
       return (numero / 1000000).toFixed(1) + 'M';
     } else if (numero >= 1000) {
       return (numero / 1000).toFixed(1) + 'K';
     }
-    return numero.toLocaleString();
+    return Number(numero).toLocaleString();
   };
 
   // Determinar el color del nivel basado en el progreso
@@ -74,7 +75,7 @@ const EstadisticasJugador = ({
         <div className="etiqueta-experiencia">
           <span>Experiencia</span>
           <span className="numeros-exp">
-            {experiencia.toLocaleString()} / {experienciaRequerida.toLocaleString()}
+            {(experiencia ?? 0).toLocaleString()} / {(experienciaRequerida ?? 0).toLocaleString()}
           </span>
         </div>
         <div className="contenedor-barra-exp">
@@ -112,7 +113,7 @@ const EstadisticasJugador = ({
         <div className="stat-item siguiente-nivel">
           <div className="stat-icono">⚡</div>
           <div className="stat-info">
-            <div className="stat-valor">{experienciaRequerida - experiencia}</div>
+            <div className="stat-valor">{Number.isFinite(experienciaRequerida - experiencia) ? (experienciaRequerida - experiencia) : 0}</div>
             <div className="stat-etiqueta">Para Nivel {nivel + 1}</div>
           </div>
         </div>

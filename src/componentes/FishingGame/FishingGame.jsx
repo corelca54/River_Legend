@@ -1,365 +1,317 @@
-/**
- * FishingGame.jsx - VERSIÓN ACTUALIZADA con modal de captura realista
- */
-
-import React from 'react';
-import { useJuegoPesca } from '../../hooks/useJuegoPesca';
-import { ESTADOS_JUEGO } from '../../data/constantesJuego';
-
-// Importación de componentes
-import VideoFondo from '../multimedia/VideoBackground/VideoBackground';
-import EstadisticasJugador from './componentes/estadoJugador/estadoJugador';
+import React, { useState, useEffect } from 'react';
+// Imports corregidos según tu estructura de carpetas
+import VideoBackground from '../multimedia/VideoBackground/VideoBackground';
 import AreaPesca from './componentes/AreaPesca/AreaPesca';
-import MedidorTension from './componentes/MedidorTension/MedidorTension';
 import ControlesJuego from './componentes/ControlesJuego/ControlesJuego';
-import ModalCapturaPez from './componentes/ModalCaptura/ModalCapturaPez';
-
-// Importación de estilos
+import EstadoJugador from './componentes/estadoJugador/estadoJugador';
+import InfoPez from './componentes/InfoPez/InfoPez';
+import MedidorTension from './componentes/MedidorTension/MedidorTension';
+import ModalCaptura from './componentes/ModalCaptura/ModalCapturaPez';
+import { useJuegoPesca } from '../../hooks/useJuegoPesca';
+import { obtenerPezAleatorio } from '../../data/datosPeces';
 import './FishingGame.css';
 
-/**
- * Componente principal del juego de pesca colombiano MEJORADO
- * Ahora incluye modal de captura realista y efectos visuales avanzados
- */
-const JuegoPesca = () => {
-  // Hook principal con toda la lógica del juego
+const FishingGame = () => {
+  // Estados del juego principal
+  const [mostrarInfoPez, setMostrarInfoPez] = useState(false);
+  const [mostrarModalCaptura, setMostrarModalCaptura] = useState(false);
+  const [pezCapturado, setPezCapturado] = useState(null);
+  const [efectosSonido, setEfectosSonido] = useState(true);
+  
+  // Hook personalizado para la lógica del juego
   const {
-    // Estados del juego
     estadoJuego,
     pezActual,
     tension,
-    profundidad,
     tiempoLucha,
-    posicionSenuelo,
-    animacionPez,
-    
-    // Estados del jugador
-    puntuacion,
-    nivel,
-    experiencia,
-    pezesCapturados,
-    
-    // Estados de UI
-    mostrandoInfoPez,
-    mensajeEstado,
-    ultimaCaptura,
-    
-    // Acciones del juego
+    posicionSedal,
+    estadisticasJugador,
     lanzarSenuelo,
     recogerSedal,
     soltarSedal,
     reiniciarJuego,
-    alternarPausa,
-    
-    // Utilidades
-    obtenerColorTension,
-    obtenerEstadisticas,
-    
-    // Estados condicionales
-    tensionCritica,
+    pausarJuego,
+    reanudarJuego,
+    puedeLanzar,
     puedeRecoger,
     puedeSoltar,
-    puedeLanzar
+    alternarPausa
   } = useJuegoPesca();
 
-  // Función para determinar si mostrar el medidor de tensión
-  const mostrarMedidorTension = () => {
-    return estadoJuego === ESTADOS_JUEGO.LUCHANDO;
+  // Audio context para efectos de sonido
+  const [audioContext, setAudioContext] = useState(null);
+
+  useEffect(() => {
+    // Inicializar audio context
+    const initAudio = () => {
+      if (!audioContext) {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        setAudioContext(ctx);
+      }
+    };
+
+    // Inicializar audio al primer clic del usuario
+    const handleFirstInteraction = () => {
+      initAudio();
+      document.removeEventListener('click', handleFirstInteraction);
+    };
+
+    document.addEventListener('click', handleFirstInteraction);
+
+    return () => {
+      document.removeEventListener('click', handleFirstInteraction);
+    };
+  }, [audioContext]);
+
+  // Reproducir efectos de sonido
+  const reproducirSonido = (tipo, volumen = 0.3) => {
+    if (!efectosSonido || !audioContext) return;
+
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    let frecuencia = 440;
+    let duracion = 0.2;
+
+    switch (tipo) {
+      case 'lanzar':
+        frecuencia = 800;
+        duracion = 0.4;
+        oscillator.type = 'sine';
+        break;
+      case 'recoger':
+        frecuencia = 600;
+        duracion = 0.2;
+        oscillator.type = 'square';
+        break;
+      case 'pez_pica':
+        frecuencia = 1000;
+        duracion = 0.6;
+        oscillator.type = 'triangle';
+        break;
+      case 'captura':
+        frecuencia = 1200;
+        duracion = 1.0;
+        oscillator.type = 'sine';
+        break;
+      case 'escape':
+        frecuencia = 200;
+        duracion = 0.8;
+        oscillator.type = 'sawtooth';
+        break;
+      default:
+        oscillator.type = 'sine';
+    }
+
+    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(volumen, audioContext.currentTime + 0.01);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duracion);
+
+    oscillator.frequency.setValueAtTime(frecuencia, audioContext.currentTime);
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + duracion);
   };
 
-  // Función para determinar el mensaje de estado a mostrar
-  const obtenerMensajeEstado = () => {
-    if (mensajeEstado) return mensajeEstado;
-    
-    switch (estadoJuego) {
-      case ESTADOS_JUEGO.LANZANDO:
-        return "Lanzando señuelo al río...";
-      case ESTADOS_JUEGO.PESCANDO:
-        return "Esperando que pique un pez... 🎣";
-      case ESTADOS_JUEGO.LUCHANDO:
-        return pezActual ? `¡${pezActual.nombre} luchando! Tiempo: ${tiempoLucha.toFixed(1)}s` : "";
-      case ESTADOS_JUEGO.PERDIDO:
-        return "¡El pez se escapó! 💔";
-      case ESTADOS_JUEGO.PAUSA:
-        return "Juego en pausa";
-      default:
-        return "";
+  // Manejar eventos del juego
+  const manejarLanzamiento = () => {
+    lanzarSenuelo();
+    reproducirSonido('lanzar');
+  };
+
+  const manejarRecogida = () => {
+    recogerSedal();
+    reproducirSonido('recoger');
+  };
+
+  const manejarSoltada = () => {
+    soltarSedal();
+    reproducirSonido('recoger', 0.2);
+  };
+
+  const manejarCaptura = (pez) => {
+    setPezCapturado(pez);
+    setMostrarModalCaptura(true);
+    reproducirSonido('captura');
+  };
+
+  const manejarEscape = () => {
+    reproducirSonido('escape');
+  };
+
+  const manejarPezSale = () => {
+    if (pezActual) {
+      manejarCaptura(pezActual);
     }
   };
 
-  // Función para cerrar el modal de captura
   const cerrarModalCaptura = () => {
-    // En el hook real, esto debería cambiar el estado
-    // Por ahora simularemos cerrando después de 3 segundos
-    setTimeout(() => {
-      reiniciarJuego();
-    }, 100);
+    setMostrarModalCaptura(false);
+    setPezCapturado(null);
+    reiniciarJuego();
   };
 
-  // Verificar si hay nuevo récord
-  const esNuevoRecord = ultimaCaptura && pezesCapturados.length > 1 && (
-    ultimaCaptura.pesoActual > Math.max(...pezesCapturados.slice(0, -1)
-      .filter(p => p.id === ultimaCaptura.id)
-      .map(p => p.pesoActual || 0), 0) ||
-    ultimaCaptura.longitudActual > Math.max(...pezesCapturados.slice(0, -1)
-      .filter(p => p.id === ultimaCaptura.id)
-      .map(p => p.longitudActual || 0), 0)
-  );
+  // Obtener mensaje de estado del juego
+  const obtenerMensajeEstado = () => {
+    switch (estadoJuego) {
+      case 'inicial':
+        return '🎣 Haz clic en "Lanzar" para comenzar a pescar';
+      case 'lanzando':
+        return '🌊 Lanzando señuelo al río...';
+      case 'pescando':
+        return '⏳ Esperando que pique un pez... (El agua está turbia)';
+      case 'luchando':
+        return `🎯 ¡${pezActual?.nombre || 'Pez'} luchando! Controla la tensión`;
+      case 'capturado':
+        return `🎉 ¡${pezActual?.nombre || 'Pez'} capturado!`;
+      case 'perdido':
+        return `😞 El ${pezActual?.nombre || 'pez'} se escapó...`;
+      case 'pausado':
+        return '⏸️ Juego pausado';
+      default:
+        return '';
+    }
+  };
+
+  // Obtener color de la tensión
+  const obtenerColorTension = () => {
+    if (tension < 30) return '#4CAF50';
+    if (tension < 60) return '#FFC107';
+    if (tension < 80) return '#FF9800';
+    return '#F44336';
+  };
 
   return (
-    <div className="juego-pesca">
+    <div className="fishing-game-container">
       {/* Video de fondo del río */}
-      <VideoFondo />
-      
-      {/* Interfaz principal del juego */}
-      <div className="interfaz-juego">
-        
-        {/* Panel superior con estadísticas del jugador */}
-        <div className="panel-superior">
-          <EstadisticasJugador
-            nivel={nivel}
-            experiencia={experiencia}
-            puntuacion={puntuacion}
-            pezesCapturados={pezesCapturados.length}
-          />
-        </div>
+      <VideoBackground />
 
-        {/* Área central de pesca */}
-        <div className="area-central-pesca">
-          <AreaPesca
-            estadoJuego={estadoJuego}
-            posicionSenuelo={posicionSenuelo}
-            profundidad={profundidad}
-            pezActual={pezActual}
-            animacionPez={animacionPez}
+      {/* Área principal de pesca */}
+      <AreaPesca
+        pezActual={pezActual}
+        posicionSedal={posicionSedal}
+        estadoJuego={estadoJuego}
+        tension={tension}
+        onPezSale={manejarPezSale}
+      />
+
+      {/* Panel de estadísticas del jugador */}
+      <div className="panel-estadisticas-superior">
+        <EstadoJugador estadisticas={estadisticasJugador} />
+      </div>
+
+      {/* Medidor de tensión (solo visible durante la lucha) */}
+      {estadoJuego === 'luchando' && (
+        <div className="medidor-tension-overlay">
+          <MedidorTension
+            tension={tension}
+            tensionMaxima={100}
+            colorTension={obtenerColorTension()}
             tiempoLucha={tiempoLucha}
+            pezNombre={pezActual?.nombre}
           />
-          
-          {/* Panel de información del pez durante la lucha */}
-          {estadoJuego === ESTADOS_JUEGO.LUCHANDO && pezActual && (
-            <div className="panel-info-lucha">
-              <div className="header-info-lucha">
-                <h3>{pezActual.nombre}</h3>
-                <span 
-                  className="rareza-badge" 
-                  style={{ 
-                    backgroundColor: pezActual.rareza === 'común' ? '#90EE90' : 
-                                    pezActual.rareza === 'raro' ? '#87CEEB' : 
-                                    pezActual.rareza === 'épico' ? '#DDA0DD' : '#FFD700',
-                    color: pezActual.rareza === 'común' ? '#2F4F4F' : '#FFFFFF'
-                  }}
-                >
-                  {pezActual.rareza.toUpperCase()}
-                </span>
-              </div>
-              <div className="stats-lucha">
-                <div className="stat-lucha">
-                  <span className="label">Peso:</span>
-                  <span className="valor">{pezActual.pesoActual}kg</span>
-                </div>
-                <div className="stat-lucha">
-                  <span className="label">Longitud:</span>
-                  <span className="valor">{pezActual.longitudActual}cm</span>
-                </div>
-                <div className="stat-lucha">
-                  <span className="label">Dificultad:</span>
-                  <span className="valor">{pezActual.dificultad}/10</span>
-                </div>
-                <div className="stat-lucha">
-                  <span className="label">Hábitat:</span>
-                  <span className="valor-habitat">{pezActual.habitat}</span>
-                </div>
-              </div>
+        </div>
+      )}
+
+      {/* Controles del juego */}
+      <div className="controles-principales">
+        <ControlesJuego
+          estadoJuego={estadoJuego}
+          puedeLanzar={puedeLanzar}
+          puedeRecoger={puedeRecoger}
+          puedeSoltar={puedeSoltar}
+          onLanzar={manejarLanzamiento}
+          onRecoger={manejarRecogida}
+          onSoltar={manejarSoltada}
+          onReiniciar={reiniciarJuego}
+          onPausa={alternarPausa}
+        />
+      </div>
+
+      {/* Mensaje de estado */}
+      <div className="mensaje-estado-juego">
+        <div className={`estado-texto ${estadoJuego}`}>
+          {obtenerMensajeEstado()}
+        </div>
+        
+        {/* Información adicional durante la lucha */}
+        {estadoJuego === 'luchando' && pezActual && (
+          <div className="info-lucha-activa">
+            <div className="pez-info-mini">
+              <span className="pez-nombre">{pezActual.nombre}</span>
+              <span className="pez-peso">{pezActual.peso}kg</span>
+              <span className={`pez-rareza ${pezActual.rareza}`}>
+                {pezActual.rareza.toUpperCase()}
+              </span>
             </div>
-          )}
-          
-          {/* Medidor de tensión (solo visible durante la lucha) */}
-          {mostrarMedidorTension() && (
-            <MedidorTension
-              tension={tension}
-              tensionCritica={tensionCritica}
-              colorTension={obtenerColorTension(tension)}
-            />
-          )}
-        </div>
-
-        {/* Panel de controles */}
-        <div className="panel-controles">
-          <ControlesJuego
-            estadoJuego={estadoJuego}
-            puedeLanzar={puedeLanzar}
-            puedeRecoger={puedeRecoger}
-            puedeSoltar={puedeSoltar}
-            onLanzar={lanzarSenuelo}
-            onRecoger={recogerSedal}
-            onSoltar={soltarSedal}
-            onReiniciar={reiniciarJuego}
-            onPausa={alternarPausa}
-          />
-        </div>
-
-        {/* Mensaje de estado del juego */}
-        {obtenerMensajeEstado() && (
-          <div className="mensaje-estado">
-            <div className={`texto-estado ${estadoJuego === ESTADOS_JUEGO.PERDIDO ? 'error' : ''}`}>
-              {obtenerMensajeEstado()}
+            <div className="consejos-lucha">
+              <p>💡 Usa "Recoger" y "Soltar" para controlar la tensión</p>
+              <p>⚠️ No dejes que la tensión llegue al 100%</p>
             </div>
           </div>
         )}
+      </div>
 
-        {/* Botones flotantes mejorados */}
-        <div className="botones-flotantes">
-          <button 
-            className="boton-coleccion"
-            onClick={() => {/* Implementar modal de colección */}}
-            title="Ver colección de peces"
-          >
-            <span className="icono-boton">📚</span>
-            <span className="texto-boton">Colección</span>
-            <span className="contador-boton">({pezesCapturados.length})</span>
-          </button>
+      {/* Modal de captura exitosa */}
+      {mostrarModalCaptura && pezCapturado && (
+        <ModalCaptura
+          pez={pezCapturado}
+          visible={mostrarModalCaptura}
+          onCerrar={cerrarModalCaptura}
+          estadisticas={estadisticasJugador}
+        />
+      )}
 
-          <button 
-            className="boton-estadisticas"
-            onClick={() => {/* Implementar modal de estadísticas */}}
-            title="Ver estadísticas detalladas"
-          >
-            <span className="icono-boton">📊</span>
-            <span className="texto-boton">Stats</span>
-          </button>
+      {/* Modal de información detallada del pez */}
+      {mostrarInfoPez && pezActual && (
+        <InfoPez
+          pez={pezActual}
+          visible={mostrarInfoPez}
+          onCerrar={() => setMostrarInfoPez(false)}
+        />
+      )}
 
-          <button 
-            className="boton-configuracion"
-            onClick={() => {/* Implementar modal de configuración */}}
-            title="Configuración del juego"
-          >
-            <span className="icono-boton">⚙️</span>
-            <span className="texto-boton">Config</span>
-          </button>
+      {/* Indicadores de profundidad y condiciones */}
+      <div className="indicadores-ambiente">
+        <div className="condiciones-agua">
+          <div className="condicion">
+            <span className="icono">🌊</span>
+            <span className="texto">Agua Turbia</span>
+          </div>
+          <div className="condicion">
+            <span className="icono">🌡️</span>
+            <span className="texto">25°C</span>
+          </div>
+          <div className="condicion">
+            <span className="icono">💨</span>
+            <span className="texto">Viento Suave</span>
+          </div>
         </div>
       </div>
 
-      {/* MODAL DE CAPTURA REALISTA - NUEVO */}
-      <ModalCapturaPez
-        pezCapturado={ultimaCaptura}
-        visible={estadoJuego === ESTADOS_JUEGO.CAPTURADO && ultimaCaptura}
-        onCerrar={cerrarModalCaptura}
-        esNuevoRecord={esNuevoRecord}
-        puntosGanados={ultimaCaptura?.puntosObtenidos || 0}
-        experienciaGanada={ultimaCaptura?.experienciaObtenida || 0}
-      />
-
-      {/* Efectos adicionales para mayor realismo */}
-      {estadoJuego === ESTADOS_JUEGO.LUCHANDO && (
-        <div className="efectos-lucha-globales">
-          {/* Efecto de vibración en toda la pantalla */}
-          <div className="vibración-pantalla" />
-          
-          {/* Indicador de tensión crítica */}
-          {tensionCritica && (
-            <div className="alerta-tension-critica">
-              <div className="icono-alerta-grande">⚠️</div>
-              <div className="texto-alerta-grande">¡TENSIÓN CRÍTICA!</div>
-              <div className="subtexto-alerta">Suelta el sedal para no romperlo</div>
+      {/* Easter eggs y detalles ambientales */}
+      <div className="detalles-ambientales">
+        {/* Sonidos del río */}
+        <div className="efectos-audio-visual">
+          {efectosSonido && (
+            <div className="indicador-audio">
+              <span className="onda-sonido onda-1"></span>
+              <span className="onda-sonido onda-2"></span>
+              <span className="onda-sonido onda-3"></span>
             </div>
           )}
         </div>
-      )}
 
-      {/* Efectos de celebración cuando se captura */}
-      {estadoJuego === ESTADOS_JUEGO.CAPTURADO && (
-        <div className="efectos-celebracion-globales">
-          {/* Confetti cayendo */}
-          <div className="confetti-container">
-            {Array.from({ length: 50 }).map((_, i) => (
-              <div 
-                key={i}
-                className="confetti-piece"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  animationDelay: `${Math.random() * 2}s`,
-                  backgroundColor: ['#FFD700', '#FF6B35', '#87CEEB', '#90EE90', '#DDA0DD'][Math.floor(Math.random() * 5)]
-                }}
-              />
-            ))}
-          </div>
-
-          {/* Destello de captura */}
-          <div className="destello-captura" />
-        </div>
-      )}
-
-      {/* Indicadores de progreso */}
-      {(estadoJuego === ESTADOS_JUEGO.LANZANDO || estadoJuego === ESTADOS_JUEGO.PESCANDO) && (
-        <div className="indicadores-progreso">
-          {estadoJuego === ESTADOS_JUEGO.LANZANDO && (
-            <div className="progreso-lanzamiento">
-              <div className="barra-progreso">
-                <div className="relleno-progreso lanzando" />
-              </div>
-              <div className="texto-progreso">Lanzando señuelo...</div>
-            </div>
-          )}
-
-          {estadoJuego === ESTADOS_JUEGO.PESCANDO && (
-            <div className="progreso-espera">
-              <div className="animacion-espera">
-                <div className="dot-espera"></div>
-                <div className="dot-espera"></div>
-                <div className="dot-espera"></div>
-              </div>
-              <div className="texto-progreso">Esperando pez...</div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Panel de información rápida */}
-      <div className="info-rapida">
-        <div className="info-item">
-          <span className="info-icono">🏆</span>
-          <span className="info-valor">{puntuacion.toLocaleString()}</span>
-        </div>
-        <div className="info-item">
-          <span className="info-icono">⭐</span>
-          <span className="info-valor">Nivel {nivel}</span>
-        </div>
-        <div className="info-item">
-          <span className="info-icono">🐟</span>
-          <span className="info-valor">{pezesCapturados.length}</span>
+        {/* Vida silvestre ocasional */}
+        <div className="vida-silvestre">
+          <div className="pajaro pajaro-1">🦅</div>
+          <div className="mariposa mariposa-1">🦋</div>
         </div>
       </div>
-
-      {/* Tutorial para nuevos usuarios */}
-      {/* ========================================================================== */}
-      {/* ESTE ES EL BLOQUE QUE VOY A CORREGIR / AÑADIR EL BOTÓN */}
-      {/* ========================================================================== */}
-      {pezesCapturados.length === 0 && estadoJuego === ESTADOS_JUEGO.ESPERANDO && (
-        <div className="tutorial-overlay">
-          <div className="tutorial-bubble">
-            <div className="tutorial-titulo">¡Bienvenido a Pesca Colombia!</div>
-            <div className="tutorial-texto">
-              🎣 Presiona "Lanzar" para comenzar tu aventura de pesca
-            </div>
-            <div className="tutorial-pasos">
-              <div className="paso">1. Lanza el señuelo</div>
-              <div className="paso">2. Espera que pique un pez</div>
-              <div className="paso">3. ¡Controla la tensión!</div>
-            </div>
-            {/* ================================================================ */}
-            {/* AÑADE ESTE BOTÓN AQUÍ PARA QUE EL USUARIO PUEDA INICIAR */}
-            <button className="boton-comenzar-tutorial" onClick={lanzarSenuelo}>
-              ¡Comenzar a Pescar!
-            </button>
-            {/* ================================================================ */}
-          </div>
-        </div>
-      )}
-      {/* ========================================================================== */}
-      {/* FIN DEL BLOQUE CORREGIDO */}
-      {/* ========================================================================== */}
     </div>
   );
 };
 
-export default JuegoPesca;
+export default FishingGame;

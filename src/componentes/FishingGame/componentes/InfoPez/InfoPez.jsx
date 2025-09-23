@@ -1,304 +1,144 @@
-/**
- * InfoPez.jsx - Modal de información detallada del pez capturado
- * Muestra datos científicos, estadísticas y celebración de captura
- */
-
-import React, { useEffect, useState } from 'react';
-import { verificarRecords } from '../../../../herramientas/calculosPesca';
+import React, { useState, useEffect } from 'react';
+import { COLORES_RAREZA } from '../../../../data/datosPeces';
 import './InfoPez.css';
 
-/**
- * Componente modal para mostrar información del pez capturado
- * @param {Object} props - Propiedades del componente
- * @param {Object} props.pez - Datos del pez capturado
- * @param {Function} props.onCerrar - Función para cerrar el modal
- * @param {boolean} props.mostrarAnimacion - Si mostrar animaciones de celebración
- * @param {Array} props.historialPeces - Historial de peces capturados para verificar récords
- */
-const InfoPez = ({ 
-  pez, 
-  onCerrar, 
-  mostrarAnimacion = true,
-  historialPeces = []
-}) => {
-  const [records, setRecords] = useState({});
-  const [mostrandoDetalles, setMostrandoDetalles] = useState(false);
-  const [animacionCompleta, setAnimacionCompleta] = useState(false);
+const InfoPez = ({ pez, visible, onCerrar }) => {
+  const [imagenCargada, setImagenCargada] = useState(false);
+  const [imagenError, setImagenError] = useState(false);
+  const [mostrarConfetti, setMostrarConfetti] = useState(false);
 
-  // Verificar récords al montar el componente
   useEffect(() => {
-    if (pez && historialPeces.length > 0) {
-      const recordsObtenidos = verificarRecords(pez, historialPeces);
-      setRecords(recordsObtenidos);
-    }
-  }, [pez, historialPeces]);
-
-  // Mostrar detalles después de la animación inicial
-  useEffect(() => {
-    if (mostrarAnimacion) {
+    if (visible && pez) {
+      setImagenCargada(false);
+      setImagenError(false);
+      setMostrarConfetti(true);
+      
+      // Ocultar confetti después de 3 segundos
       const timer = setTimeout(() => {
-        setMostrandoDetalles(true);
-      }, 800);
+        setMostrarConfetti(false);
+      }, 3000);
 
-      const timer2 = setTimeout(() => {
-        setAnimacionCompleta(true);
-      }, 1200);
-
-      return () => {
-        clearTimeout(timer);
-        clearTimeout(timer2);
-      };
-    } else {
-      setMostrandoDetalles(true);
-      setAnimacionCompleta(true);
+      return () => clearTimeout(timer);
     }
-  }, [mostrarAnimacion]);
+  }, [visible, pez]);
 
-  if (!pez) return null;
+  const handleImagenCarga = () => {
+    setImagenCargada(true);
+    setImagenError(false);
+  };
 
-  // Obtener color de rareza
-  const obtenerColorRareza = (rareza) => {
-    const colores = {
-      común: '#90EE90',
-      raro: '#87CEEB',
-      épico: '#DDA0DD',
-      legendario: '#FFD700'
+  const handleImagenError = () => {
+    setImagenError(true);
+    setImagenCargada(false);
+  };
+
+  const obtenerRutaImagen = () => {
+    if (!pez) return '';
+    
+    // Intentar imagen principal primero
+    if (!imagenError) {
+      return pez.imagen;
+    }
+    
+    // Fallback a imagen alternativa
+    return pez.imagenAlternativa || pez.imagen;
+  };
+
+  const calcularPuntosCaptura = () => {
+    if (!pez) return 0;
+    const multiplicadorTamaño = pez.multiplicadorTamaño || 1;
+    const bonusRareza = {
+      común: 1,
+      raro: 1.5,
+      épico: 2,
+      legendario: 3
     };
-    return colores[rareza] || '#FFFFFF';
+    
+    return Math.floor(pez.puntos * multiplicadorTamaño * bonusRareza[pez.rareza]);
   };
 
-  // Obtener icono de rareza
-  const obtenerIconoRareza = (rareza) => {
-    const iconos = {
-      común: '🐟',
-      raro: '🐠',
-      épico: '🦈',
-      legendario: '🐲'
-    };
-    return iconos[rareza] || '🐟';
+  const obtenerClasificacionTamaño = () => {
+    if (!pez) return 'Normal';
+    
+    const porcentajeTamaño = (pez.peso - pez.pesoMin) / (pez.pesoMax - pez.pesoMin);
+    
+    if (porcentajeTamaño >= 0.9) return 'Trofeo';
+    if (porcentajeTamaño >= 0.7) return 'Grande';
+    if (porcentajeTamaño >= 0.4) return 'Normal';
+    return 'Pequeño';
   };
 
-  // Obtener mensaje de celebración
-  const obtenerMensajeCelebracion = () => {
-    if (records.primerEspecie) return '¡Primera captura de esta especie!';
-    if (records.mayorPeso) return '¡Nuevo récord de peso!';
-    if (records.mayorLongitud) return '¡Nuevo récord de longitud!';
-    if (records.menorTiempoLucha) return '¡Récord de velocidad de captura!';
-    if (pez.rareza === 'legendario') return '¡Captura legendaria increíble!';
-    if (pez.rareza === 'épico') return '¡Excelente captura épica!';
-    return '¡Fantástica captura!';
-  };
+  if (!visible || !pez) return null;
+
+  const coloresRareza = COLORES_RAREZA[pez.rareza];
+  const clasificacionTamaño = obtenerClasificacionTamaño();
+  const puntosCaptura = calcularPuntosCaptura();
 
   return (
-    <div className="modal-info-pez">
-      <div className="overlay-modal" onClick={onCerrar} />
-      
-      <div className={`contenido-modal ${animacionCompleta ? 'completado' : ''}`}>
-        
-        {/* Animación de celebración inicial */}
-        {mostrarAnimacion && !animacionCompleta && (
-          <div className="animacion-celebracion">
-            <div className="explosion-confeti">
-              {Array.from({ length: 12 }).map((_, i) => (
-                <div 
-                  key={i}
-                  className="particula-confeti"
-                  style={{
-                    '--angulo': `${i * 30}deg`,
-                    '--color': `hsl(${i * 30}, 70%, 60%)`
-                  }}
-                />
-              ))}
-            </div>
-            <div className="texto-celebracion">
-              <h1>¡CAPTURADO!</h1>
-              <div className="icono-pez-grande">
-                {obtenerIconoRareza(pez.rareza)}
-              </div>
-            </div>
+    <>
+      {/* Confetti para celebración */}
+      {mostrarConfetti && (
+        <div className="confetti-container">
+          {[...Array(50)].map((_, i) => (
+            <div
+              key={i}
+              className="confetti-piece"
+              style={{
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 2}s`,
+                backgroundColor: ['#FFD700', '#FF6B6B', '#4FC3F7', '#81C784', '#FFB74D'][Math.floor(Math.random() * 5)]
+              }}
+            />
+          ))}
+        </div>
+      )}
+
+      <div className="info-pez-overlay" onClick={onCerrar}>
+        <div className="info-pez-modal" onClick={e => e.stopPropagation()}>
+          
+          {/* Header del modal */}
+          <div className="modal-header" style={{ borderBottomColor: coloresRareza.border }}>
+            <div className="celebracion-badge">🎉 ¡PEZ CAPTURADO! 🎉</div>
+            <button className="cerrar-modal" onClick={onCerrar}>✕</button>
           </div>
-        )}
 
-        {/* Contenido principal del modal */}
-        {mostrandoDetalles && (
-          <div className="info-principal">
-            
-            {/* Header con nombre y rareza */}
-            <div className="header-pez">
-              <div className="nombre-container">
-                <h2 className="nombre-pez">{pez.nombre}</h2>
-                <div 
-                  className="badge-rareza"
-                  style={{ backgroundColor: obtenerColorRareza(pez.rareza) }}
-                >
-                  <span className="icono-rareza">{obtenerIconoRareza(pez.rareza)}</span>
-                  <span className="texto-rareza">{pez.rareza.toUpperCase()}</span>
-                </div>
-              </div>
-              <div className="nombre-cientifico">{pez.nombreCientifico}</div>
-              <div className="familia-pez">Familia: {pez.familia}</div>
-            </div>
-
-            {/* Imagen del pez */}
-            <div className="contenedor-imagen-pez">
-              <div 
-                className="imagen-pez-capturado"
-                style={{ 
-                  backgroundImage: `url(${pez.imagen})`,
-                  borderColor: obtenerColorRareza(pez.rareza)
-                }}
-              >
-                {!pez.imagen && (
-                  <div 
-                    className="pez-placeholder"
-                    style={{ backgroundColor: pez.color }}
-                  >
-                    {obtenerIconoRareza(pez.rareza)}
-                  </div>
-                )}
+          {/* Imagen del pez */}
+          <div className="pez-imagen-container">
+            <div className="imagen-marco" style={{ borderColor: coloresRareza.border }}>
+              {!imagenError ? (
+                <img
+                                  src={obtenerRutaImagen()}
+                                  alt={pez.nombre}
+                                  className={`pez-imagen ${imagenCargada ? 'cargada' : ''}`}
+                                  onLoad={handleImagenCarga}
+                                  onError={handleImagenError}
+                                />
+                              ) : (
+                                <div className="imagen-error">Imagen no disponible</div>
+                              )}
+                            </div>
+                          </div>
                 
-                {/* Efectos visuales */}
-                <div className="brillo-captura" />
-                <div className="ondas-captura">
-                  {Array.from({ length: 3 }).map((_, i) => (
-                    <div 
-                      key={i}
-                      className="onda"
-                      style={{ animationDelay: `${i * 0.3}s` }}
-                    />
-                  ))}
-                </div>
-              </div>
-              
-              {/* Mensaje de celebración */}
-              <div className="mensaje-celebracion">
-                {obtenerMensajeCelebracion()}
-              </div>
-            </div>
-
-            {/* Estadísticas del pez */}
-            <div className="estadisticas-pez">
-              <div className="grid-estadisticas">
-                
-                <div className="stat-card peso">
-                  <div className="stat-icono">⚖️</div>
-                  <div className="stat-contenido">
-                    <div className="stat-valor">{pez.pesoActual} kg</div>
-                    <div className="stat-etiqueta">Peso</div>
-                    <div className="stat-rango">({pez.peso.minimo} - {pez.peso.maximo} kg)</div>
-                  </div>
-                  {records.mayorPeso && <div className="badge-record">¡RÉCORD!</div>}
-                </div>
-
-                <div className="stat-card longitud">
-                  <div className="stat-icono">📏</div>
-                  <div className="stat-contenido">
-                    <div className="stat-valor">{pez.longitudActual} cm</div>
-                    <div className="stat-etiqueta">Longitud</div>
-                    <div className="stat-rango">({pez.longitud.minimo} - {pez.longitud.maximo} cm)</div>
-                  </div>
-                  {records.mayorLongitud && <div className="badge-record">¡RÉCORD!</div>}
-                </div>
-
-                <div className="stat-card dificultad">
-                  <div className="stat-icono">💪</div>
-                  <div className="stat-contenido">
-                    <div className="stat-valor">{pez.dificultad}/10</div>
-                    <div className="stat-etiqueta">Dificultad</div>
-                    <div className="stat-rango">Resistencia</div>
-                  </div>
-                </div>
-
-                <div className="stat-card puntos">
-                  <div className="stat-icono">🏆</div>
-                  <div className="stat-contenido">
-                    <div className="stat-valor">{pez.puntosObtenidos}</div>
-                    <div className="stat-etiqueta">Puntos</div>
-                    <div className="stat-rango">Obtenidos</div>
-                  </div>
-                </div>
-
-                {pez.tiempoLucha && (
-                  <div className="stat-card tiempo">
-                    <div className="stat-icono">⏱️</div>
-                    <div className="stat-contenido">
-                      <div className="stat-valor">{pez.tiempoLucha.toFixed(1)}s</div>
-                      <div className="stat-etiqueta">Tiempo de Lucha</div>
-                      <div className="stat-rango">Duración</div>
-                    </div>
-                    {records.menorTiempoLucha && <div className="badge-record">¡RÉCORD!</div>}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Información del hábitat */}
-            <div className="info-habitat">
-              <h3>Información del Hábitat</h3>
-              <div className="habitat-grid">
-                <div className="habitat-item">
-                  <span className="habitat-icono">🌊</span>
-                  <div className="habitat-contenido">
-                    <div className="habitat-titulo">Ubicación</div>
-                    <div className="habitat-descripcion">{pez.habitat}</div>
-                  </div>
-                </div>
-                
-                <div className="habitat-item">
-                  <span className="habitat-icono">📅</span>
-                  <div className="habitat-contenido">
-                    <div className="habitat-titulo">Mejor Época</div>
-                    <div className="habitat-descripcion">{pez.temporadaOptima}</div>
-                  </div>
-                </div>
-                
-                <div className="habitat-item">
-                  <span className="habitat-icono">📊</span>
-                  <div className="habitat-contenido">
-                    <div className="habitat-titulo">Estado</div>
-                    <div className="habitat-descripcion">{pez.estadoConservacion}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Descripción del pez */}
-            <div className="descripcion-pez">
-              <h3>Acerca de esta Especie</h3>
-              <p>{pez.descripcion}</p>
-            </div>
-
-            {/* Botones de acción */}
-            <div className="acciones-modal">
-              <button 
-                className="boton-compartir"
-                onClick={() => {
-                  // Implementar funcionalidad de compartir
-                  console.log('Compartir captura:', pez);
-                }}
-              >
-                <span className="icono-boton">📸</span>
-                Compartir Captura
-              </button>
-              
-              <button 
-                className="boton-continuar"
-                onClick={onCerrar}
-              >
-                <span className="icono-boton">🎣</span>
-                Continuar Pescando
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Botón de cerrar */}
-        <button className="boton-cerrar" onClick={onCerrar}>
-          <span>✕</span>
-        </button>
-      </div>
-    </div>
-  );
-};
+                          {/* Información del pez */}
+                          <div className="pez-info">
+                            <h2 style={{ color: coloresRareza.texto }}>{pez.nombre}</h2>
+                            <div className="rareza-badge" style={{ backgroundColor: coloresRareza.fondo, color: coloresRareza.texto }}>
+                              {pez.rareza}
+                            </div>
+                            <div className="clasificacion-tamano">{clasificacionTamaño}</div>
+                            <div className="puntos-captura">Puntos: {puntosCaptura}</div>
+                            <div className="peso-pez">
+                              Peso: {pez.peso} kg
+                              <span className="rango-peso">
+                                ({pez.pesoMin} - {pez.pesoMax} kg)
+                              </span>
+                            </div>
+                                            <div className="descripcion-pez">{pez.descripcion}</div>
+                                          </div>
+                                        </div>
+                                      </div>
+                    </>
+                                    );
+                  }
 
 export default InfoPez;

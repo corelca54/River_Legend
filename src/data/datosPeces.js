@@ -1,276 +1,309 @@
-/**
- * datosPeces.js - Base de datos completa de peces colombianos
- * Información científica y características de cada especie
- */
-
+// Base de datos completa de peces colombianos con imágenes reales
 export const PECES_COLOMBIANOS = {
   bocachico: {
     id: 'bocachico',
-    nombre: "Bocachico",
-    nombreCientifico: "Prochilodus magdalenae",
-    familia: "Prochilodontidae",
-    peso: { minimo: 0.8, maximo: 2.5 }, // kg
-    longitud: { minimo: 25, maximo: 45 }, // cm
-    dificultad: 2, // 1-10 escala
-    rareza: "común", // común, raro, épico, legendario
-    habitat: "Río Magdalena, Río Cauca, Río Sinú",
-    descripcion: "Pez migratorio fundamental en la pesca artesanal colombiana. Especie endémica de gran importancia comercial y cultural.",
+    nombre: 'Bocachico',
+    nombreCientifico: 'Prochilodus magdalenae',
+  imagen: '/assets/imagenes/peces/Bocachico.png',
+  imagenAlternativa: '/assets/imagenes/peces/Bocachico.png',
+    rareza: 'común',
+    dificultad: 3,
+    pesoMin: 0.5,
+    pesoMax: 3.0,
+    longitudMin: 20,
+    longitudMax: 40,
+    habitat: 'Río Magdalena',
+    region: 'Costa Caribe y Andina',
     puntos: 150,
-    color: "#DAA520",
-    comportamiento: "activo",
-    imagen: "/assets/imagenes/peces/Bocachico.png", // CORREGIDO (ruta y nombre exacto)
-    temporadaOptima: "Marzo - Mayo",
-    profundidadOptima: { minima: 1, maxima: 8 }, // metros
-    carnada: ["lombriz", "maíz", "yuca"],
-    estadoConservacion: "Vulnerable"
+    descripcion: 'Pez migratorio muy importante en la pesca artesanal colombiana. Su carne es muy apreciada.',
+    color: '#C0C0C0',
+    colorSecundario: '#E6E6FA',
+    velocidadLucha: 1.2,
+    resistencia: 0.8,
+    sonidoCaptura: 'splash_pequeno',
+    movimiento: 'zigzag',
+    profundidadOptima: { min: 1, max: 5 },
+    carnada: ['lombriz', 'masa', 'maíz'],
+    temporadaOptima: 'Diciembre - Abril',
+    estadoConservacion: 'Preocupación menor'
+  },
+  
+  bagre_rayado: {
+    id: 'bagre_rayado',
+    nombre: 'Bagre Rayado',
+    nombreCientifico: 'Pseudoplatystoma fasciatum',
+  imagen: '/assets/imagenes/peces/Bagre rayado.png',
+  imagenAlternativa: '/assets/imagenes/peces/Bagre rayado.png',
+    rareza: 'raro',
+    dificultad: 6,
+    pesoMin: 5.0,
+    pesoMax: 25.0,
+    longitudMin: 50,
+    longitudMax: 120,
+    habitat: 'Río Orinoco y Amazonas',
+    region: 'Orinoquía y Amazonía',
+    puntos: 400,
+    descripcion: 'Depredador de gran tamaño con distintivas rayas negras. Muy codiciado por pescadores deportivos.',
+    color: '#F4A460',
+    colorSecundario: '#DEB887',
+    velocidadLucha: 1.8,
+    resistencia: 1.5,
+    sonidoCaptura: 'splash_grande',
+    movimiento: 'violento',
+    profundidadOptima: { min: 3, max: 15 },
+    carnada: ['pescado vivo', 'camarón', 'carnada artificial'],
+    temporadaOptima: 'Junio - Septiembre',
+    estadoConservacion: 'Vulnerable'
   },
 
   arapaima: {
     id: 'arapaima',
-    nombre: "Arapaima",
-    nombreCientifico: "Arapaima gigas",
-    familia: "Arapaimidae",
-    peso: { minimo: 15, maximo: 120 },
-    longitud: { minimo: 120, maximo: 250 },
-    dificultad: 9,
-    rareza: "legendario",
-    habitat: "Río Amazonas, Río Putumayo, Río Caquetá",
-    descripcion: "El gigante de agua dulce más grande de Sudamérica. Conocido como el 'bacalao del Amazonas', puede vivir hasta 20 años.",
-    puntos: 2500,
-    color: "#8B0000",
-    comportamiento: "territorial",
-    imagen: "/assets/imagenes/peces/Arapaima.png", // CORREGIDO (ruta y nombre exacto - asumiendo Mayúscula)
-    temporadaOptima: "Junio - Agosto",
-    profundidadOptima: { minima: 3, maxima: 15 },
-    carnada: ["pez vivo", "camarón", "rana"],
-    estadoConservacion: "En Peligro"
-  },
-
-  bagre: {
-    id: 'bagre',
-    nombre: "Bagre Rayado",
-    nombreCientifico: "Pseudoplatystoma fasciatum",
-    familia: "Pimelodidae",
-    peso: { minimo: 3, maximo: 25 },
-    longitud: { minimo: 60, maximo: 140 },
-    dificultad: 6,
-    rareza: "raro",
-    habitat: "Río Magdalena, Río Orinoco, Río Meta",
-    descripcion: "Depredador nocturno con distintivas rayas negras. Muy apreciado por su carne y por la lucha que ofrece.",
-    puntos: 900,
-    color: "#696969",
-    comportamiento: "nocturno",
-    imagen: "/assets/imagenes/peces/Bagre rayado.png", // CORREGIDO (ruta y nombre exacto)
-    temporadaOptima: "Diciembre - Febrero",
-    profundidadOptima: { minima: 5, maxima: 20 },
-    carnada: ["pescado", "camarón", "lombriz"],
-    estadoConservacion: "Preocupación Menor"
+    nombre: 'Arapaima',
+    nombreCientifico: 'Arapaima gigas',
+  imagen: '/assets/imagenes/peces/Arapaima.png',
+  imagenAlternativa: '/assets/imagenes/peces/Arapaima.png',
+    rareza: 'legendario',
+    dificultad: 10,
+    pesoMin: 50.0,
+    pesoMax: 200.0,
+    longitudMin: 150,
+    longitudMax: 300,
+    habitat: 'Amazonía Colombiana',
+    region: 'Amazonía',
+    puntos: 1000,
+    descripcion: 'El gigante de agua dulce más grande del mundo. Respira aire y puede saltar fuera del agua.',
+    color: '#B22222',
+    colorSecundario: '#CD5C5C',
+    velocidadLucha: 2.5,
+    resistencia: 2.0,
+    sonidoCaptura: 'splash_epico',
+    movimiento: 'salvaje',
+    profundidadOptima: { min: 2, max: 10 },
+    carnada: ['pez grande', 'carnada viva'],
+    temporadaOptima: 'Agosto - Noviembre',
+    estadoConservacion: 'En peligro'
   },
 
   sabalo: {
     id: 'sabalo',
-    nombre: "Sábalo",
-    nombreCientifico: "Brycon moorei",
-    familia: "Bryconidae",
-    peso: { minimo: 1.2, maximo: 5 },
-    longitud: { minimo: 30, maximo: 70 },
+    nombre: 'Sábalo',
+    nombreCientifico: 'Brycon moorei',
+  imagen: '/assets/imagenes/peces/Sábalo (1).png',
+  imagenAlternativa: '/assets/imagenes/peces/Sábalo (1).png',
+    rareza: 'común',
     dificultad: 4,
-    rareza: "común",
-    habitat: "Río Magdalena, Río Atrato, Río Cauca",
-    descripcion: "Pez de aguas rápidas muy valorado comercialmente. Excelente para pesca deportiva por su fuerza y velocidad.",
-    puntos: 400,
-    color: "#C0C0C0",
-    comportamiento: "rápido",
-    imagen: "/assets/imagenes/peces/Sábalo (1).png", // ¡CORREGIDO! con el "(1)" y ruta exacta
-    temporadaOptima: "Abril - Junio",
-    profundidadOptima: { minima: 2, maxima: 12 },
-    carnada: ["insectos", "frutas", "gusanos"],
-    estadoConservacion: "Vulnerable"
-  },
-
-  sabaleta: {
-    id: 'sabaleta',
-    nombre: "Sabaleta",
-    nombreCientifico: "Brycon henni",
-    familia: "Bryconidae",
-    peso: { minimo: 0.5, maximo: 2 },
-    longitud: { minimo: 20, maximo: 40 },
-    dificultad: 3,
-    rareza: "común",
-    habitat: "Río Cauca, afluentes andinos, quebradas de montaña",
-    descripcion: "Pez endémico de Colombia, muy apreciado localmente. Importante en la pesca artesanal de las regiones andinas.",
-    puntos: 250,
-    color: "#F0E68C",
-    comportamiento: "esquivo",
-    imagen: "/assets/imagenes/peces/Sabaleta.png", // ASUME Sabaleta.png existe (no visible en la imagen, pero sigue el patrón)
-    temporadaOptima: "Septiembre - Noviembre",
-    profundidadOptima: { minima: 1, maxima: 6 },
-    carnada: ["moscas", "pequeños peces", "larvas"],
-    estadoConservacion: "En Peligro Crítico"
-  },
-
-  nicuro: {
-    id: 'nicuro',
-    nombre: "Nicuro",
-    nombreCientifico: "Pimelodus grosskopfii",
-    familia: "Pimelodidae",
-    peso: { minimo: 0.8, maximo: 4 },
-    longitud: { minimo: 25, maximo: 60 },
-    dificultad: 3,
-    rareza: "común",
-    habitat: "Río Magdalena, Río Cauca, ciénagas",
-    descripcion: "Bagre de tamaño medio, resistente luchador. Muy común en ciénagas y remansos del río Magdalena.",
-    puntos: 300,
-    color: "#708090",
-    comportamiento: "territorial",
-    imagen: "/assets/imagenes/peces/dorado.png", // CORREGIDO (ruta y nombre exacto - minúscula)
-    temporadaOptima: "Todo el año",
-    profundidadOptima: { minima: 2, maxima: 10 },
-    carnada: ["lombriz", "camarón", "masa"],
-    estadoConservacion: "Preocupación Menor"
-  },
-
-  corroncho: {
-    id: 'corroncho',
-    nombre: "Corroncho",
-    nombreCientifico: "Chaetostoma fischeri",
-    familia: "Loricariidae",
-    peso: { minimo: 0.3, maximo: 1 },
-    longitud: { minimo: 15, maximo: 30 },
-    dificultad: 1,
-    rareza: "común",
-    habitat: "Río Magdalena, tributarios, aguas rocosas",
-    descripcion: "Pequeño pez de fondo, limpiador natural. Importante en el ecosistema acuático como controlador de algas.",
-    puntos: 150,
-    color: "#A0522D",
-    comportamiento: "pasivo",
-    imagen: "/assets/imagenes/peces/Corroncho.png", // CORREGIDO (ruta y nombre exacto)
-    temporadaOptima: "Julio - Septiembre",
-    profundidadOptima: { minima: 0.5, maxima: 5 },
-    carnada: ["algas", "materia vegetal", "pequeños invertebrados"],
-    estadoConservacion: "Preocupación Menor"
-  },
-
-  azulejo: {
-    id: 'azulejo',
-    nombre: "Azulejo",
-    nombreCientifico: "Crenicichla lugubris",
-    familia: "Cichlidae",
-    peso: { minimo: 0.4, maximo: 1.5 },
-    longitud: { minimo: 18, maximo: 35 },
-    dificultad: 2,
-    rareza: "común",
-    habitat: "Río Orinoco, Río Meta, Río Guaviare",
-    descripcion: "Cíclido territorial con colores vibrantes. Muy agresivo durante la época reproductiva.",
+    pesoMin: 1.0,
+    pesoMax: 8.0,
+    longitudMin: 25,
+    longitudMax: 60,
+    habitat: 'Ríos Andinos',
+    region: 'Región Andina',
     puntos: 200,
-    color: "#4169E1",
-    comportamiento: "agresivo",
-    imagen: "/assets/imagenes/peces/perca.png", // CORREGIDO (ruta y nombre exacto - minúscula)
-    temporadaOptima: "Enero - Marzo",
-    profundidadOptima: { minima: 1, maxima: 8 },
-    carnada: ["pequeños peces", "insectos", "crustáceos"],
-    estadoConservacion: "Preocupación Menor"
+    descripcion: 'Pez plateado con aletas de colores brillantes. Excelente para pesca deportiva.',
+    color: '#FFD700',
+    colorSecundario: '#FFA500',
+    velocidadLucha: 1.5,
+    resistencia: 1.0,
+    sonidoCaptura: 'splash_mediano',
+    movimiento: 'rapido',
+    profundidadOptima: { min: 1, max: 8 },
+    carnada: ['insectos', 'frutas', 'lombriz'],
+    temporadaOptima: 'Marzo - Julio',
+    estadoConservacion: 'Preocupación menor'
   },
 
   pavon: {
     id: 'pavon',
-    nombre: "Pavón",
-    nombreCientifico: "Cichla orinocensis",
-    familia: "Cichlidae",
-    peso: { minimo: 2, maximo: 12 },
-    longitud: { minimo: 40, maximo: 90 },
-    dificultad: 7,
-    rareza: "épico",
-    habitat: "Río Orinoco, Río Guaviare, Río Vichada",
-    descripcion: "Depredador agresivo muy valorado por pescadores deportivos. Conocido por sus saltos espectaculares.",
-    puntos: 1500,
-    color: "#FFD700",
-    comportamiento: "agresivo",
-    imagen: "/assets/imagenes/peces/Pavón.png", // CORREGIDO (ruta y nombre exacto)
-    temporadaOptima: "Febrero - Abril",
-    profundidadOptima: { minima: 2, maxima: 15 },
-    carnada: ["señuelos", "peces vivos", "camarones"],
-    estadoConservacion: "Preocupación Menor"
+    nombre: 'Pavón',
+    nombreCientifico: 'Cichla orinocensis',
+  imagen: '/assets/imagenes/peces/Pavón.png',
+  imagenAlternativa: '/assets/imagenes/peces/Pavón.png',
+    rareza: 'épico',
+    dificultad: 8,
+    pesoMin: 3.0,
+    pesoMax: 15.0,
+    longitudMin: 40,
+    longitudMax: 80,
+    habitat: 'Río Orinoco',
+    region: 'Orinoquía',
+    puntos: 600,
+    descripcion: 'Depredador agresivo conocido por sus saltos espectaculares. El rey de la pesca deportiva.',
+    color: '#FFD700',
+    colorSecundario: '#FF8C00',
+    velocidadLucha: 2.0,
+    resistencia: 1.8,
+    sonidoCaptura: 'splash_grande',
+    movimiento: 'agresivo',
+    profundidadOptima: { min: 2, max: 12 },
+    carnada: ['señuelos artificiales', 'peces pequeños'],
+    temporadaOptima: 'Enero - Abril',
+    estadoConservacion: 'Preocupación menor'
+  },
+
+  cachama: {
+    id: 'cachama',
+    nombre: 'Cachama',
+    nombreCientifico: 'Piaractus brachypomus',
+  imagen: '/assets/imagenes/peces/perca.png',
+  imagenAlternativa: '/assets/imagenes/peces/perca.png',
+    rareza: 'común',
+    dificultad: 4,
+    pesoMin: 2.0,
+    pesoMax: 12.0,
+    longitudMin: 30,
+    longitudMax: 70,
+    habitat: 'Ríos Orinoco y Amazonas',
+    region: 'Orinoquía y Amazonía',
+    puntos: 250,
+    descripción: 'Pez robusto muy importante en la acuicultura colombiana. Omnívoro de gran resistencia.',
+    color: '#4682B4',
+    colorSecundario: '#87CEEB',
+    velocidadLucha: 1.3,
+    resistencia: 1.2,
+    sonidoCaptura: 'splash_mediano',
+    movimiento: 'firme',
+    profundidadOptima: { min: 1, max: 6 },
+    carnada: ['frutas', 'semillas', 'masa'],
+    temporadaOptima: 'Todo el año',
+    estadoConservacion: 'Preocupación menor'
   },
 
   mojarra: {
     id: 'mojarra',
-    nombre: "Mojarra Amarilla",
-    nombreCientifico: "Caquetaia kraussii",
-    familia: "Cichlidae",
-    peso: { minimo: 0.6, maximo: 2.5 },
-    longitud: { minimo: 22, maximo: 45 },
+    nombre: 'Mojarra Amarilla',
+    nombreCientifico: 'Caquetaia kraussii',
+  imagen: '/assets/imagenes/peces/trucha_mariposa.png',
+  imagenAlternativa: '/assets/imagenes/peces/trucha_mariposa.png',
+    rareza: 'común',
     dificultad: 2,
-    rareza: "común",
-    habitat: "Río Magdalena, Río Cauca, ciénagas costeras",
-    descripcion: "Cíclido endémico muy importante en la pesca artesanal. Adaptable a diferentes condiciones de agua.",
-    puntos: 280,
-    color: "#FFE4B5",
-    comportamiento: "territorial",
-    imagen: "/assets/imagenes/peces/trucha_mariposa.png", // CORREGIDO (ruta y nombre exacto - minúscula)
-    temporadaOptima: "Mayo - Julio",
-    profundidadOptima: { minima: 1, maxima: 10 },
-    carnada: ["lombrices", "masa", "pequeños peces"],
-    estadoConservacion: "Vulnerable"
+    pesoMin: 0.3,
+    pesoMax: 2.0,
+    longitudMin: 15,
+    longitudMax: 35,
+    habitat: 'Ríos y lagunas',
+    region: 'Costa Caribe',
+    puntos: 100,
+    descripcion: 'Pez pequeño pero combativo. Ideal para principiantes en la pesca deportiva.',
+    color: '#FFFF99',
+    colorSecundario: '#FFFACD',
+    velocidadLucha: 1.0,
+    resistencia: 0.6,
+    sonidoCaptura: 'splash_pequeno',
+    movimiento: 'nervioso',
+    profundidadOptima: { min: 0.5, max: 3 },
+    carnada: ['lombriz', 'insectos', 'masa pequeña'],
+    temporadaOptima: 'Todo el año',
+    estadoConservacion: 'Preocupación menor'
+  },
+
+  dorado: {
+    id: 'dorado',
+    nombre: 'Dorado',
+    nombreCientifico: 'Brycon sinuensis',
+  imagen: '/assets/imagenes/peces/dorado.png',
+  imagenAlternativa: '/assets/imagenes/peces/dorado.png',
+    rareza: 'raro',
+    dificultad: 7,
+    pesoMin: 4.0,
+    pesoMax: 18.0,
+    longitudMin: 45,
+    longitudMax: 90,
+    habitat: 'Río Magdalena y afluentes',
+    region: 'Región Andina',
+    puntos: 500,
+    descripcion: 'Pez dorado brillante con increíble fuerza. Realiza saltos impresionantes cuando es enganchado.',
+    color: '#FFD700',
+    colorSecundario: '#FFA500',
+    velocidadLucha: 2.2,
+    resistencia: 1.7,
+    sonidoCaptura: 'splash_grande',
+    movimiento: 'saltarin',
+    profundidadOptima: { min: 2, max: 10 },
+    carnada: ['peces pequeños', 'camarón', 'señuelos brillantes'],
+    temporadaOptima: 'Febrero - Mayo',
+    estadoConservacion: 'Vulnerable'
   }
 };
 
-// ... el resto de tu archivo datosPeces.js sigue igual ...
-export const obtenerPecesPorRareza = (rareza) => {
-  return Object.values(PECES_COLOMBIANOS).filter(pez => pez.rareza === rareza);
-};
-
+// Función para obtener pez aleatorio con probabilidades por rareza
 export const obtenerPezAleatorio = (nivelJugador = 1) => {
-  const peces = Object.keys(PECES_COLOMBIANOS);
-  const factorNivel = Math.min(nivelJugador / 10, 1);
-  
   const probabilidades = {
-    común: 0.6,
-    raro: 0.25,
-    épico: 0.12,
-    legendario: 0.03
+    común: 0.5,
+    raro: 0.3,
+    épico: 0.15,
+    legendario: Math.min(0.05, nivelJugador * 0.01)
   };
-  
-  probabilidades.raro += factorNivel * 0.1;
-  probabilidades.épico += factorNivel * 0.05;
-  probabilidades.legendario += factorNivel * 0.02;
-  
-  const numeroAleatorio = Math.random();
+
+  const random = Math.random();
   let acumulado = 0;
-  
+  let rarezaSeleccionada = 'común';
+
   for (const [rareza, prob] of Object.entries(probabilidades)) {
     acumulado += prob;
-    if (numeroAleatorio <= acumulado) {
-      const pecesTipo = obtenerPecesPorRareza(rareza);
-      if (pecesTipo.length > 0) {
-        const pezSeleccionado = pecesTipo[Math.floor(Math.random() * pecesTipo.length)];
-        return generarInstanciaPez(pezSeleccionado);
-      }
+    if (random <= acumulado) {
+      rarezaSeleccionada = rareza;
+      break;
     }
   }
-  
-  const pezId = peces[Math.floor(Math.random() * peces.length)];
-  return generarInstanciaPez(PECES_COLOMBIANOS[pezId]);
-};
 
-export const generarInstanciaPez = (datosPez) => {
-  const pesoActual = (
-    Math.random() * (datosPez.peso.maximo - datosPez.peso.minimo) + 
-    datosPez.peso.minimo
-  ).toFixed(1);
-  
-  const longitudActual = Math.floor(
-    Math.random() * (datosPez.longitud.maximo - datosPez.longitud.minimo) + 
-    datosPez.longitud.minimo
+  // Filtrar peces por rareza
+  const pecesPorRareza = Object.values(PECES_COLOMBIANOS).filter(
+    pez => pez.rareza === rarezaSeleccionada
   );
+
+  if (pecesPorRareza.length === 0) {
+    // Fallback a común si no hay peces de esa rareza
+    const pecesComunes = Object.values(PECES_COLOMBIANOS).filter(
+      pez => pez.rareza === 'común'
+    );
+    return pecesComunes[Math.floor(Math.random() * pecesComunes.length)];
+  }
+
+  const pezSeleccionado = pecesPorRareza[Math.floor(Math.random() * pecesPorRareza.length)];
   
+  // Generar características aleatorias del pez individual
+  const peso = (
+    Math.random() * (pezSeleccionado.pesoMax - pezSeleccionado.pesoMin) + 
+    pezSeleccionado.pesoMin
+  ).toFixed(2);
+  
+  const longitud = Math.floor(
+    Math.random() * (pezSeleccionado.longitudMax - pezSeleccionado.longitudMin) + 
+    pezSeleccionado.longitudMin
+  );
+
   return {
-    ...datosPez,
-    pesoActual: parseFloat(pesoActual),
-    longitudActual,
-    resistencia: datosPez.dificultad * 8 + Math.random() * 25,
-    fuerza: Math.random() * datosPez.dificultad + 0.5,
-    tiempoCaptura: Date.now(),
-    id: `${datosPez.id}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    ...pezSeleccionado,
+    peso: parseFloat(peso),
+    longitud,
+    fechaCaptura: new Date().toISOString(),
+    multiplicadorTamaño: 0.8 + (Math.random() * 0.4), // 0.8 - 1.2
+    id: `${pezSeleccionado.id}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   };
 };
+
+// Configuración de colores por rareza
+export const COLORES_RAREZA = {
+  común: {
+    background: '#90EE90',
+    border: '#32CD32',
+    text: '#006400'
+  },
+  raro: {
+    background: '#87CEEB',
+    border: '#4682B4',
+    text: '#000080'
+  },
+  épico: {
+    background: '#DDA0DD',
+    border: '#9370DB',
+    text: '#4B0082'
+  },
+  legendario: {
+    background: '#FFD700',
+    border: '#FFA500',
+    text: '#B8860B'
+  }
+};
+
+export default PECES_COLOMBIANOS;

@@ -70,7 +70,9 @@ const MedidorTension = ({
   };
 
   // Calcular el ángulo para el medidor circular
-  const anguloMedidor = (tension / 100) * 270; // 270 grados máximo
+  const tensionSafe = isNaN(tension) ? 0 : tension;
+  const colorTensionSafe = colorTension || '#4CAF50';
+  const anguloMedidor = (tensionSafe / 100) * 270; // 270 grados máximo
 
   return (
     <div className={`medidor-tension ${vibracion ? 'vibrando' : ''}`}>
@@ -130,18 +132,18 @@ const MedidorTension = ({
             strokeWidth="8"
             strokeLinecap="round"
             strokeDasharray="340"
-            strokeDashoffset={340 - (tension / 100) * 340}
+            strokeDashoffset={340 - (tensionSafe / 100) * 340}
             className="arco-tension"
           />
           
           {/* Aguja del medidor */}
-          <g transform={`rotate(${anguloMedidor - 135} 100 100)`}>
+          <g transform={`rotate(${isNaN(anguloMedidor) ? 0 : anguloMedidor - 135} 100 100)`}>
             <line
               x1="100"
               y1="100"
               x2="100"
               y2="30"
-              stroke={colorTension}
+              stroke={colorTensionSafe}
               strokeWidth="3"
               strokeLinecap="round"
               className="aguja-medidor"
@@ -150,14 +152,14 @@ const MedidorTension = ({
               cx="100"
               cy="100"
               r="8"
-              fill={colorTension}
+              fill={colorTensionSafe}
               stroke="white"
               strokeWidth="2"
             />
           </g>
           
           {/* Zona de peligro */}
-          {tension >= 80 && (
+          {tensionSafe >= 80 && (
             <path
               d="M 40 160 A 80 80 0 1 1 160 160"
               fill="none"
@@ -165,7 +167,7 @@ const MedidorTension = ({
               strokeWidth="12"
               strokeLinecap="round"
               strokeDasharray="340"
-              strokeDashoffset={340 - (tension / 100) * 340}
+              strokeDashoffset={340 - (tensionSafe / 100) * 340}
               className="zona-peligro"
             />
           )}
@@ -174,7 +176,7 @@ const MedidorTension = ({
         {/* Valor numérico central */}
         <div className="valor-central">
           <div className="numero-tension" style={{ color: colorTension }}>
-            {Math.round(tension)}
+            {isNaN(tension) ? '0' : String(Math.round(tension))}
           </div>
           <div className="unidad-tension">%</div>
         </div>
@@ -191,7 +193,7 @@ const MedidorTension = ({
           <div 
             className="relleno-barra"
             style={{ 
-              width: `${tension}%`,
+              width: `${isNaN(tension) ? 0 : tension}%`,
               backgroundColor: colorTension
             }}
           />
@@ -222,12 +224,12 @@ const MedidorTension = ({
             {historialTension.length > 1 && (
               <polyline
                 points={historialTension.map((valor, index) => {
-                  const x = (index / (historialTension.length - 1)) * 200;
-                  const y = 50 - (valor / 100) * 40;
+                  const x = (index / Math.max(historialTension.length - 1, 1)) * 200;
+                  const y = 50 - ((isNaN(valor) ? 0 : valor) / 100) * 40;
                   return `${x},${y}`;
                 }).join(' ')}
                 fill="none"
-                stroke={colorTension}
+                stroke={colorTensionSafe}
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -238,14 +240,14 @@ const MedidorTension = ({
             {historialTension.map((valor, index) => {
               if (index < historialTension.length - 1) return null;
               const x = (index / Math.max(historialTension.length - 1, 1)) * 200;
-              const y = 50 - (valor / 100) * 40;
+              const y = 50 - ((isNaN(valor) ? 0 : valor) / 100) * 40;
               return (
                 <circle
                   key={index}
                   cx={x}
                   cy={y}
                   r="3"
-                  fill={colorTension}
+                  fill={colorTensionSafe}
                   stroke="white"
                   strokeWidth="1"
                 />

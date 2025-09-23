@@ -1,549 +1,380 @@
-/**
- * AreaPesca.jsx - VERSIÓN MEJORADA con pez realista
- * Muestra el pez colgando del anzuelo, girando y moviéndose de forma realista
- */
-
-import React, { useEffect, useState, useRef } from 'react';
-import { ESTADOS_JUEGO } from '../../../../data/constantesJuego';
+import React, { useState, useEffect, useRef } from 'react';
+import * as THREE from 'three';
 import './AreaPesca.css';
 
-const AreaPesca = ({
-  estadoJuego,
-  posicionSenuelo,
-  profundidad,
-  pezActual,
-  animacionPez,
-  tiempoLucha
+const AreaPesca = ({ 
+  pezActual, 
+  posicionSedal, 
+  estadoJuego, 
+  tension,
+  onPezSale 
 }) => {
-  const [ondulacionAgua, setOndulacionAgua] = useState(0);
-  const [burbujas, setBurbujas] = useState([]);
-  const [efectoChapuzon, setEfectoChapuzon] = useState(false);
-  const [rotacionPez, setRotacionPez] = useState(0);
-  const [balanceoPez, setBalanceoPez] = useState(0);
-  const [escalaPez, setEscalaPez] = useState(1);
-  const [mordidaVisible, setMordidaVisible] = useState(false);
-  
-  const intervalosRef = useRef([]);
+  const mountRef = useRef(null);
+  const sceneRef = useRef(null);
+  const rendererRef = useRef(null);
+  const pezMeshRef = useRef(null);
+  const animationIdRef = useRef(null);
 
-  // Limpiar intervalos al desmontar
+  // Estado para el pez 3D
+  const [pez3DVisible, setPez3DVisible] = useState(false);
+  const [animacionPez, setAnimacionPez] = useState('nadando');
+
   useEffect(() => {
+    if (!mountRef.current) return;
+
+    // Configurar Three.js scene
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ 
+      alpha: true, 
+      antialias: true 
+    });
+
+    renderer.setSize(300, 200);
+    renderer.setClearColor(0x000000, 0);
+    mountRef.current.appendChild(renderer.domElement);
+
+    // Luz ambiental suave
+    const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+    scene.add(ambientLight);
+
+    // Luz direccional para dar volumen
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(1, 1, 1);
+    scene.add(directionalLight);
+
+    // Posicionar cámara
+    camera.position.z = 5;
+
+    sceneRef.current = scene;
+    rendererRef.current = renderer;
+
     return () => {
-      intervalosRef.current.forEach(clearInterval);
+      if (mountRef.current && renderer.domElement) {
+        mountRef.current.removeChild(renderer.domElement);
+      }
+      renderer.dispose();
     };
   }, []);
 
-  // Efecto de ondulación del agua
+  // Crear pez 3D cuando hay captura
   useEffect(() => {
-    const intervalo = setInterval(() => {
-      setOndulacionAgua(prev => (prev + 1) % 360);
-    }, 100);
-    intervalosRef.current.push(intervalo);
+    if (!pezActual || !sceneRef.current) return;
 
-    return () => clearInterval(intervalo);
-  }, []);
-
-  // Animación del pez cuando está luchando
-  useEffect(() => {
-    if (estadoJuego === ESTADOS_JUEGO.LUCHANDO && pezActual) {
-      // Mostrar mordida del anzuelo
-      setMordidaVisible(true);
-      
-      const intervaloLucha = setInterval(() => {
-        // Movimiento errático durante la lucha
-        setRotacionPez(prev => prev + (Math.random() - 0.5) * 30);
-        setBalanceoPez(Math.sin(Date.now() / 200) * 15);
-        setEscalaPez(1 + Math.sin(Date.now() / 300) * 0.2);
-      }, 100);
-      
-      intervalosRef.current.push(intervaloLucha);
-      
-      return () => clearInterval(intervaloLucha);
-    } else {
-      setMordidaVisible(false);
+    // Limpiar pez anterior
+    if (pezMeshRef.current) {
+      sceneRef.current.remove(pezMeshRef.current);
     }
-  }, [estadoJuego, pezActual]);
 
-  // Animación del pez capturado (colgando)
-  useEffect(() => {
-    if (estadoJuego === ESTADOS_JUEGO.CAPTURADO && pezActual) {
-      let anguloBalanceo = 0;
-      let velocidadRotacion = 0;
+    // Crear geometría del pez basada en sus características
+    const crearGeometriaPez = () => {
+      const group = new THREE.Group();
       
-      const intervaloCapturado = setInterval(() => {
-        // Física de péndulo para el balanceo
-        anguloBalanceo += 0.1;
-        const balanceo = Math.sin(anguloBalanceo) * 20;
-        setBalanceoPez(balanceo);
-        
-        // Rotación continua para mostrar el pez completo
-        velocidadRotacion += 2;
-        setRotacionPez(velocidadRotacion);
-        
-        // Escala que "respira"
-        setEscalaPez(1 + Math.sin(anguloBalanceo * 2) * 0.1);
-      }, 50);
+      // Cuerpo principal del pez
+      const cuerpoGeometry = new THREE.CylinderGeometry(
+        0.3, 0.8, 2, 8
+      );
       
-      intervalosRef.current.push(intervaloCapturado);
+      // Color basado en el pez capturado
+      const colorPez = new THREE.Color(pezActual.color || '#C0C0C0');
+      const cuerpoMaterial = new THREE.MeshPhongMaterial({ 
+        color: colorPez,
+        shininess: 100,
+        transparent: true,
+        opacity: 0.9
+      });
       
-      return () => clearInterval(intervaloCapturado);
-    }
-  }, [estadoJuego, pezActual]);
+      const cuerpoMesh = new THREE.Mesh(cuerpoGeometry, cuerpoMaterial);
+      cuerpoMesh.rotation.z = Math.PI / 2; // Horizontal
+      group.add(cuerpoMesh);
 
-  // Crear efecto de chapuzón cuando se lanza
+      // Cola del pez
+      const colaGeometry = new THREE.ConeGeometry(0.6, 1, 6);
+      const colaMaterial = new THREE.MeshPhongMaterial({ 
+        color: colorPez.clone().multiplyScalar(0.8),
+        transparent: true,
+        opacity: 0.8
+      });
+      const colaMesh = new THREE.Mesh(colaGeometry, colaMaterial);
+      colaMesh.position.x = -1.5;
+      colaMesh.rotation.z = Math.PI / 2;
+      group.add(colaMesh);
+
+      // Aletas
+      const aletaGeometry = new THREE.ConeGeometry(0.2, 0.6, 4);
+      const aletaMaterial = new THREE.MeshPhongMaterial({ 
+        color: pezActual.colorSecundario || '#FFD700',
+        transparent: true,
+        opacity: 0.7
+      });
+      
+      // Aleta dorsal
+      const aletaDorsal = new THREE.Mesh(aletaGeometry, aletaMaterial);
+      aletaDorsal.position.set(0, 0.6, 0);
+      aletaDorsal.rotation.x = Math.PI;
+      group.add(aletaDorsal);
+
+      // Aletas laterales
+      const aletaIzq = new THREE.Mesh(aletaGeometry, aletaMaterial);
+      aletaIzq.position.set(0.3, 0, 0.4);
+      aletaIzq.rotation.z = Math.PI / 4;
+      group.add(aletaIzq);
+
+      const aletaDer = new THREE.Mesh(aletaGeometry, aletaMaterial);
+      aletaDer.position.set(0.3, 0, -0.4);
+      aletaDer.rotation.z = -Math.PI / 4;
+      group.add(aletaDer);
+
+      // Escalar basado en el tamaño del pez
+      const escala = Math.max(0.5, Math.min(2, pezActual.peso / 10));
+      group.scale.setScalar(escala);
+
+      return group;
+    };
+
+    const pezMesh = crearGeometriaPez();
+    pezMesh.position.set(0, 0, 0);
+    
+    sceneRef.current.add(pezMesh);
+    pezMeshRef.current = pezMesh;
+
+    setPez3DVisible(true);
+    setAnimacionPez('luchando');
+
+  }, [pezActual]);
+
+  // Animación del pez 3D
   useEffect(() => {
-    if (estadoJuego === ESTADOS_JUEGO.LANZANDO) {
-      setEfectoChapuzon(true);
-      setTimeout(() => setEfectoChapuzon(false), 1000);
+    if (!pezMeshRef.current || !rendererRef.current || !sceneRef.current) return;
+
+    const animate = () => {
+      const pezMesh = pezMeshRef.current;
+      const time = Date.now() * 0.001;
+
+      if (animacionPez === 'luchando') {
+        // Movimiento de lucha violento
+        pezMesh.rotation.y = Math.sin(time * 8) * 0.5;
+        pezMesh.rotation.z = Math.cos(time * 6) * 0.3;
+        pezMesh.position.y = Math.sin(time * 10) * 0.3;
+        pezMesh.position.x = Math.cos(time * 7) * 0.2;
+        
+        // Intensificar con la tensión
+        const intensidad = (tension || 0) / 100;
+        pezMesh.rotation.x = Math.sin(time * 12) * 0.4 * intensidad;
+        
+      } else if (animacionPez === 'capturado') {
+        // Movimiento más suave cuando es capturado
+        pezMesh.rotation.y = Math.sin(time * 2) * 0.2;
+        pezMesh.position.y = Math.sin(time * 3) * 0.1;
+        
+      } else if (animacionPez === 'saliendo') {
+        // Animación de salida del agua
+        pezMesh.position.y += 0.05;
+        pezMesh.rotation.y += 0.1;
+        pezMesh.rotation.z = Math.sin(time * 5) * 0.8;
+        
+        // Llamar callback cuando el pez sale completamente
+        if (pezMesh.position.y > 3) {
+          onPezSale && onPezSale();
+          setAnimacionPez('capturado');
+          pezMesh.position.y = 0;
+        }
+      }
+
+      rendererRef.current.render(sceneRef.current, { 
+        position: { z: 5 }
+      });
+      animationIdRef.current = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      if (animationIdRef.current) {
+        cancelAnimationFrame(animationIdRef.current);
+      }
+    };
+  }, [animacionPez, tension, onPezSale]);
+
+  // Cambiar animación según el estado del juego
+  useEffect(() => {
+    if (estadoJuego === 'luchando') {
+      setAnimacionPez('luchando');
+    } else if (estadoJuego === 'capturado') {
+      setAnimacionPez('saliendo');
     }
   }, [estadoJuego]);
 
-  // Generar burbujas durante la pesca y lucha
-  useEffect(() => {
-    if (estadoJuego === ESTADOS_JUEGO.PESCANDO || estadoJuego === ESTADOS_JUEGO.LUCHANDO) {
-      const generarBurbuja = () => {
-        const nuevaBurbuja = {
-          id: Date.now() + Math.random(),
-          x: posicionSenuelo.x + (Math.random() - 0.5) * 30,
-          y: 100,
-          tamaño: Math.random() * 8 + 4,
-          velocidad: Math.random() * 2 + 1,
-          opacidad: Math.random() * 0.7 + 0.3
-        };
-        
-        setBurbujas(prev => [...prev.slice(-15), nuevaBurbuja]);
-      };
-
-      const intervaloBurbujas = setInterval(generarBurbuja, 
-        estadoJuego === ESTADOS_JUEGO.LUCHANDO ? 500 : 2000
-      );
-      intervalosRef.current.push(intervaloBurbujas);
-      
-      return () => clearInterval(intervaloBurbujas);
-    }
-  }, [estadoJuego, posicionSenuelo.x]);
-
-  // Animar burbujas hacia arriba
-  useEffect(() => {
-    const intervalo = setInterval(() => {
-      setBurbujas(prev => prev
-        .map(burbuja => ({
-          ...burbuja,
-          y: burbuja.y - burbuja.velocidad,
-          opacidad: burbuja.opacidad - 0.01
-        }))
-        .filter(burbuja => burbuja.y > -10 && burbuja.opacidad > 0)
-      );
-    }, 50);
-    
-    intervalosRef.current.push(intervalo);
-    return () => clearInterval(intervalo);
-  }, []);
-
-  // Calcular ángulo de la caña
-  const calcularAnguloCaná = () => {
-    const anguloBase = 15;
-    const factorProfundidad = profundidad * 0.3;
-    const factorLucha = estadoJuego === ESTADOS_JUEGO.LUCHANDO ? Math.sin(Date.now() / 200) * 5 : 0;
-    return anguloBase + factorProfundidad + factorLucha;
-  };
-
-  // Obtener la imagen del pez o fallback
-  const obtenerImagenPez = () => {
-    if (!pezActual) return null;
-    
-    // Rutas de imágenes mejoradas
-    const rutasImagenes = {
-      bocachico: '/assets/imagenes/peces/Bocachico.png',
-      arapaima: '/assets/imagenes/peces/Arapaima.png',
-      bagre: '/assets/imagenes/peces/Bagre_rayado.png',
-      sabalo: '/assets/imagenes/peces/Sabalo.png',
-      sabaleta: '/assets/imagenes/peces/Sabaleta.png',
-      nicuro: '/assets/imagenes/peces/dorado.png',
-      corroncho: '/assets/imagenes/peces/Bocachico.png',
-      azulejo: '/assets/imagenes/peces/Perca.png',
-      pavon: '/assets/imagenes/peces/Pavon.png',
-      mojarra: '/assets/imagenes/peces/trucha_mariposa.png'
-    };
-    
-    return rutasImagenes[pezActual.id] || '/assets/imagenes/peces/Bocachico.png';
-  };
-
   return (
-    <div className="area-pesca">
-      {/* Superficie del agua con ondulación */}
+    <div className="area-pesca-container">
+      {/* Caña de pescar mejorada */}
+      <div className="cana-pesca-realista">
+        <div className="mango-cana">
+          <div className="grip-goma"></div>
+          <div className="carrete-container">
+            <div className={`carrete-metalico ${estadoJuego === 'luchando' ? 'girando' : ''}`}>
+              <div className="carrete-bobina"></div>
+              <div className="carrete-manija"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="vara-cana">
+          <div className="segmento-vara segmento-1"></div>
+          <div className="segmento-vara segmento-2"></div>
+          <div className="segmento-vara segmento-3"></div>
+          <div className="punta-vara"></div>
+          <div className="guia-sedal guia-1"></div>
+          <div className="guia-sedal guia-2"></div>
+          <div className="guia-sedal guia-3"></div>
+          <div className="guia-sedal guia-4"></div>
+        </div>
+      </div>
+
+      {/* Sedal dinámico */}
+      <svg className="sedal-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="sedalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#2F2F2F" />
+            <stop offset="100%" stopColor="#1A1A1A" />
+          </linearGradient>
+        </defs>
+        <path
+          d={`M 85 8 Q ${(posicionSedal?.x ?? 50)} ${(posicionSedal?.y ? posicionSedal.y / 2 : 10)} ${(posicionSedal?.x ?? 50)} ${(posicionSedal?.y ?? 20)}`}
+          stroke="url(#sedalGradient)"
+          strokeWidth={tension > 70 ? "0.8" : "0.4"}
+          fill="none"
+          className={`sedal ${estadoJuego === 'luchando' ? `tension-${Math.floor(tension / 25)}` : ''}`}
+          filter="drop-shadow(1px 1px 2px rgba(0,0,0,0.5))"
+        />
+      </svg>
+
+      {/* Anzuelo y señuelo */}
       <div 
-        className="superficie-agua"
-        style={{
-          transform: `translateY(${Math.sin(ondulacionAgua * Math.PI / 180) * 2}px)`
+        className={`anzuelo-container ${pez3DVisible ? 'con-pez' : ''}`}
+        style={{ 
+          left: `${posicionSedal?.x ?? 50}%`, 
+          top: `${posicionSedal?.y ?? 20}%`
         }}
       >
-        {efectoChapuzon && <div className="efecto-chapuzon" />}
-      </div>
-
-      {/* Caña de pescar */}
-      <div className="contenedor-caña">
-        <div 
-          className="caña-pescar"
-          style={{
-            transform: `rotate(${calcularAnguloCaná()}deg)`,
-            transformOrigin: 'bottom left'
-          }}
-        >
-          <div className="mango-caña" />
-          <div className="cuerpo-caña" />
-          <div className="punta-caña" />
+        <div className="anzuelo-realista">
+          <div className="anzuelo-cuerpo"></div>
+          <div className="anzuelo-punta"></div>
+          <div className="anzuelo-ojo"></div>
         </div>
-        <div 
-          className={`carrete ${estadoJuego === ESTADOS_JUEGO.LANZANDO ? 'girando' : ''}`}
-        />
-      </div>
-
-      {/* Sedal y señuelo */}
-      <div className="contenedor-sedal">
-        <svg 
-          className="sedal-svg"
-          width="100%"
-          height="100%"
-          viewBox="0 0 100 100"
-          preserveAspectRatio="none"
-        >
-          <path
-            d={`M 15 10 Q ${posicionSenuelo.x * 0.7} ${posicionSenuelo.y * 0.5} ${posicionSenuelo.x} ${posicionSenuelo.y}`}
-            stroke="#E6E6FA"
-            strokeWidth={estadoJuego === ESTADOS_JUEGO.LUCHANDO ? "0.5" : "0.3"}
-            fill="none"
-            className={`linea-sedal ${estadoJuego === ESTADOS_JUEGO.LUCHANDO ? 'tension' : ''}`}
-          />
-        </svg>
-
-        {/* Señuelo con estados mejorados */}
-        <div 
-          className={`señuelo ${estadoJuego === ESTADOS_JUEGO.LANZANDO ? 'cayendo' : ''} ${estadoJuego === ESTADOS_JUEGO.LUCHANDO ? 'luchando' : ''}`}
-          style={{
-            left: `${posicionSenuelo.x}%`,
-            top: `${posicionSenuelo.y}%`,
-            transform: `translate(-50%, -50%) rotate(${animacionPez.rotacion}deg) scale(${animacionPez.escala})`
-          }}
-        >
-          <div className="anzuelo" />
-          <div className="carnada" />
-          <div className="brillo-señuelo" />
+        
+        <div className="señuelo">
+          <div className="señuelo-cuerpo"></div>
+          <div className="señuelo-reflejo"></div>
         </div>
 
-        {/* PEZ LUCHANDO - VERSIÓN REALISTA */}
-        {estadoJuego === ESTADOS_JUEGO.LUCHANDO && pezActual && (
-          <div 
-            className="pez-luchando-realista"
-            style={{
-              left: `${posicionSenuelo.x}%`,
-              top: `${posicionSenuelo.y}%`,
-              transform: `translate(-50%, -50%)`,
-            }}
-          >
-            {/* Sedal desde anzuelo hasta pez */}
-            <div 
-              className="sedal-al-pez"
-              style={{
-                position: 'absolute',
-                top: '-30px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: '2px',
-                height: '25px',
-                background: 'none',
-                boxShadow: '0 0 5px rgba(230, 230, 250, 0.8)',
-                zIndex: 10
-              }}
-            />
-
-            {/* Pez con movimiento realista */}
-            <div 
-              className="contenedor-pez-realista"
-              style={{
-                transform: `rotate(${rotacionPez}deg) scale(${escalaPez}) translateX(${balanceoPez}px)`,
-                transformOrigin: 'center top',
-                transition: estadoJuego === ESTADOS_JUEGO.CAPTURADO ? 'none' : 'transform 0.1s ease-out'
-              }}
-            >
-              {/* Imagen del pez */}
-              <img 
-                src={obtenerImagenPez()}
-                alt={pezActual.nombre}
-                className="imagen-pez-luchando"
+        {/* Burbujas cuando hay pez */}
+        {pez3DVisible && (
+          <div className="burbujas-pez">
+            {[...Array(8)].map((_, i) => (
+              <div 
+                key={i} 
+                className={`burbuja-pez burbuja-${i + 1}`}
                 style={{
-                  width: `${Math.max(80, Math.min(pezActual.longitudActual * 2, 150))}px`,
-                  height: 'auto',
-                  filter: `brightness(1.2) contrast(1.1) saturate(1.3) drop-shadow(0 0 20px rgba(255, 255, 255, 0.6))`,
-                  transform: mordidaVisible ? 'rotateY(10deg)' : 'rotateY(0deg)',
-                }}
-                onError={(e) => {
-                  // Fallback si la imagen no carga
-                  e.target.style.display = 'none';
-                  e.target.parentNode.querySelector('.pez-emoji-fallback').style.display = 'block';
-                }}
-              />
-              
-              {/* Fallback emoji */}
-              <div 
-                className="pez-emoji-fallback"
-                style={{ 
-                  display: 'none',
-                  fontSize: `${Math.max(2, Math.min(pezActual.longitudActual / 20, 4))}rem`,
-                  filter: 'drop-shadow(0 0 15px rgba(255, 255, 255, 0.8))',
-                  animation: 'rebotePez 0.5s infinite alternate'
-                }}
-              >
-                🐠
-              </div>
-
-              {/* Indicador de mordida en el anzuelo */}
-              {mordidaVisible && (
-                <div 
-                  className="indicador-mordida"
-                  style={{
-                    position: 'absolute',
-                    top: '-10px',
-                    left: '30%',
-                    width: '8px',
-                    height: '8px',
-                    background: 'red',
-                    borderRadius: '50%',
-                    animation: 'parpadearMordida 0.3s infinite',
-                    zIndex: 15
-                  }}
-                />
-              )}
-
-              {/* Salpicaduras de agua alrededor del pez */}
-              <div className="salpicaduras-agua">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div 
-                    key={i} 
-                    className="gota-agua"
-                    style={{
-                      position: 'absolute',
-                      width: '4px',
-                      height: '4px',
-                      background: 'none',
-                      borderRadius: '50%',
-                      animation: `salpicadura 0.8s ease-out infinite`,
-                      animationDelay: `${i * 0.1}s`,
-                      '--angulo': `${i * 60}deg`
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Efecto de chapoteo realista al luchar */}
-            {estadoJuego === ESTADOS_JUEGO.LUCHANDO && (
-              <div className="efecto-chapoteo-realista">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="gota-chapoteo"
-                    style={{
-                      position: 'absolute',
-                      width: `${6 + Math.random() * 6}px`,
-                      height: `${6 + Math.random() * 6}px`,
-                      background: 'rgba(173,216,230,0.7)',
-                      borderRadius: '50%',
-                      left: `${40 + Math.cos(i * 2 * Math.PI / 8) * 30}px`,
-                      top: `${40 + Math.sin(i * 2 * Math.PI / 8) * 18}px`,
-                      opacity: 0.7,
-                      animation: `chapoteoAgua 0.7s ${i * 0.08}s infinite cubic-bezier(.4,1.6,.6,1)`
-                    }}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* PEZ CAPTURADO - COLGANDO DEL ANZUELO */}
-        {estadoJuego === ESTADOS_JUEGO.CAPTURADO && pezActual && (
-          <div 
-            className="pez-capturado-colgando"
-            style={{
-              left: `${posicionSenuelo.x}%`,
-              top: `${posicionSenuelo.y + 15}%`,
-              transform: `translate(-50%, -50%)`,
-              zIndex: 20
-            }}
-          >
-            {/* Sedal visible hasta el pez */}
-            <div 
-              className="sedal-captura"
-              style={{
-                position: 'absolute',
-                top: '-40px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: '3px',
-                height: '35px',
-                background: 'none',
-                boxShadow: '0 0 8px rgba(230, 230, 250, 0.9)',
-                zIndex: 19
-              }}
-            />
-
-            {/* Pez colgando con física de péndulo */}
-            <div 
-              className="pez-colgando"
-              style={{
-                transform: `rotate(${balanceoPez}deg) rotateY(${rotacionPez}deg) scale(${escalaPez})`,
-                transformOrigin: 'center top',
-                animation: 'none'
-              }}
-            >
-              {/* Anzuelo visible en la boca del pez */}
-              <div 
-                className="anzuelo-en-boca"
-                style={{
-                  position: 'absolute',
-                  top: '20%',
-                  left: '80%',
-                  width: '6px',
-                  height: '6px',
-                  background: '#FFD700',
-                  borderRadius: '50%',
-                  boxShadow: '0 0 5px #FFA500',
-                  zIndex: 21
-                }}
-              />
-              
-              {/* Imagen del pez capturado */}
-              <img 
-                src={obtenerImagenPez()}
-                alt={`${pezActual.nombre} capturado`}
-                className="imagen-pez-capturado"
-                style={{
-                  width: `${Math.max(100, Math.min(pezActual.longitudActual * 2.5, 180))}px`,
-                  height: 'auto',
-                  filter: `brightness(1.3) contrast(1.2) saturate(1.4) drop-shadow(0 0 25px rgba(255, 215, 0, 0.8))`,
-                  border: `3px solid ${pezActual.rareza === 'legendario' ? '#FFD700' : pezActual.rareza === 'épico' ? '#DDA0DD' : pezActual.rareza === 'raro' ? '#87CEEB' : '#90EE90'}`,
-                  borderRadius: '12px',
-                  background: 'rgba(255, 255, 255, 0.1)'
-                }}
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.parentNode.querySelector('.pez-emoji-capturado').style.display = 'block';
-                }}
-              />
-              
-              {/* Fallback para pez capturado */}
-              <div 
-                className="pez-emoji-capturado"
-                style={{ 
-                  display: 'none',
-                  fontSize: `${Math.max(3, Math.min(pezActual.longitudActual / 15, 5))}rem`,
-                  filter: 'drop-shadow(0 0 20px rgba(255, 215, 0, 0.9))',
-                  border: '3px solid #FFD700',
-                  borderRadius: '50%',
-                  padding: '10px',
-                  background: 'rgba(255, 215, 0, 0.2)'
-                }}
-              >
-                🏆🐠
-              </div>
-
-              {/* Efectos de celebración */}
-              <div className="efectos-celebracion">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div 
-                    key={i}
-                    className="estrella-celebracion"
-                    style={{
-                      position: 'absolute',
-                      top: '50%',
-                      left: '50%',
-                      width: '8px',
-                      height: '8px',
-                      background: '#FFD700',
-                      clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
-                      animation: `celebrarEstrella 2s ease-out infinite`,
-                      animationDelay: `${i * 0.2}s`,
-                      '--direccion': `${i * 45}deg`
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Burbujas del agua */}
-      <div className="contenedor-burbujas">
-        {burbujas.map(burbuja => (
-          <div
-            key={burbuja.id}
-            className="burbuja"
-            style={{
-              left: `${burbuja.x}%`,
-              bottom: `${burbuja.y}%`,
-              width: `${burbuja.tamaño}px`,
-              height: `${burbuja.tamaño}px`,
-              opacity: burbuja.opacidad,
-              background: `radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, rgba(173, 216, 230, 0.4) 50%, rgba(255, 255, 255, 0.2) 100%)`,
-              background: 'none',
-              border: '1px solid rgba(255, 255, 255, 0.3)',
-              borderRadius: '50%',
-              animation: `subirBurbuja ${3 / burbuja.velocidad}s linear infinite`
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Estados visuales del juego */}
-      {estadoJuego === ESTADOS_JUEGO.ESPERANDO && (
-        <div className="mensaje-estado-area">
-          <div className="icono-espera">🎣</div>
-          <div className="texto-espera">Presiona "Lanzar" para comenzar</div>
-        </div>
-      )}
-
-      {estadoJuego === ESTADOS_JUEGO.PESCANDO && (
-        <div className="indicador-pescando">
-          <div className="ondas-sonar">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div 
-                key={i}
-                className="onda-sonar"
-                style={{ 
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  width: '20px',
-                  height: '20px',
-                  border: '2px solid rgba(255, 215, 0, 0.6)',
-                  borderRadius: '50%',
-                  animation: `ondaSonar 2s ease-out infinite`,
-                  animationDelay: `${i * 0.5}s`
+                  animationDelay: `${i * 0.2}s`
                 }}
               />
             ))}
           </div>
+        )}
+      </div>
+
+      {/* Área del pez 3D */}
+      {pez3DVisible && (
+        <div 
+          className="pez-3d-container"
+          style={{ 
+            left: `${posicionSedal.x}%`, 
+            top: `${posicionSedal.y + 5}%`
+          }}
+        >
+          <div ref={mountRef} className="threejs-mount" />
+          
+          {/* Efectos de agua alrededor del pez */}
+          <div className="efectos-agua-pez">
+            <div className="ondas-agua onda-1"></div>
+            <div className="ondas-agua onda-2"></div>
+            <div className="ondas-agua onda-3"></div>
+          </div>
+
+          {/* Salpicaduras cuando el pez lucha */}
+          {animacionPez === 'luchando' && (
+            <div className="salpicaduras">
+              {[...Array(12)].map((_, i) => (
+                <div 
+                  key={i} 
+                  className={`gota-agua gota-${i + 1}`}
+                  style={{
+                    animationDelay: `${Math.random() * 2}s`
+                  }}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
 
-      {/* Efectos ambientales mejorados */}
-      <div className="efectos-ambientales">
-        <div className="rayos-sol">
-          {Array.from({ length: 3 }).map((_, i) => (
+      {/* Efectos de superficie del agua */}
+      <div className="superficie-agua">
+        <div className="ondas-superficie">
+          {[...Array(6)].map((_, i) => (
             <div 
-              key={i}
-              className="rayo-sol"
+              key={i} 
+              className={`onda-superficie onda-${i + 1}`}
               style={{
-                position: 'absolute',
-                top: 0,
-                left: `${25 + i * 25}%`,
-                width: '2px',
-                height: '100%',
-                background: `linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%)`,
-                animation: `ondularRayo ${4 + i}s ease-in-out infinite`,
+                left: `${posicionSedal?.x ?? 50}%`,
                 animationDelay: `${i * 0.5}s`
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Indicador de profundidad */}
+      <div className="indicador-profundidad">
+        <div className="escala-profundidad">
+          {[1, 2, 3, 4, 5].map(depth => (
+            <div 
+              key={depth} 
+              className={`marca-profundidad ${(posicionSedal?.y ?? 20) > depth * 15 ? 'activa' : ''}`}
+            >
+              <span>{depth}m</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Efectos ambientales */}
+      <div className="efectos-ambientales">
+        {/* Rayos de sol bajo el agua */}
+        <div className="rayos-sol">
+          {[...Array(5)].map((_, i) => (
+            <div 
+              key={i} 
+              className={`rayo-sol rayo-${i + 1}`}
+              style={{
+                left: `${20 + i * 15}%`,
+                animationDelay: `${i * 0.8}s`
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Partículas flotantes en el agua */}
+        <div className="particulas-agua">
+          {[...Array(15)].map((_, i) => (
+            <div 
+              key={i} 
+              className={`particula-flotante particula-${i + 1}`}
+              style={{
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${5 + Math.random() * 3}s`
               }}
             />
           ))}

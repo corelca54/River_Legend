@@ -34,8 +34,8 @@ export const CONFIGURACION_PESCA = {
   TIEMPO_ESPERA_MAXIMO: 1500, // 1.5 segundos (para testing rápido)
   
   // Lucha con peces
-  RESISTENCIA_BASE_PEZ: 50,
-  FACTOR_CANSANCIO: 0.5,
+  RESISTENCIA_BASE_PEZ: 150,
+  FACTOR_CANSANCIO: 0.15,
   PROBABILIDAD_LUCHA: 0.3,
   
   // Animaciones

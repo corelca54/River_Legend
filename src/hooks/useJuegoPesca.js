@@ -102,10 +102,8 @@ export const useJuegoPesca = () => {
         setEstadoJuego(ESTADOS_JUEGO.PESCANDO);
         mostrarMensaje("Esperando que pique un pez... 🎣");
         
-        // Calcular tiempo de espera aleatorio
-        const tiempoEspera = Math.random() * 
-          (CONFIGURACION_PESCA.TIEMPO_ESPERA_MAXIMO - CONFIGURACION_PESCA.TIEMPO_ESPERA_MINIMO) + 
-          CONFIGURACION_PESCA.TIEMPO_ESPERA_MINIMO;
+        // Calcular tiempo de espera aleatorio (más largo para visibilidad)
+        const tiempoEspera = 2000 + Math.random() * 2000;
 
         agregarTimeout(() => {
           // Verificar que el juego siga en estado de pesca antes de iniciar lucha
@@ -118,7 +116,7 @@ export const useJuegoPesca = () => {
           });
         }, tiempoEspera);
       }
-    }, 50);
+    }, 80); // más lento para animación visible
   }, [estadoJuego, agregarIntervalo, agregarTimeout, mostrarMensaje]);
 
   // Función para iniciar la lucha con un pez

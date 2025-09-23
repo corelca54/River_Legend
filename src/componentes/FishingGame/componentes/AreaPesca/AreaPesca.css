@@ -1,602 +1,972 @@
-@keyframes chapoteoAgua {
-  0% {
-    opacity: 0.8;
-    transform: scale(1) translateY(0);
-  }
-  60% {
-    opacity: 0.7;
-    transform: scale(1.2) translateY(-10px);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.7) translateY(-30px);
+  .area-pesca-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    min-height: 500px;
+    background: transparent;
+    overflow: hidden;
+    z-index: 5;
   }
 }
 
-.efecto-chapoteo-realista {
+/* Caña de pesca realista */
+
+.cana-pesca-realista {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 80px;
-  height: 60px;
-  pointer-events: none;
-  z-index: 20;
+  top: 5%;
+  right: 3%;
+  width: 320px;
+  height: 450px;
+  z-index: 10;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.4));
+  transition: filter 0.3s;
 }
 
-.gota-chapoteo {
-  pointer-events: none;
-}
-/**
- * AreaPesca.css - VERSIÓN MEJORADA con animaciones realistas
- * Incluye física de péndulo, efectos de agua y animaciones de captura
- */
-
-/* Animaciones para el pez capturado */
-@keyframes parpadearMordida {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.3; transform: scale(1.3); }
+.cana-pesca-realista:hover {
+  filter: drop-shadow(0 12px 32px rgba(0,0,0,0.6));
 }
 
-@keyframes salpicadura {
+.mango-cana {
+  position: absolute;
+  bottom: 0;
+  right: 25px;
+  width: 25px;
+  height: 140px;
+  background: linear-gradient(180deg, #8B4513 0%, #654321 30%, #5D4E37 60%, #3D2914 100%);
+  border-radius: 12px;
+  box-shadow: 
+    inset 2px 0 4px rgba(139, 69, 19, 0.8),
+    inset -2px 0 4px rgba(0, 0, 0, 0.4),
+    4px 4px 12px rgba(0, 0, 0, 0.3);
+  animation: rayo-movimiento 8s ease-in-out infinite;
+  transform-origin: top center;
+}
+
+.rayo-1 { animation-delay: 0s; }
+.rayo-2 { animation-delay: 1.6s; }
+.rayo-3 { animation-delay: 3.2s; }
+.rayo-4 { animation-delay: 4.8s; }
+.rayo-5 { animation-delay: 6.4s; }
+
+@keyframes rayo-movimiento {
+  0%, 100% { 
+    transform: translateX(-10px) rotate(-2deg);
+    opacity: 0.3;
+  }
+  50% { 
+    transform: translateX(10px) rotate(2deg);
+    opacity: 0.6;
+  }
+}
+
+/* Partículas flotantes */
+.particulas-agua {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.particula-flotante {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(139, 101, 65, 0.4);
+  border-radius: 50%;
+  animation: particula-flotacion linear infinite;
+}
+
+.particula-flotante:nth-child(3n) {
+  background: rgba(160, 120, 80, 0.3);
+  width: 3px;
+  height: 3px;
+}
+
+.particula-flotante:nth-child(5n) {
+  background: rgba(101, 67, 33, 0.5);
+  width: 1px;
+  height: 1px;
+}
+
+@keyframes particula-flotacion {
   0% {
-    transform: translate(-50%, -50%) rotate(var(--angulo)) translateX(0) scale(1);
+    transform: translateY(-10px) translateX(0px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
     opacity: 1;
   }
   100% {
-    transform: translate(-50%, -50%) rotate(var(--angulo)) translateX(40px) scale(0);
+    transform: translateY(calc(100vh + 10px)) translateX(30px) rotate(180deg);
     opacity: 0;
   }
 }
 
-@keyframes expandirOnda {
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .cana-pesca-realista {
+    width: 280px;
+    height: 400px;
+    top: 8%;
+    right: 2%;
+  }
+  
+  .mango-cana {
+    width: 22px;
+    height: 120px;
+  }
+  
+  .vara-cana {
+    height: 240px;
+  }
+  
+  .pez-3d-container .threejs-mount {
+    transform: scale(0.8);
+  }
+}
+
+@media (max-width: 768px) {
+  .cana-pesca-realista {
+    width: 240px;
+    height: 350px;
+    top: 10%;
+    right: 1%;
+  }
+  
+  .mango-cana {
+    width: 20px;
+    height: 100px;
+    right: 20px;
+  }
+  
+  .vara-cana {
+    height: 200px;
+    bottom: 90px;
+    right: 25px;
+  }
+  
+  .segmento-1 { height: 60px; width: 10px; }
+  .segmento-2 { height: 60px; width: 8px; bottom: 55px; }
+  .segmento-3 { height: 60px; width: 6px; bottom: 110px; }
+  .punta-vara { height: 40px; width: 4px; bottom: 165px; }
+  
+  .carrete-container {
+    width: 40px;
+    height: 32px;
+    top: 70px;
+    left: -10px;
+  }
+  
+  .indicador-profundidad {
+    width: 50px;
+    left: 15px;
+  }
+  
+  .marca-profundidad {
+    width: 30px;
+  }
+  
+  .marca-profundidad span {
+    font-size: 10px;
+  }
+  
+  .pez-3d-container .threejs-mount {
+    transform: scale(0.6);
+  }
+  
+  .efectos-agua-pez {
+    width: 300px;
+    height: 200px;
+    top: -15px;
+    left: -30px;
+  }
+  
+  .salpicaduras {
+    width: 280px;
+    height: 180px;
+    top: -20px;
+    left: -25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cana-pesca-realista {
+    width: 200px;
+    height: 300px;
+    top: 12%;
+    right: 0%;
+  }
+  
+  .mango-cana {
+    width: 18px;
+    height: 80px;
+    right: 15px;
+  }
+  
+  .vara-cana {
+    height: 160px;
+    bottom: 70px;
+    right: 20px;
+    width: 8px;
+  }
+  
+  .segmento-1 { height: 50px; width: 8px; }
+  .segmento-2 { height: 50px; width: 6px; bottom: 45px; }
+  .segmento-3 { height: 50px; width: 4px; bottom: 90px; }
+  .punta-vara { height: 30px; width: 3px; bottom: 135px; }
+  
+  .carrete-container {
+    width: 32px;
+    height: 24px;
+    top: 55px;
+    left: -8px;
+  }
+  
+  .carrete-bobina {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .grip-goma {
+    width: 22px;
+    height: 40px;
+    top: 15px;
+    left: -2px;
+  }
+  
+  .guia-1 { bottom: 40px; }
+  .guia-2 { bottom: 80px; }
+  .guia-3 { bottom: 120px; }
+  .guia-4 { bottom: 150px; }
+  
+  .anzuelo-realista {
+    width: 8px;
+    height: 12px;
+  }
+  
+  .señuelo {
+    width: 6px;
+    height: 6px;
+    top: -3px;
+  }
+  
+  .burbujas-pez {
+    width: 30px;
+    height: 40px;
+    top: 15px;
+    left: -8px;
+  }
+  
+  .burbuja-pez {
+    transform: scale(0.8);
+  }
+  
+  .pez-3d-container .threejs-mount {
+    transform: scale(0.4);
+  }
+  
+  .indicador-profundidad {
+    width: 40px;
+    left: 10px;
+  }
+  
+  .marca-profundidad {
+    width: 25px;
+  }
+  
+  .marca-profundidad span {
+    font-size: 9px;
+    left: 5px;
+  }
+  
+  .rayos-sol .rayo-sol {
+    width: 2px;
+  }
+  
+  .particula-flotante {
+    width: 1px;
+    height: 1px;
+  }
+  
+  .particula-flotante:nth-child(3n) {
+    width: 2px;
+    height: 2px;
+  }
+}
+
+/* Efectos especiales para diferentes tipos de peces */
+.pez-3d-container.bocachico .threejs-mount {
+  filter: hue-rotate(0deg) brightness(1.1);
+}
+
+.pez-3d-container.bagre-rayado .threejs-mount {
+  filter: hue-rotate(20deg) brightness(1.2) contrast(1.1);
+}
+
+.pez-3d-container.arapaima .threejs-mount {
+  filter: hue-rotate(-10deg) brightness(1.3) contrast(1.2);
+  animation: pez-legendario 2s ease-in-out infinite;
+}
+
+.pez-3d-container.sabalo .threejs-mount {
+  filter: hue-rotate(40deg) brightness(1.15) saturate(1.2);
+}
+
+.pez-3d-container.pavon .threejs-mount {
+  filter: hue-rotate(60deg) brightness(1.25) saturate(1.3);
+}
+
+@keyframes pez-legendario {
+  0%, 100% { 
+    filter: hue-rotate(-10deg) brightness(1.3) contrast(1.2);
+  }
+  50% { 
+    filter: hue-rotate(-10deg) brightness(1.5) contrast(1.3) drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
+  }
+}
+
+/* Animaciones de entrada */
+@keyframes cana-aparicion {
+  from {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.cana-pesca-realista {
+  animation: cana-aparicion 1s ease-out;
+}
+
+/* Efectos de hover para elementos interactivos */
+.anzuelo-container:hover .señuelo-cuerpo {
+  animation-duration: 1s;
+  box-shadow: 
+    0 2px 12px rgba(255, 215, 0, 0.6), 
+    inset 1px 1px 3px rgba(255, 255, 255, 0.9);
+}
+
+/* Estados especiales del sedal */
+.sedal-svg:hover .sedal {
+  filter: drop-shadow(1px 1px 3px rgba(0,0,0,0.6));
+}
+
+/* Efectos de transición suaves */
+* {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Optimizaciones de rendimiento */
+.pez-3d-container,
+.efectos-agua-pez,
+.salpicaduras,
+.burbujas-pez {
+  will-change: transform, opacity;
+}
+
+.threejs-mount canvas {
+  will-change: transform;
+}
+
+/* Efectos de profundidad con parallax */
+.rayos-sol {
+  transform: translateZ(0);
+}
+
+.particulas-agua {
+  transform: translateZ(0);
+}
+
+.superficie-agua {
+  transform: translateZ(0);
+}
+
+.grip-goma {
+  position: absolute;
+  top: 20px;
+  left: -2px;
+  width: 29px;
+  height: 60px;
+  background: linear-gradient(180deg, #2F2F2F, #1C1C1C);
+  border-radius: 8px;
+  border: 1px solid #404040;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.1);
+}
+
+.grip-goma::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 2px;
+  right: 2px;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 3px,
+    rgba(255, 255, 255, 0.2) 3px,
+    rgba(255, 255, 255, 0.2) 6px
+  );
+}
+
+.carrete-container {
+  position: absolute;
+  top: 90px;
+  left: -12px;
+  width: 50px;
+  height: 40px;
+}
+
+.carrete-metalico {
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, #E6E6E6 0%, #C0C0C0 50%, #A0A0A0 100%);
+  border-radius: 50%;
+  border: 3px solid #808080;
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.4),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.carrete-bobina {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #606060, #404040);
+  border-radius: 50%;
+  border: 2px solid #505050;
+}
+
+.carrete-bobina::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 3px;
+  height: 24px;
+  background: #303030;
+  border-radius: 2px;
+}
+
+.carrete-bobina::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 24px;
+  height: 3px;
+  background: #303030;
+  border-radius: 2px;
+}
+
+.carrete-manija {
+  position: absolute;
+  top: -5px;
+  right: -8px;
+  width: 12px;
+  height: 8px;
+  background: linear-gradient(45deg, #C0C0C0, #A0A0A0);
+  border-radius: 6px;
+  border: 1px solid #808080;
+}
+
+.girando {
+  animation: carrete-rotacion 0.2s linear infinite;
+}
+
+@keyframes carrete-rotacion {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Vara de la caña */
+.vara-cana {
+  position: absolute;
+  bottom: 120px;
+  right: 30px;
+  width: 12px;
+  height: 280px;
+  transform: rotate(-12deg);
+  transform-origin: bottom center;
+}
+
+.segmento-vara {
+  position: absolute;
+  border-radius: 6px;
+  box-shadow: 
+    2px 2px 6px rgba(0, 0, 0, 0.4),
+    inset 1px 0 2px rgba(255, 255, 255, 0.1);
+}
+
+.segmento-1 {
+  bottom: 0;
+  width: 12px;
+  height: 80px;
+  background: linear-gradient(180deg, #2F2F2F 0%, #1C1C1C 100%);
+}
+
+.segmento-2 {
+  bottom: 75px;
+  width: 10px;
+  height: 80px;
+  left: 1px;
+  background: linear-gradient(180deg, #1C1C1C 0%, #0F0F0F 100%);
+}
+
+.segmento-3 {
+  bottom: 150px;
+  width: 8px;
+  height: 80px;
+  left: 2px;
+  background: linear-gradient(180deg, #0F0F0F 0%, #050505 100%);
+}
+
+.punta-vara {
+  bottom: 225px;
+  width: 6px;
+  height: 55px;
+  left: 3px;
+  background: linear-gradient(180deg, #050505 0%, #000000 100%);
+  border-radius: 3px;
+}
+
+/* Guías del sedal */
+.guia-sedal {
+  position: absolute;
+  width: 4px;
+  height: 8px;
+  background: #C0C0C0;
+  border-radius: 2px;
+  left: 4px;
+  border: 1px solid #808080;
+}
+
+.guia-1 { bottom: 60px; }
+.guia-2 { bottom: 120px; }
+.guia-3 { bottom: 180px; }
+.guia-4 { bottom: 240px; }
+
+/* Sedal SVG */
+.sedal-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 8;
+}
+
+.sedal {
+  filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.4));
+  transition: all 0.3s ease;
+}
+
+.sedal.tension-0 {
+  stroke: #2F2F2F;
+  stroke-width: 0.4;
+}
+
+.sedal.tension-1 {
+  stroke: #4A4A00;
+  stroke-width: 0.5;
+  animation: sedal-vibrar-leve 0.3s ease-in-out infinite;
+}
+
+.sedal.tension-2 {
+  stroke: #808000;
+  stroke-width: 0.6;
+  animation: sedal-vibrar-medio 0.2s ease-in-out infinite;
+}
+
+.sedal.tension-3 {
+  stroke: #FF6600;
+  stroke-width: 0.7;
+  animation: sedal-vibrar-fuerte 0.1s ease-in-out infinite;
+}
+
+.sedal.tension-4 {
+  stroke: #FF0000;
+  stroke-width: 0.8;
+  animation: sedal-vibrar-critico 0.05s ease-in-out infinite;
+}
+
+@keyframes sedal-vibrar-leve {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(0.5px); }
+}
+
+@keyframes sedal-vibrar-medio {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(1px); }
+}
+
+@keyframes sedal-vibrar-fuerte {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(1.5px); }
+}
+
+@keyframes sedal-vibrar-critico {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-1px); }
+  75% { transform: translateX(1px); }
+}
+
+/* Anzuelo y señuelo */
+.anzuelo-container {
+  position: absolute;
+  z-index: 9;
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform: translate(-50%, -50%);
+}
+
+.anzuelo-container.con-pez {
+  animation: anzuelo-con-pez 0.5s ease-in-out infinite;
+}
+
+@keyframes anzuelo-con-pez {
+  0%, 100% { transform: translate(-50%, -50%) rotate(-2deg); }
+  50% { transform: translate(-50%, -50%) rotate(2deg); }
+}
+
+.anzuelo-realista {
+  position: relative;
+  width: 12px;
+  height: 16px;
+}
+
+.anzuelo-cuerpo {
+  position: absolute;
+  top: 0;
+  left: 4px;
+  width: 4px;
+  height: 12px;
+  background: linear-gradient(180deg, #E6E6FA 0%, #C0C0C0 100%);
+  border-radius: 2px;
+  border: 1px solid #A0A0A0;
+  box-shadow: 
+    1px 1px 2px rgba(0, 0, 0, 0.3),
+    inset 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+.anzuelo-punta {
+  position: absolute;
+  bottom: 2px;
+  right: 0;
+  width: 8px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, #C0C0C0 50%, #A0A0A0 100%);
+  border-radius: 0 2px 2px 0;
+  transform: rotate(-30deg);
+  transform-origin: left center;
+}
+
+.anzuelo-ojo {
+  position: absolute;
+  top: -2px;
+  left: 3px;
+  width: 6px;
+  height: 6px;
+  border: 2px solid #C0C0C0;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.señuelo {
+  position: absolute;
+  top: -5px;
+  left: 2px;
+  width: 8px;
+  height: 8px;
+}
+
+.señuelo-cuerpo {
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, #FFD700 30%, #FFA500 70%);
+  border-radius: 50%;
+  border: 1px solid #FF8C00;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.6);
+  animation: señuelo-brillo 2s ease-in-out infinite;
+}
+
+@keyframes señuelo-brillo {
+  0%, 100% { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), inset 1px 1px 2px rgba(255, 255, 255, 0.6); }
+  50% { box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4), inset 1px 1px 2px rgba(255, 255, 255, 0.8); }
+}
+
+.señuelo-reflejo {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 3px;
+  height: 3px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+/* Burbujas del pez */
+.burbujas-pez {
+  position: absolute;
+  top: 20px;
+  left: -10px;
+  width: 40px;
+  height: 60px;
+}
+
+.burbuja-pez {
+  position: absolute;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.2) 70%, transparent 100%);
+  border-radius: 50%;
+  animation: burbuja-subir 1.5s ease-out infinite;
+}
+
+.burbuja-1 { width: 4px; height: 4px; left: 5px; }
+.burbuja-2 { width: 6px; height: 6px; left: 15px; animation-delay: 0.2s; }
+.burbuja-3 { width: 3px; height: 3px; left: 25px; animation-delay: 0.4s; }
+.burbuja-4 { width: 5px; height: 5px; left: 8px; animation-delay: 0.6s; }
+.burbuja-5 { width: 4px; height: 4px; left: 20px; animation-delay: 0.8s; }
+.burbuja-6 { width: 7px; height: 7px; left: 12px; animation-delay: 1s; }
+.burbuja-7 { width: 3px; height: 3px; left: 18px; animation-delay: 1.2s; }
+.burbuja-8 { width: 5px; height: 5px; left: 22px; animation-delay: 1.4s; }
+
+@keyframes burbuja-subir {
+  0% {
+    bottom: 0;
+    opacity: 0.8;
+    transform: translateX(0) scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(10px) scale(1);
+  }
+  100% {
+    bottom: 60px;
+    opacity: 0;
+    transform: translateX(-5px) scale(1.2);
+  }
+}
+
+/* Contenedor del pez 3D */
+.pez-3d-container {
+  position: absolute;
+  z-index: 7;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.threejs-mount {
+  position: relative;
+  z-index: 8;
+}
+
+.threejs-mount canvas {
+  border-radius: 10px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+/* Efectos de agua alrededor del pez */
+.efectos-agua-pez {
+  position: absolute;
+  top: -20px;
+  left: -50px;
+  width: 400px;
+  height: 300px;
+  pointer-events: none;
+}
+
+.ondas-agua {
+  position: absolute;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  animation: ondas-expansion 1.5s ease-out infinite;
+}
+
+.onda-1 {
+  width: 60px;
+  height: 60px;
+  top: 120px;
+  left: 170px;
+}
+
+.onda-2 {
+  width: 80px;
+  height: 80px;
+  top: 110px;
+  left: 160px;
+  animation-delay: 0.5s;
+}
+
+.onda-3 {
+  width: 100px;
+  height: 100px;
+  top: 100px;
+  left: 150px;
+  animation-delay: 1s;
+}
+
+@keyframes ondas-expansion {
+  0% {
+    transform: scale(0.3);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+/* Salpicaduras */
+.salpicaduras {
+  position: absolute;
+  top: -30px;
+  left: -40px;
+  width: 380px;
+  height: 280px;
+  pointer-events: none;
+}
+
+.gota-agua {
+  position: absolute;
+  width: 4px;
+  height: 8px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(135, 206, 235, 0.6) 100%);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  animation: gota-salpicar 0.8s ease-out infinite;
+}
+
+.gota-1 { top: 140px; left: 150px; animation-delay: 0s; }
+.gota-2 { top: 130px; left: 180px; animation-delay: 0.1s; }
+.gota-3 { top: 150px; left: 200px; animation-delay: 0.2s; }
+.gota-4 { top: 120px; left: 160px; animation-delay: 0.3s; }
+.gota-5 { top: 160px; left: 140px; animation-delay: 0.4s; }
+.gota-6 { top: 135px; left: 190px; animation-delay: 0.5s; }
+.gota-7 { top: 145px; left: 170px; animation-delay: 0.6s; }
+.gota-8 { top: 125px; left: 175px; animation-delay: 0.7s; }
+.gota-9 { top: 155px; left: 155px; animation-delay: 0.8s; }
+.gota-10 { top: 140px; left: 185px; animation-delay: 0.9s; }
+.gota-11 { top: 130px; left: 165px; animation-delay: 1s; }
+.gota-12 { top: 150px; left: 195px; animation-delay: 1.1s; }
+
+@keyframes gota-salpicar {
+  0% {
+    transform: translateY(0) scale(0.5);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(-15px) scale(1);
+  }
+  100% {
+    transform: translateY(30px) scale(0.3);
+    opacity: 0;
+  }
+}
+
+/* Superficie del agua */
+.superficie-agua {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 30%;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.ondas-superficie .onda-superficie {
+  position: absolute;
+  width: 200px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: onda-superficie-expansion 2s ease-out infinite;
+}
+
+.onda-1 { animation-delay: 0s; }
+.onda-2 { animation-delay: 0.3s; }
+.onda-3 { animation-delay: 0.6s; }
+.onda-4 { animation-delay: 0.9s; }
+.onda-5 { animation-delay: 1.2s; }
+.onda-6 { animation-delay: 1.5s; }
+
+@keyframes onda-superficie-expansion {
   0% {
     width: 20px;
     height: 20px;
     opacity: 0.8;
   }
   100% {
-    width: 100px;
+    width: 200px;
     height: 100px;
     opacity: 0;
   }
 }
 
-@keyframes celebrarEstrella {
-  0% {
-    transform: translate(-50%, -50%) rotate(var(--direccion)) translateX(0) scale(0) rotate(0deg);
-    opacity: 1;
-  }
-  50% {
-    opacity: 1;
-    transform: translate(-50%, -50%) rotate(var(--direccion)) translateX(30px) scale(1) rotate(180deg);
-  }
-  100% {
-    transform: translate(-50%, -50%) rotate(var(--direccion)) translateX(60px) scale(0) rotate(360deg);
-    opacity: 0;
-  }
-}
-
-@keyframes ondularRayo {
-  0%, 100% {
-    transform: translateX(0) scaleY(1);
-    opacity: 0.4;
-  }
-  50% {
-    transform: translateX(8px) scaleY(1.1);
-    opacity: 0.7;
-  }
-}
-
-@keyframes subirBurbuja {
-  0% {
-    transform: translateY(0) scale(1);
-    opacity: 0.8;
-  }
-  50% {
-    transform: translateY(-30vh) scale(1.2);
-    opacity: 0.5;
-  }
-  100% {
-    transform: translateY(-60vh) scale(0.8);
-    opacity: 0;
-  }
-}
-
-@keyframes ondaSonar {
-  0% {
-    width: 20px;
-    height: 20px;
-    opacity: 1;
-  }
-  100% {
-    width: 80px;
-    height: 80px;
-    opacity: 0;
-  }
-}
-
-@keyframes rebotePez {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-8px) scale(1.1); }
-}
-
-/* Contenedor principal optimizado */
-.area-pesca {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: calc(100vh - 200px);
-  overflow: hidden;
-  background: none !important;
-}
-
-/* Superficie del agua mejorada */
-.superficie-agua {
+/* Indicador de profundidad */
+.indicador-profundidad {
   position: absolute;
-  top: 15%;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: none !important;
-  box-shadow: none;
-  transition: transform 0.1s ease;
-  z-index: 5;
-}
-
-.efecto-chapuzon {
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 60px;
-  border: none;
-  border-radius: 50%;
-  animation: chapuzon 1s ease-out;
-}
-
-@keyframes chapuzon {
-  0% {
-    width: 10px;
-    height: 10px;
-    opacity: 1;
-  }
-  100% {
-    width: 80px;
-    height: 80px;
-    opacity: 0;
-  }
-}
-
-/* Caña de pescar mejorada */
-.contenedor-caña {
-  position: absolute;
-  bottom: 20px;
   left: 20px;
-  width: 200px;
-  height: 300px;
-  z-index: 10;
-}
-
-.caña-pescar {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.mango-caña {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 8px;
-  height: 80px;
-  background: #8B4513;
-  border-radius: 4px;
-  box-shadow: 
-    inset 2px 0 4px rgba(139, 69, 19, 0.3),
-    2px 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-.mango-caña::after {
-  content: '';
-  position: absolute;
-  top: 10px;
-  left: -2px;
-  width: 12px;
-  height: 30px;
-  background: #2F4F4F;
-  border-radius: 6px;
-}
-
-.cuerpo-caña {
-  position: absolute;
-  bottom: 80px;
-  left: 2px;
-  width: 4px;
-  height: 180px;
-  background: #CD853F;
-  border-radius: 2px;
-  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
-}
-
-.punta-caña {
-  position: absolute;
-  bottom: 260px;
-  left: 3px;
-  width: 2px;
-  height: 40px;
-  background: #FFD700;
-  border-radius: 1px;
-  box-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
-}
-
-.carrete {
-  position: absolute;
-  bottom: 60px;
-  left: -8px;
-  width: 24px;
-  height: 24px;
-  background: #C0C0C0;
-  border-radius: 50%;
-  border: 2px solid #2F4F4F;
-  box-shadow: 
-    0 2px 8px rgba(0, 0, 0, 0.4),
-    inset 0 2px 4px rgba(255, 255, 255, 0.3);
-}
-
-.carrete::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 12px;
-  height: 12px;
-  background: #2F4F4F;
-  border-radius: 50%;
-}
-
-.carrete.girando {
-  animation: girarCarrete 2s linear infinite;
-}
-
-@keyframes girarCarrete {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Sedal mejorado */
-.contenedor-sedal {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.sedal-svg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  pointer-events: none;
+  top: 20%;
+  height: 60%;
+  width: 60px;
   z-index: 5;
 }
 
-.linea-sedal {
-  filter: drop-shadow(0 0 2px rgba(230, 230, 250, 0.8));
-  transition: stroke-width 0.3s ease;
-}
-
-.linea-sedal.tension {
-  stroke: #FF6B6B;
-  stroke-width: 0.5;
-  animation: vibrarSedal 0.2s infinite alternate;
-}
-
-@keyframes vibrarSedal {
-  0% { stroke-width: 0.3; }
-  100% { stroke-width: 0.7; }
-}
-
-/* Señuelo mejorado */
-.señuelo {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  z-index: 8;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.señuelo.cayendo {
-  animation: caerSenuelo 3s ease-in;
-}
-
-.señuelo.luchando {
-  animation: luchaSenuelo 0.3s infinite alternate;
-}
-
-@keyframes caerSenuelo {
-  0% {
-    transform: translate(-50%, -50%) rotate(0deg) scale(1);
-  }
-  50% {
-    transform: translate(-50%, -50%) rotate(180deg) scale(1.2);
-  }
-  100% {
-    transform: translate(-50%, -50%) rotate(360deg) scale(1);
-  }
-}
-
-@keyframes luchaSenuelo {
-  0% {
-    transform: translate(-50%, -50%) rotate(-5deg) scale(1);
-  }
-  100% {
-    transform: translate(-50%, -50%) rotate(5deg) scale(1.1);
-  }
-}
-
-.anzuelo {
-  width: 12px;
-  height: 12px;
-  background: radial-gradient(circle, #FFD700, #FFA500);
-  border-radius: 50%;
-  border: 2px solid #8B4513;
-  box-shadow: 
-    0 0 8px rgba(255, 215, 0, 0.8),
-    inset 0 2px 4px rgba(255, 255, 255, 0.3);
-  position: relative;
-}
-
-.anzuelo::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 3px solid transparent;
-  border-right: 3px solid transparent;
-  border-top: 6px solid #8B4513;
-}
-
-.carnada {
-  position: absolute;
-  top: -4px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 8px;
-  height: 8px;
-  background: radial-gradient(circle, #FF6B6B, #DC143C);
-  border-radius: 50%;
-  box-shadow: 0 0 4px rgba(255, 107, 107, 0.6);
-}
-
-.brillo-señuelo {
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  width: 20px;
-  height: 20px;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.3) 0%,
-    transparent 70%
-  );
-  border-radius: 50%;
-  animation: brillarSenuelo 2s ease-in-out infinite;
-}
-
-@keyframes brillarSenuelo {
-  0%, 100% { opacity: 0.3; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.2); }
-}
-
-/* PEZ LUCHANDO - ESTILOS REALISTAS */
-.pez-luchando-realista {
-  position: absolute;
-  z-index: 20;
-  transform-origin: center top;
-}
-
-.contenedor-pez-realista {
-  position: relative;
-  transform-origin: center top;
-}
-
-.imagen-pez-luchando {
-  object-fit: contain;
-  border-radius: 12px;
-  transition: all 0.2s ease;
-  max-width: 180px;
-  height: auto;
-}
-
-.pez-emoji-fallback {
-  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
-  text-align: center;
-}
-
-.sedal-al-pez {
-  animation: tensionSedal 0.5s infinite alternate;
-}
-
-@keyframes tensionSedal {
-  0% { 
-    transform: translateX(-50%) scaleY(1);
-    filter: drop-shadow(0 0 3px rgba(230, 230, 250, 0.6));
-  }
-  100% { 
-    transform: translateX(-50%) scaleY(1.1);
-    filter: drop-shadow(0 0 6px rgba(230, 230, 250, 0.9));
-  }
-}
-
-.indicador-mordida {
-  box-shadow: 0 0 8px rgba(255, 0, 0, 0.8);
-}
-
-.salpicaduras-agua {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80px;
-  height: 80px;
-  pointer-events: none;
-}
-
-.gota-agua {
-  box-shadow: 0 0 3px rgba(173, 216, 230, 0.8);
-}
-
-.ondas-lucha {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100px;
-  height: 100px;
-  pointer-events: none;
-}
-
-/* PEZ CAPTURADO - ESTILOS DE PÉNDULO */
-.pez-capturado-colgando {
-  position: absolute;
-  z-index: 20;
-  transform-origin: center top;
-}
-
-.sedal-captura {
-  animation: balanceoSedal 2s ease-in-out infinite;
-}
-
-@keyframes balanceoSedal {
-  0%, 100% { 
-    transform: translateX(-50%) rotate(-2deg);
-  }
-  50% { 
-    transform: translateX(-50%) rotate(2deg);
-  }
-}
-
-.pez-colgando {
-  transform-origin: center top;
-  transition: none;
-}
-
-.anzuelo-en-boca {
-  animation: brillarAnzuelo 1.5s ease-in-out infinite;
-}
-
-@keyframes brillarAnzuelo {
-  0%, 100% { 
-    box-shadow: 0 0 5px #FFA500;
-  }
-  50% { 
-    box-shadow: 0 0 15px #FFD700, 0 0 25px #FFA500;
-  }
-}
-
-.imagen-pez-capturado {
-  animation: respirarPez 3s ease-in-out infinite;
-}
-
-@keyframes respirarPez {
-  0%, 100% { 
-    transform: scale(1);
-  }
-  50% { 
-    transform: scale(1.05);
-  }
-}
-
-.pez-emoji-capturado {
-  animation: celebrarCaptura 2s ease-in-out infinite;
-}
-
-@keyframes celebrarCaptura {
-  0%, 100% { 
-    transform: scale(1) rotate(0deg);
-  }
-  50% { 
-    transform: scale(1.1) rotate(5deg);
-  }
-}
-
-.efectos-celebracion {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 120px;
-  height: 120px;
-  pointer-events: none;
-}
-
-.estrella-celebracion {
-  filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.8));
-}
-
-/* Burbujas mejoradas */
-.contenedor-burbujas {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+.escala-profundidad {
   height: 100%;
-  pointer-events: none;
-  z-index: 3;
+  border-left: 3px solid rgba(255, 255, 255, 0.3);
+  position: relative;
 }
 
-.burbuja {
-  animation: subirBurbuja linear infinite;
-}
-
-/* Estados del juego */
-.mensaje-estado-area {
+.marca-profundidad {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  z-index: 15;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
 }
 
-.icono-espera {
-  font-size: 3rem;
-  margin-bottom: 10px;
-  animation: balanceoPesca 2s ease-in-out infinite;
+.marca-profundidad:nth-child(1) { top: 20%; }
+.marca-profundidad:nth-child(2) { top: 35%; }
+.marca-profundidad:nth-child(3) { top: 50%; }
+.marca-profundidad:nth-child(4) { top: 65%; }
+.marca-profundidad:nth-child(5) { top: 80%; }
+
+.marca-profundidad.activa {
+  background: #4FC3F7;
+  box-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
 }
 
-@keyframes balanceoPesca {
-  0%, 100% { transform: rotate(-10deg); }
-  50% { transform: rotate(10deg); }
-}
-
-.texto-espera {
-  color: white;
-  font-size: 1.1rem;
-  font-weight: 500;
-  background: rgba(0, 0, 0, 0.7);
-  padding: 10px 20px;
-  border-radius: 25px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+.marca-profundidad span {
+  position: absolute;
+  left: 8px;
+  top: -8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: bold;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-.indicador-pescando {
-  position: absolute;
-  bottom: 30%;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 6;
-}
-
-.ondas-sonar {
-  position: relative;
-  width: 80px;
-  height: 80px;
+.marca-profundidad.activa span {
+  color: #4FC3F7;
 }
 
 /* Efectos ambientales */
@@ -604,144 +974,16 @@
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
 }
 
+/* Rayos de sol */
 .rayos-sol {
   position: absolute;
   top: 0;
-  left: 0;
-  right: 0;
+  width: 100%;
   height: 100%;
-}
-
-.rayo-sol {
-  filter: blur(1px);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .contenedor-caña {
-    width: 150px;
-    height: 200px;
-    bottom: 15px;
-    left: 15px;
-  }
-  
-  .cuerpo-caña {
-    height: 120px;
-  }
-  
-  .punta-caña {
-    bottom: 180px;
-    height: 30px;
-  }
-  
-  .imagen-pez-luchando,
-  .imagen-pez-capturado {
-    max-width: 120px;
-  }
-  
-  .icono-espera {
-    font-size: 2rem;
-  }
-  
-  .texto-espera {
-    font-size: 0.9rem;
-    padding: 8px 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .contenedor-caña {
-    width: 120px;
-    height: 160px;
-    bottom: 10px;
-    left: 10px;
-  }
-  
-  .mango-caña {
-    width: 6px;
-    height: 60px;
-  }
-  
-  .cuerpo-caña {
-    bottom: 60px;
-    width: 3px;
-    height: 90px;
-  }
-  
-  .punta-caña {
-    bottom: 150px;
-    width: 1.5px;
-    height: 20px;
-  }
-  
-  .carrete {
-    width: 18px;
-    height: 18px;
-    bottom: 45px;
-    left: -6px;
-  }
-  
-  .señuelo {
-    width: 12px;
-    height: 12px;
-  }
-  
-  .anzuelo {
-    width: 8px;
-    height: 8px;
-  }
-  
-  .carnada {
-    width: 6px;
-    height: 6px;
-  }
-  
-  .imagen-pez-luchando,
-  .imagen-pez-capturado {
-    max-width: 80px;
-  }
-}
-
-/* Optimizaciones de rendimiento */
-@media (prefers-reduced-motion: reduce) {
-  .caña-pescar,
-  .señuelo,
-  .pez-luchando-realista,
-  .pez-capturado-colgando,
-  .burbuja,
-  .estrella-celebracion,
-  .rayo-sol {
-    animation: none;
-  }
-  
-  .carrete.girando {
-    animation: none;
-  }
-  
-  .linea-sedal.tension {
-    animation: none;
-  }
-}
-
-/* Modo de contraste alto */
-@media (prefers-contrast: high) {
-  .superficie-agua {
-    background: #FFFFFF;
-  }
-  
-  .señuelo,
-  .anzuelo {
-    border: 2px solid #000000;
-  }
-  
-  .texto-espera {
-    background: #000000;
-    border-color: #FFFFFF;
-  }
 }

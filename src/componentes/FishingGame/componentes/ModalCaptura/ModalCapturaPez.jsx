@@ -5,6 +5,17 @@
 
 import React, { useEffect, useState } from 'react';
 import './ModalCapturaPez.css';
+import InfoPez from '../InfoPez/InfoPez';
+
+const ModalCaptura = ({ pez, visible, onCerrar, estadisticas }) => {
+  return (
+    <InfoPez 
+      pez={pez}
+      visible={visible}
+      onCerrar={onCerrar}
+    />
+  );
+};
 
 const ModalCapturaPez = ({ 
   pezCapturado, 
