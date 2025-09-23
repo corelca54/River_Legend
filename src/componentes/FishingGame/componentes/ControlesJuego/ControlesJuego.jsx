@@ -1,38 +1,20 @@
-/**
- * ControlesJuego.jsx - Componente de controles del juego de pesca
- * Maneja los botones principales: Lanzar, Recoger, Soltar, etc.
- */
-
 import React, { useState, useEffect } from 'react';
-import { ESTADOS_JUEGO } from '../../../../data/constantesJuego';
 import './ControlesJuego.css';
 
-/**
- * Componente de controles del juego
- * @param {Object} props - Propiedades del componente
- * @param {string} props.estadoJuego - Estado actual del juego
- * @param {boolean} props.puedeLanzar - Si se puede lanzar el señuelo
- * @param {boolean} props.puedeRecoger - Si se puede recoger el sedal
- * @param {boolean} props.puedeSoltar - Si se puede soltar el sedal
- * @param {Function} props.onLanzar - Función para lanzar
- * @param {Function} props.onRecoger - Función para recoger
- * @param {Function} props.onSoltar - Función para soltar
- * @param {Function} props.onReiniciar - Función para reiniciar
- * @param {Function} props.onPausa - Función para pausar/reanudar
- */
 const ControlesJuego = ({
   estadoJuego,
-  puedeLanzar,
-  puedeRecoger,
-  puedeSoltar,
   onLanzar,
   onRecoger,
   onSoltar,
   onReiniciar,
-  onPausa
+  onPausar,
+  onReanudar,
+  efectosSonido,
+  onToggleSonido,
+  tension
 }) => {
-  const [presionandoRecoger, setPresionandoRecoger] = useState(false);
-  const [presionandoSoltar, setPresionandoSoltar] = useState(false);
+  const [pulsandoRecoger, setPulsandoRecoger] = useState(false);
+  const [pulsandoSoltar, setPulsandoSoltar] = useState(false);
   const [vibracionDisponible, setVibracionDisponible] = useState(false);
 
   // Detectar si la vibración está disponible
@@ -40,287 +22,324 @@ const ControlesJuego = ({
     setVibracionDisponible('vibrate' in navigator);
   }, []);
 
-  // Manejar vibración táctil
-  const vibrar = (patron = [50]) => {
+  // Vibración táctil para feedback
+  const vibrar = (duracion = 50) => {
     if (vibracionDisponible) {
-      navigator.vibrate(patron);
+      navigator.vibrate(duracion);
     }
   };
 
-  // Manejar presión continua para recoger
-  const manejarInicioRecoger = () => {
-    if (!puedeRecoger) return;
-    
-    setPresionandoRecoger(true);
-    vibrar([30]);
-    onRecoger();
-    
-    // Recoger continuo mientras se mantenga presionado
-    const intervalo = setInterval(() => {
-      if (puedeRecoger) {
-        onRecoger();
+  // Manejo de botón Lanzar/Reiniciar
+  const manejarLanzarReiniciar = () => {
+    vibrar(100);
+    if (estadoJuego === 'inicial' || estadoJuego === 'perdido' || estadoJuego === 'capturado') {
+      if (estadoJuego === 'inicial') {
+        onLanzar();
+      } else {
+        onReiniciar();
       }
-    }, 100);
-    
-    // Cleanup function para el intervalo
-    const cleanup = () => {
-      clearInterval(intervalo);
-      setPresionandoRecoger(false);
-    };
-    
-    // Event listeners para detectar cuando se suelta
-    const manejarFin = () => {
-      cleanup();
-      document.removeEventListener('mouseup', manejarFin);
-      document.removeEventListener('touchend', manejarFin);
-    };
-    
-    document.addEventListener('mouseup', manejarFin);
-    document.addEventListener('touchend', manejarFin);
+    }
   };
 
-  // Manejar presión continua para soltar
-  const manejarInicioSoltar = () => {
-    if (!puedeSoltar) return;
-    
-    setPresionandoSoltar(true);
-    vibrar([50]);
-    onSoltar();
-    
-    // Soltar continuo mientras se mantenga presionado
-    const intervalo = setInterval(() => {
-      if (puedeSoltar) {
-        onSoltar();
-      }
-    }, 150);
-    
-    // Cleanup function para el intervalo
-    const cleanup = () => {
-      clearInterval(intervalo);
-      setPresionandoSoltar(false);
-    };
-    
-    // Event listeners para detectar cuando se suelta
-    const manejarFin = () => {
-      cleanup();
-      document.removeEventListener('mouseup', manejarFin);
-      document.removeEventListener('touchend', manejarFin);
-    };
-    
-    document.addEventListener('mouseup', manejarFin);
-    document.addEventListener('touchend', manejarFin);
+  // Manejo de recoger sedal (con presión continua)
+  const iniciarRecoger = () => {
+    if (estadoJuego === 'luchando') {
+      setPulsandoRecoger(true);
+      vibrar(30);
+      onRecoger();
+    }
   };
 
-  // Manejar clic en lanzar
-  const manejarLanzar = () => {
-    if (!puedeLanzar) return;
-    vibrar([100, 50, 100]);
-    onLanzar();
+  const detenerRecoger = () => {
+    setPulsandoRecoger(false);
   };
 
-  // Manejar clic en reiniciar
-  const manejarReiniciar = () => {
-    vibrar([80]);
-    onReiniciar();
+  // Manejo de soltar sedal (con presión continua)
+  const iniciarSoltar = () => {
+    if (estadoJuego === 'luchando') {
+      setPulsandoSoltar(true);
+      vibrar(20);
+      onSoltar();
+    }
   };
 
-  // Manejar clic en pausa
+  const detenerSoltar = () => {
+    setPulsandoSoltar(false);
+  };
+
+  // Manejo de pausa/reanudar
   const manejarPausa = () => {
-    vibrar([60]);
-    onPausa();
-  };
-
-  // Obtener texto del botón de lanzar según el estado
-  const obtenerTextoLanzar = () => {
-    switch (estadoJuego) {
-      case ESTADOS_JUEGO.LANZANDO:
-        return 'Lanzando...';
-      case ESTADOS_JUEGO.PESCANDO:
-        return 'Pescando...';
-      case ESTADOS_JUEGO.LUCHANDO:
-        return 'Luchando!';
-      default:
-        return 'Lanzar';
+    vibrar(50);
+    if (estadoJuego === 'pausado') {
+      onReanudar();
+    } else if (estadoJuego === 'luchando') {
+      onPausar();
     }
   };
 
-  // Obtener icono del botón de lanzar según el estado
-  const obtenerIconoLanzar = () => {
+  // Toggle de sonido
+  const manejarToggleSonido = () => {
+    vibrar(30);
+    onToggleSonido();
+  };
+
+  // Obtener texto del botón principal
+  const obtenerTextoBotonPrincipal = () => {
     switch (estadoJuego) {
-      case ESTADOS_JUEGO.LANZANDO:
-        return '🎯';
-      case ESTADOS_JUEGO.PESCANDO:
-        return '🎣';
-      case ESTADOS_JUEGO.LUCHANDO:
-        return '⚔️';
+      case 'inicial':
+        return 'LANZAR SEÑUELO';
+      case 'lanzando':
+        return 'LANZANDO...';
+      case 'pescando':
+        return 'ESPERANDO...';
+      case 'picando':
+        return '¡PICA!';
+      case 'luchando':
+        return 'LUCHANDO';
+      case 'capturado':
+        return 'NUEVO LANCE';
+      case 'perdido':
+        return 'INTENTAR OTRA VEZ';
+      case 'pausado':
+        return 'PAUSADO';
       default:
-        return '🎣';
+        return 'LANZAR';
     }
+  };
+
+  // Obtener clase CSS del botón principal
+  const obtenerClaseBotonPrincipal = () => {
+    const clases = ['boton-principal'];
+    
+    switch (estadoJuego) {
+      case 'lanzando':
+        clases.push('estado-lanzando');
+        break;
+      case 'pescando':
+        clases.push('estado-esperando');
+        break;
+      case 'picando':
+        clases.push('estado-picando');
+        break;
+      case 'luchando':
+        clases.push('estado-luchando');
+        break;
+      case 'capturado':
+        clases.push('estado-capturado');
+        break;
+      case 'perdido':
+        clases.push('estado-perdido');
+        break;
+      case 'pausado':
+        clases.push('estado-pausado');
+        break;
+      default:
+        clases.push('estado-inicial');
+    }
+    
+    return clases.join(' ');
+  };
+
+  // Obtener intensidad de vibración por tensión
+  const obtenerIntensidadTension = () => {
+    if (tension > 80) return 'critica';
+    if (tension > 60) return 'alta';
+    if (tension > 30) return 'media';
+    return 'baja';
   };
 
   return (
     <div className="controles-juego">
-      {/* Controles principales */}
-      <div className="controles-principales">
-        
-        {/* Botón de lanzar */}
-        <button
-          className={`control-btn lanzar ${!puedeLanzar ? 'deshabilitado' : ''} ${estadoJuego === ESTADOS_JUEGO.LANZANDO ? 'activo' : ''}`}
-          onClick={manejarLanzar}
-          disabled={!puedeLanzar}
-        >
-          <div className="contenido-boton">
-            <span className="icono-boton">{obtenerIconoLanzar()}</span>
-            <span className="texto-boton">{obtenerTextoLanzar()}</span>
+      {/* Controles principales de lucha (solo durante la lucha) */}
+      {estadoJuego === 'luchando' && (
+        <div className="controles-lucha">
+          <div className="indicador-tension-control">
+            <div className="etiqueta-tension">TENSIÓN</div>
+            <div className={`barra-tension-mini tension-${obtenerIntensidadTension()}`}>
+              <div 
+                className="relleno-tension"
+                style={{ width: `${tension}%` }}
+              />
+              <div className="indicador-peligro" style={{ left: '80%' }}>⚠️</div>
+            </div>
+            <div className="valor-tension">{Math.round(tension)}%</div>
           </div>
-          {estadoJuego === ESTADOS_JUEGO.ESPERANDO && (
-            <div className="indicador-pulse" />
-          )}
+
+          <div className="botones-lucha">
+            {/* Botón Recoger */}
+            <button
+              className={`boton-accion boton-recoger ${pulsandoRecoger ? 'presionado' : ''}`}
+              onMouseDown={iniciarRecoger}
+              onMouseUp={detenerRecoger}
+              onMouseLeave={detenerRecoger}
+              onTouchStart={(e) => { e.preventDefault(); iniciarRecoger(); }}
+              onTouchEnd={(e) => { e.preventDefault(); detenerRecoger(); }}
+            >
+              <div className="icono-boton">🎣</div>
+              <div className="texto-boton">RECOGER</div>
+              <div className="subtexto-boton">Reduce mucho</div>
+              <div className="efecto-pulso"></div>
+            </button>
+
+            {/* Botón Soltar */}
+            <button
+              className={`boton-accion boton-soltar ${pulsandoSoltar ? 'presionado' : ''}`}
+              onMouseDown={iniciarSoltar}
+              onMouseUp={detenerSoltar}
+              onMouseLeave={detenerSoltar}
+              onTouchStart={(e) => { e.preventDefault(); iniciarSoltar(); }}
+              onTouchEnd={(e) => { e.preventDefault(); detenerSoltar(); }}
+            >
+              <div className="icono-boton">🤲</div>
+              <div className="texto-boton">SOLTAR</div>
+              <div className="subtexto-boton">Reduce poco</div>
+              <div className="efecto-pulso"></div>
+            </button>
+          </div>
+
+          {/* Consejos dinámicos de lucha */}
+          <div className="consejos-dinamicos">
+            {tension > 85 && (
+              <div className="consejo critico">
+                🚨 ¡TENSIÓN CRÍTICA! ¡RECOGER YA!
+              </div>
+            )}
+            {tension > 60 && tension <= 85 && (
+              <div className="consejo alerta">
+                ⚠️ Tensión alta - Considera recoger
+              </div>
+            )}
+            {tension <= 30 && (
+              <div className="consejo optimo">
+                ✅ Tensión controlada - Sigue así
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Controles generales */}
+      <div className="controles-generales">
+        {/* Botón principal */}
+        <button
+          className={obtenerClaseBotonPrincipal()}
+          onClick={manejarLanzarReiniciar}
+          disabled={estadoJuego === 'lanzando' || estadoJuego === 'pescando' || estadoJuego === 'picando' || estadoJuego === 'luchando'}
+        >
+          <div className="contenido-boton-principal">
+            <div className="icono-principal">
+              {estadoJuego === 'inicial' && '🎯'}
+              {estadoJuego === 'lanzando' && '🌊'}
+              {estadoJuego === 'pescando' && '⏳'}
+              {estadoJuego === 'picando' && '🐟'}
+              {estadoJuego === 'luchando' && '⚔️'}
+              {estadoJuego === 'capturado' && '🎉'}
+              {estadoJuego === 'perdido' && '😞'}
+              {estadoJuego === 'pausado' && '⏸️'}
+            </div>
+            <div className="texto-principal">{obtenerTextoBotonPrincipal()}</div>
+          </div>
+          
+          {/* Efectos visuales del botón */}
+          <div className="efecto-fondo"></div>
+          <div className="efecto-brillo"></div>
         </button>
 
-        {/* Botón de recoger */}
-        <button
-          className={`control-btn recoger ${!puedeRecoger ? 'deshabilitado' : ''} ${presionandoRecoger ? 'presionado' : ''}`}
-          onMouseDown={manejarInicioRecoger}
-          onTouchStart={manejarInicioRecoger}
-          disabled={!puedeRecoger}
-        >
-          <div className="contenido-boton">
-            <span className="icono-boton">⬆️</span>
-            <span className="texto-boton">Recoger</span>
-          </div>
-          <div className="efecto-indicador">-15% Tensión</div>
-          {presionandoRecoger && (
-            <div className="efecto-presion" />
+        {/* Controles secundarios */}
+        <div className="controles-secundarios">
+          {/* Botón de pausa (solo durante la lucha) */}
+          {(estadoJuego === 'luchando' || estadoJuego === 'pausado') && (
+            <button
+              className={`boton-secundario boton-pausa ${estadoJuego === 'pausado' ? 'activo' : ''}`}
+              onClick={manejarPausa}
+            >
+              <div className="icono-secundario">
+                {estadoJuego === 'pausado' ? '▶️' : '⏸️'}
+              </div>
+              <div className="texto-secundario">
+                {estadoJuego === 'pausado' ? 'Reanudar' : 'Pausa'}
+              </div>
+            </button>
           )}
-        </button>
 
-        {/* Botón de soltar */}
-        <button
-          className={`control-btn soltar ${!puedeSoltar ? 'deshabilitado' : ''} ${presionandoSoltar ? 'presionado' : ''}`}
-          onMouseDown={manejarInicioSoltar}
-          onTouchStart={manejarInicioSoltar}
-          disabled={!puedeSoltar}
-        >
-          <div className="contenido-boton">
-            <span className="icono-boton">⬇️</span>
-            <span className="texto-boton">Soltar</span>
-          </div>
-          <div className="efecto-indicador">-25% Tensión</div>
-          {presionandoSoltar && (
-            <div className="efecto-presion" />
+          {/* Control de sonido */}
+          <button
+            className={`boton-secundario boton-sonido ${efectosSonido ? 'activo' : 'inactivo'}`}
+            onClick={manejarToggleSonido}
+          >
+            <div className="icono-secundario">
+              {efectosSonido ? '🔊' : '🔇'}
+            </div>
+            <div className="texto-secundario">
+              {efectosSonido ? 'Sonido ON' : 'Sonido OFF'}
+            </div>
+          </button>
+
+          {/* Indicador de vibración */}
+          {vibracionDisponible && (
+            <div className="indicador-vibracion">
+              📳 Vibración disponible
+            </div>
           )}
-        </button>
+        </div>
       </div>
 
-      {/* Controles secundarios */}
-      <div className="controles-secundarios">
-        
-        {/* Botón de pausa */}
-        <button
-          className="control-btn-secundario pausa"
-          onClick={manejarPausa}
-          title={estadoJuego === ESTADOS_JUEGO.PAUSA ? 'Reanudar' : 'Pausar'}
-        >
-          <span className="icono-boton">
-            {estadoJuego === ESTADOS_JUEGO.PAUSA ? '▶️' : '⏸️'}
-          </span>
-        </button>
-
-        {/* Botón de reiniciar */}
-        <button
-          className="control-btn-secundario reiniciar"
-          onClick={manejarReiniciar}
-          title="Reiniciar juego"
-        >
-          <span className="icono-boton">🔄</span>
-        </button>
-
-        {/* Botón de configuración */}
-        <button
-          className="control-btn-secundario configuracion"
-          onClick={() => {/* Implementar modal de configuración */}}
-          title="Configuración"
-        >
-          <span className="icono-boton">⚙️</span>
-        </button>
-      </div>
-
-      {/* Instrucciones de uso */}
-      <div className="instrucciones-controles">
-        {estadoJuego === ESTADOS_JUEGO.ESPERANDO && (
-          <div className="instruccion activa">
-            <span className="icono-instruccion">💡</span>
-            <span className="texto-instruccion">Presiona "Lanzar" para comenzar a pescar</span>
-          </div>
-        )}
-        
-        {estadoJuego === ESTADOS_JUEGO.PESCANDO && (
-          <div className="instruccion activa">
-            <span className="icono-instruccion">⏳</span>
-            <span className="texto-instruccion">Espera pacientemente... un pez puede picar en cualquier momento</span>
-          </div>
-        )}
-        
-        {estadoJuego === ESTADOS_JUEGO.LUCHANDO && (
-          <div className="instruccion activa critica">
-            <span className="icono-instruccion">⚠️</span>
-            <span className="texto-instruccion">
-              ¡Controla la tensión! Mantén presionado "Recoger" o "Soltar" según sea necesario
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* Indicadores de estado */}
+      {/* Indicadores de estado del juego */}
       <div className="indicadores-estado">
-        
-        {/* Indicador de vibración */}
-        {vibracionDisponible && (
-          <div className="indicador-caracteristica">
-            <span className="icono-caracteristica">📳</span>
-            <span className="texto-caracteristica">Vibración activa</span>
+        {estadoJuego === 'lanzando' && (
+          <div className="estado-visual lanzando">
+            <div className="spinner"></div>
+            <span>Señuelo en vuelo...</span>
           </div>
         )}
-        
-        {/* Indicador de controles táctiles */}
-        <div className="indicador-caracteristica">
-          <span className="icono-caracteristica">👆</span>
-          <span className="texto-caracteristica">Controles táctiles optimizados</span>
-        </div>
-        
-        {/* Indicador de estado del juego */}
-        <div className={`indicador-estado-juego ${estadoJuego}`}>
-          <div className="punto-estado" />
-          <span className="texto-estado">
-            {estadoJuego === ESTADOS_JUEGO.ESPERANDO && 'Listo para pescar'}
-            {estadoJuego === ESTADOS_JUEGO.LANZANDO && 'Lanzando señuelo'}
-            {estadoJuego === ESTADOS_JUEGO.PESCANDO && 'Esperando pez'}
-            {estadoJuego === ESTADOS_JUEGO.LUCHANDO && 'Pez luchando'}
-            {estadoJuego === ESTADOS_JUEGO.CAPTURADO && 'Pez capturado'}
-            {estadoJuego === ESTADOS_JUEGO.PERDIDO && 'Pez perdido'}
-            {estadoJuego === ESTADOS_JUEGO.PAUSA && 'Juego pausado'}
-          </span>
-        </div>
+
+        {estadoJuego === 'pescando' && (
+          <div className="estado-visual pescando">
+            <div className="ondas-radar">
+              <div className="onda-radar"></div>
+              <div className="onda-radar"></div>
+              <div className="onda-radar"></div>
+            </div>
+            <span>Detectando peces...</span>
+          </div>
+        )}
+
+        {estadoJuego === 'picando' && (
+          <div className="estado-visual picando">
+            <div className="alerta-picada">❗</div>
+            <span>¡Un pez muerde el anzuelo!</span>
+          </div>
+        )}
       </div>
 
-      {/* Consejos dinámicos */}
-      <div className="consejos-dinamicos">
-        {estadoJuego === ESTADOS_JUEGO.LUCHANDO && (
-          <div className="consejo">
-            <span className="icono-consejo">💪</span>
-            <span className="texto-consejo">
-              Mantén la tensión entre 30-70% para no romper el sedal ni perder el pez
-            </span>
+      {/* Instrucciones contextuales */}
+      <div className="instrucciones-contextuales">
+        {estadoJuego === 'inicial' && (
+          <div className="instruccion">
+            👆 Toca "LANZAR SEÑUELO" para comenzar tu aventura de pesca
           </div>
         )}
-        
-        {estadoJuego === ESTADOS_JUEGO.ESPERANDO && (
-          <div className="consejo">
-            <span className="icono-consejo">🎯</span>
-            <span className="texto-consejo">
-              Los peces más grandes suelen estar en aguas más profundas
-            </span>
+
+        {estadoJuego === 'luchando' && (
+          <div className="instruccion activa">
+            <div className="tip-lucha">
+              💡 <strong>MANTÉN PRESIONADO</strong> los botones para acción continua
+            </div>
+            <div className="tip-lucha">
+              🎯 Mantén la tensión <strong>por debajo del 100%</strong> para no perder el pez
+            </div>
+          </div>
+        )}
+
+        {estadoJuego === 'capturado' && (
+          <div className="instruccion exito">
+            🎊 ¡Excelente captura! Toca "NUEVO LANCE" para continuar pescando
+          </div>
+        )}
+
+        {estadoJuego === 'perdido' && (
+          <div className="instruccion motivacion">
+            💪 ¡No te rindas! Cada pescador pierde algunos peces. ¡Intenta de nuevo!
           </div>
         )}
       </div>

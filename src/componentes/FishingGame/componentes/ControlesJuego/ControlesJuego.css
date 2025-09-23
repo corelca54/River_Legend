@@ -1,442 +1,612 @@
-/**
- * ControlesJuego.css - Estilos para los controles del juego
- * Diseño optimizado para interacción táctil y visual atractiva
- */
+/* ControlesJuego.css - Estilos Profesionales */
 
 .controles-juego {
-  position: fixed !important;
-  bottom: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  z-index: 1000 !important;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 15px 20px;
-  background: rgba(0, 20, 40, 0.98) !important;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.8) 30%,
+    rgba(0, 0, 0, 0.95) 100%
+  );
   backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
-  max-height: 140px;
-  overflow: visible;
+  padding: 20px;
+  z-index: 50;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Controles principales */
-.controles-principales {
+/* Controles de lucha */
+.controles-lucha {
+  margin-bottom: 20px;
+}
+
+.indicador-tension-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  gap: 10px;
+}
+
+.etiqueta-tension {
+  color: white;
+  font-weight: bold;
+  font-size: 0.9rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.barra-tension-mini {
+  position: relative;
+  width: 150px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.relleno-tension {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #FFC107, #FF9800, #F44336);
+  transition: width 0.3s ease;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.barra-tension-mini.tension-critica .relleno-tension {
+  animation: tension-critica-flash 0.5s ease-in-out infinite;
+}
+
+.barra-tension-mini.tension-alta .relleno-tension {
+  animation: tension-alta-pulse 1s ease-in-out infinite;
+}
+
+.indicador-peligro {
+  position: absolute;
+  top: -2px;
+  transform: translateX(-50%);
+  font-size: 12px;
+  animation: peligro-parpadeo 1s ease-in-out infinite;
+}
+
+.valor-tension {
+  color: white;
+  font-weight: bold;
+  font-size: 0.9rem;
+  min-width: 40px;
+  text-align: right;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Botones de lucha */
+.botones-lucha {
   display: flex;
   gap: 15px;
   justify-content: center;
-  flex-wrap: wrap;
+  margin-bottom: 15px;
 }
 
-.control-btn {
+.boton-accion {
   position: relative;
-  min-width: 90px;
-  min-height: 45px;
-  padding: 8px 14px;
+  background: linear-gradient(145deg, #667eea 0%, #764ba2 100%);
   border: none;
-  border-radius: 10px;
-  font-size: 0.85rem;
-  font-weight: 600;
+  border-radius: 20px;
+  padding: 15px 25px;
+  color: white;
+  font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+  box-shadow: 
+    0 8px 20px rgba(0, 0, 0, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.2);
+  min-width: 120px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.boton-recoger {
+  background: linear-gradient(145deg, #4CAF50 0%, #45a049 100%);
+}
+
+.boton-recoger:hover {
+  background: linear-gradient(145deg, #5CBF60 0%, #4CAF50 100%);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 25px rgba(76, 175, 80, 0.4),
+    inset 0 2px 4px rgba(255, 255, 255, 0.2);
+}
+
+.boton-soltar {
+  background: linear-gradient(145deg, #FF9800 0%, #F57C00 100%);
+}
+
+.boton-soltar:hover {
+  background: linear-gradient(145deg, #FFB74D 0%, #FF9800 100%);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 25px rgba(255, 152, 0, 0.4),
+    inset 0 2px 4px rgba(255, 255, 255, 0.2);
+}
+
+.boton-accion:active,
+.boton-accion.presionado {
+  transform: translateY(2px);
+  box-shadow: 
+    0 4px 10px rgba(0, 0, 0, 0.3),
+    inset 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.boton-accion.presionado {
+  animation: boton-presionado-continuo 0.3s ease-in-out infinite;
+}
+
+.icono-boton {
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+}
+
+.texto-boton {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+.subtexto-boton {
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+.efecto-pulso {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.3s ease;
+}
+
+.boton-accion.presionado .efecto-pulso {
+  opacity: 1;
+  transform: scale(1);
+  animation: efecto-pulso-activo 0.6s ease-in-out infinite;
+}
+
+/* Consejos dinámicos */
+.consejos-dinamicos {
+  text-align: center;
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.consejo {
+  padding: 8px 15px;
+  border-radius: 15px;
+  font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  animation: consejo-aparicion 0.3s ease-out;
+}
+
+.consejo.critico {
+  background: linear-gradient(135deg, #F44336, #D32F2F);
+  color: white;
+  animation: consejo-critico-flash 0.5s ease-in-out infinite;
+}
+
+.consejo.alerta {
+  background: linear-gradient(135deg, #FF9800, #F57C00);
+  color: white;
+}
+
+.consejo.optimo {
+  background: linear-gradient(135deg, #4CAF50, #388E3C);
+  color: white;
+}
+
+/* Controles generales */
+.controles-generales {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Botón principal */
+.boton-principal {
+  position: relative;
+  background: linear-gradient(145deg, #2196F3 0%, #1976D2 100%);
+  border: none;
+  border-radius: 25px;
+  padding: 20px 40px;
+  color: white;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 10px 25px rgba(33, 150, 243, 0.4),
+    inset 0 2px 4px rgba(255, 255, 255, 0.2);
+  min-width: 200px;
   overflow: hidden;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
 }
 
-.control-btn::before {
-  content: '';
+.boton-principal:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 15px 30px rgba(33, 150, 243, 0.5),
+    inset 0 2px 4px rgba(255, 255, 255, 0.2);
+}
+
+.boton-principal:active:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 8px 20px rgba(33, 150, 243, 0.4),
+    inset 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.boton-principal:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Estados del botón principal */
+.boton-principal.estado-lanzando {
+  background: linear-gradient(145deg, #00BCD4 0%, #0097A7 100%);
+  animation: boton-lanzando 2s ease-in-out infinite;
+}
+
+.boton-principal.estado-esperando {
+  background: linear-gradient(145deg, #FFC107 0%, #FFA000 100%);
+  animation: boton-esperando 3s ease-in-out infinite;
+}
+
+.boton-principal.estado-picando {
+  background: linear-gradient(145deg, #FF5722 0%, #D84315 100%);
+  animation: boton-picando 0.5s ease-in-out infinite;
+}
+
+.boton-principal.estado-luchando {
+  background: linear-gradient(145deg, #9C27B0 0%, #7B1FA2 100%);
+  animation: boton-luchando 1s ease-in-out infinite;
+}
+
+.boton-principal.estado-capturado {
+  background: linear-gradient(145deg, #4CAF50 0%, #388E3C 100%);
+  animation: boton-exito 1s ease-in-out infinite;
+}
+
+.boton-principal.estado-perdido {
+  background: linear-gradient(145deg, #607D8B 0%, #455A64 100%);
+}
+
+.boton-principal.estado-pausado {
+  background: linear-gradient(145deg, #795548 0%, #5D4037 100%);
+  animation: boton-pausado 2s ease-in-out infinite;
+}
+
+.contenido-boton-principal {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.icono-principal {
+  font-size: 1.5rem;
+}
+
+.texto-principal {
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.efecto-fondo {
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
-  transition: left 0.5s ease;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: all 0.5s ease;
 }
 
-.control-btn:hover::before {
+.boton-principal:hover:not(:disabled) .efecto-fondo {
   left: 100%;
 }
 
-.contenido-boton {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  position: relative;
-  z-index: 1;
-}
-
-.icono-boton {
-  font-size: 1.5rem;
-  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.5));
-}
-
-.texto-boton {
-  font-size: 0.9rem;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-}
-
-/* Botón de lanzar */
-.control-btn.lanzar {
-  background: linear-gradient(135deg, #2E8B57, #228B22);
-  color: white;
-  flex: 1;
-  max-width: 200px;
-}
-
-.control-btn.lanzar:hover:not(.deshabilitado) {
-  background: linear-gradient(135deg, #228B22, #2E8B57);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(46, 139, 87, 0.4);
-}
-
-.control-btn.lanzar.activo {
-  background: linear-gradient(135deg, #FFD700, #FFA500);
-  color: #2F4F4F;
-  animation: pulsoLanzando 1.5s ease-in-out infinite;
-}
-
-@keyframes pulsoLanzando {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4);
-  }
-  50% {
-    transform: scale(1.05);
-    box-shadow: 0 8px 30px rgba(255, 215, 0, 0.6);
-  }
-}
-
-.indicador-pulse {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  height: 100%;
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: 16px;
-  animation: pulseIndicador 2s ease-in-out infinite;
-}
-
-@keyframes pulseIndicador {
-  0% {
-    width: 100%;
-    height: 100%;
-    opacity: 1;
-  }
-  100% {
-    width: 120%;
-    height: 120%;
-    opacity: 0;
-  }
-}
-
-/* Botón de recoger */
-.control-btn.recoger {
-  background: linear-gradient(135deg, #4682B4, #87CEEB);
-  color: white;
-}
-
-.control-btn.recoger:hover:not(.deshabilitado) {
-  background: linear-gradient(135deg, #87CEEB, #4682B4);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(70, 130, 180, 0.4);
-}
-
-.control-btn.recoger.presionado {
-  background: linear-gradient(135deg, #1E90FF, #00BFFF);
-  transform: translateY(-1px) scale(0.98);
-  animation: efectoRecoger 0.2s ease-in-out infinite;
-}
-
-@keyframes efectoRecoger {
-  0%, 100% { transform: translateY(-1px) scale(0.98); }
-  50% { transform: translateY(-3px) scale(1.02); }
-}
-
-/* Botón de soltar */
-.control-btn.soltar {
-  background: linear-gradient(135deg, #FF8C00, #FF6347);
-  color: white;
-}
-
-.control-btn.soltar:hover:not(.deshabilitado) {
-  background: linear-gradient(135deg, #FF6347, #FF8C00);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(255, 140, 0, 0.4);
-}
-
-.control-btn.soltar.presionado {
-  background: linear-gradient(135deg, #FF4500, #DC143C);
-  transform: translateY(-1px) scale(0.98);
-  animation: efectoSoltar 0.2s ease-in-out infinite;
-}
-
-@keyframes efectoSoltar {
-  0%, 100% { transform: translateY(-1px) scale(0.98); }
-  50% { transform: translateY(-3px) scale(1.02); }
-}
-
-/* Estados de botones */
-.control-btn.deshabilitado {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
-}
-
-.control-btn.deshabilitado::before {
-  display: none;
-}
-
-/* Efectos de los botones */
-.efecto-indicador {
-  position: absolute;
-  bottom: -25px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.8);
-  background: rgba(0, 0, 0, 0.7);
-  padding: 2px 8px;
-  border-radius: 8px;
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.control-btn:hover .efecto-indicador {
-  opacity: 1;
-}
-
-.efecto-presion {
+.efecto-brillo {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.3) 0%,
-    transparent 70%
-  );
-  border-radius: inherit;
-  animation: ondaPresion 0.6s ease-out infinite;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-@keyframes ondaPresion {
-  0% {
-    transform: scale(0.8);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1.2);
-    opacity: 0;
-  }
+.boton-principal:hover:not(:disabled) .efecto-brillo {
+  opacity: 1;
 }
 
 /* Controles secundarios */
 .controles-secundarios {
   display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 10px;
 }
 
-.control-btn-secundario {
-  width: 50px;
-  height: 50px;
-  border: none;
-  border-radius: 50%;
+.boton-secundario {
   background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  padding: 10px 15px;
   color: white;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  gap: 8px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
 }
 
-.control-btn-secundario:hover {
+.boton-secundario:hover {
   background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px) scale(1.1);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-.control-btn-secundario.pausa:hover {
-  border-color: #FFD700;
-  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.3);
+.boton-secundario.activo {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  border-color: #4CAF50;
+  box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
 }
 
-.control-btn-secundario.reiniciar:hover {
-  border-color: #FF6347;
-  box-shadow: 0 6px 20px rgba(255, 99, 71, 0.3);
+.boton-secundario.inactivo {
+  background: linear-gradient(135deg, #F44336, #D32F2F);
+  border-color: #F44336;
 }
 
-.control-btn-secundario.configuracion:hover {
-  border-color: #87CEEB;
-  box-shadow: 0 6px 20px rgba(135, 206, 235, 0.3);
+.icono-secundario {
+  font-size: 1.1rem;
 }
 
-/* Instrucciones */
-.instrucciones-controles {
-  text-align: center;
+.texto-secundario {
+  font-weight: 500;
 }
 
-.instruccion {
+.indicador-vibracion {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 12px 20px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  margin-bottom: 10px;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: all 0.3s ease;
-}
-
-.instruccion.activa {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.instruccion.critica {
-  background: rgba(255, 68, 68, 0.2);
-  border-color: #FF4444;
-  animation: parpadearInstruccion 2s ease-in-out infinite;
-}
-
-@keyframes parpadearInstruccion {
-  0%, 100% {
-    background: rgba(255, 68, 68, 0.2);
-    box-shadow: 0 0 10px rgba(255, 68, 68, 0.2);
-  }
-  50% {
-    background: rgba(255, 68, 68, 0.4);
-    box-shadow: 0 0 20px rgba(255, 68, 68, 0.4);
-  }
-}
-
-.icono-instruccion {
-  font-size: 1.2rem;
-  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
-}
-
-.texto-instruccion {
-  color: white;
-  font-size: 0.9rem;
-  font-weight: 500;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  line-height: 1.4;
+  gap: 5px;
+  margin-top: 5px;
 }
 
 /* Indicadores de estado */
 .indicadores-estado {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: center;
+  justify-content: center;
+  margin-top: 15px;
+  min-height: 40px;
 }
 
-.indicador-caracteristica {
+.estado-visual {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.icono-caracteristica {
-  font-size: 0.9rem;
-}
-
-.texto-caracteristica {
-  font-weight: 400;
-}
-
-.indicador-estado-juego {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.punto-estado {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #4CAF50;
-  animation: pulsoEstado 2s ease-in-out infinite;
-}
-
-.indicador-estado-juego.luchando .punto-estado {
-  background: #FF4444;
-  animation: pulsoEstadoRapido 0.5s ease-in-out infinite;
-}
-
-.indicador-estado-juego.pescando .punto-estado {
-  background: #FFD700;
-}
-
-.indicador-estado-juego.pausa .punto-estado {
-  background: #FF8C00;
-  animation: none;
-}
-
-@keyframes pulsoEstado {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(1.2); }
-}
-
-@keyframes pulsoEstadoRapido {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.3; transform: scale(1.3); }
-}
-
-.texto-estado {
-  font-size: 0.8rem;
+  gap: 10px;
   color: white;
   font-weight: 500;
+  animation: estado-aparicion 0.3s ease-out;
 }
 
-/* Consejos dinámicos */
-.consejos-dinamicos {
-  margin-top: 10px;
+.estado-visual.lanzando .spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spinner-rotacion 1s linear infinite;
 }
 
-.consejo {
+.estado-visual.pescando .ondas-radar {
+  position: relative;
+  width: 24px;
+  height: 24px;
+}
+
+.onda-radar {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 2px solid rgba(255, 193, 7, 0.6);
+  border-radius: 50%;
+  animation: radar-expansion 2s ease-out infinite;
+}
+
+.onda-radar:nth-child(2) {
+  animation-delay: 0.7s;
+}
+
+.onda-radar:nth-child(3) {
+  animation-delay: 1.4s;
+}
+
+.estado-visual.picando .alerta-picada {
+  font-size: 1.5rem;
+  animation: alerta-parpadeo 0.3s ease-in-out infinite;
+}
+
+/* Instrucciones contextuales */
+.instrucciones-contextuales {
+  margin-top: 15px;
+  text-align: center;
+  min-height: 50px;
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 10px 15px;
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 152, 0, 0.1));
-  border: 1px solid rgba(255, 215, 0, 0.3);
-  border-radius: 10px;
-  animation: aparecerConsejo 0.5s ease-out;
+  align-items: center;
+  justify-content: center;
 }
 
-@keyframes aparecerConsejo {
+.instruccion {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 12px 20px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: instruccion-aparicion 0.5s ease-out;
+  max-width: 400px;
+}
+
+.instruccion.activa {
+  background: rgba(33, 150, 243, 0.2);
+  border-color: rgba(33, 150, 243, 0.3);
+}
+
+.instruccion.exito {
+  background: rgba(76, 175, 80, 0.2);
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+.instruccion.motivacion {
+  background: rgba(255, 152, 0, 0.2);
+  border-color: rgba(255, 152, 0, 0.3);
+}
+
+.tip-lucha {
+  margin: 5px 0;
+  font-size: 0.85rem;
+}
+
+.tip-lucha strong {
+  color: #FFC107;
+}
+
+/* ANIMACIONES */
+
+@keyframes tension-critica-flash {
+  0%, 100% { background: linear-gradient(90deg, #F44336, #D32F2F); }
+  50% { background: linear-gradient(90deg, #FF5722, #F44336); }
+}
+
+@keyframes tension-alta-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes peligro-parpadeo {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes boton-presionado-continuo {
+  0%, 100% { transform: translateY(2px) scale(0.98); }
+  50% { transform: translateY(3px) scale(0.96); }
+}
+
+@keyframes efecto-pulso-activo {
+  0%, 100% { opacity: 0.8; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes consejo-aparicion {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes consejo-critico-flash {
+  0%, 100% { 
+    background: linear-gradient(135deg, #F44336, #D32F2F);
+    transform: scale(1);
+  }
+  50% { 
+    background: linear-gradient(135deg, #FF5722, #F44336);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes boton-lanzando {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+@keyframes boton-esperando {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes boton-picando {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes boton-luchando {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.02) rotate(1deg); }
+  75% { transform: scale(1.02) rotate(-1deg); }
+}
+
+@keyframes boton-exito {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+@keyframes boton-pausado {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes spinner-rotacion {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes radar-expansion {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes alerta-parpadeo {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+@keyframes estado-aparicion {
   0% {
     opacity: 0;
     transform: translateY(10px);
@@ -447,235 +617,112 @@
   }
 }
 
-.icono-consejo {
-  font-size: 1.1rem;
-  margin-top: 2px;
-  filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.6));
-}
-
-.texto-consejo {
-  color: white;
-  font-size: 0.85rem;
-  line-height: 1.4;
-  font-weight: 400;
+@keyframes instruccion-aparicion {
+  0% {
+    opacity: 0;
+    transform: translateY(15px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .controles-juego {
     padding: 15px;
-    gap: 15px;
   }
-  
-  .controles-principales {
-    gap: 12px;
+
+  .botones-lucha {
+    flex-direction: column;
+    gap: 10px;
   }
-  
-  .control-btn {
+
+  .boton-accion {
+    padding: 12px 20px;
     min-width: 100px;
-    min-height: 55px;
-    padding: 12px 16px;
-    font-size: 0.9rem;
   }
-  
-  .icono-boton {
-    font-size: 1.3rem;
+
+  .boton-principal {
+    padding: 15px 30px;
+    font-size: 1rem;
+    min-width: 180px;
   }
-  
-  .texto-boton {
-    font-size: 0.8rem;
+
+  .controles-secundarios {
+    flex-direction: column;
+    gap: 10px;
   }
-  
-  .control-btn-secundario {
-    width: 45px;
-    height: 45px;
+
+  .barra-tension-mini {
+    width: 120px;
   }
-  
-  .texto-instruccion {
+
+  .instruccion {
     font-size: 0.85rem;
-  }
-  
-  .consejo {
-    padding: 8px 12px;
-  }
-  
-  .texto-consejo {
-    font-size: 0.8rem;
+    padding: 10px 15px;
   }
 }
 
 @media (max-width: 480px) {
   .controles-juego {
-    padding: 12px;
-    gap: 12px;
-  }
-  
-  .controles-principales {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .control-btn {
-    width: 100%;
-    min-width: auto;
-    min-height: 50px;
-    padding: 10px 15px;
-  }
-  
-  .control-btn.lanzar {
-    max-width: none;
-  }
-  
-  .controles-secundarios {
-    justify-content: space-around;
-  }
-  
-  .control-btn-secundario {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .instruccion {
-    padding: 10px 15px;
-    margin-bottom: 8px;
-  }
-  
-  .icono-instruccion {
-    font-size: 1rem;
-  }
-  
-  .texto-instruccion {
-    font-size: 0.8rem;
-  }
-  
-  .indicadores-estado {
-    gap: 6px;
-  }
-  
-  .indicador-caracteristica {
-    font-size: 0.7rem;
-  }
-  
-  .texto-estado {
-    font-size: 0.7rem;
-  }
-}
-
-@media (max-width: 320px) {
-  .controles-juego {
     padding: 10px;
   }
-  
-  .control-btn {
-    min-height: 45px;
-    padding: 8px 12px;
-    font-size: 0.8rem;
+
+  .boton-principal {
+    padding: 12px 25px;
+    font-size: 0.9rem;
+    min-width: 160px;
   }
-  
+
+  .icono-principal {
+    font-size: 1.3rem;
+  }
+
+  .boton-accion {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+  }
+
   .icono-boton {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
   }
-  
-  .texto-boton {
-    font-size: 0.7rem;
-  }
-  
-  .consejos-dinamicos {
-    display: none; /* Ocultar en pantallas muy pequeñas */
-  }
-}
 
-/* Orientación horizontal */
-@media (max-height: 500px) and (orientation: landscape) {
-  .controles-juego {
-    padding: 8px 15px;
-    gap: 8px;
+  .barra-tension-mini {
+    width: 100px;
+    height: 6px;
   }
-  
-  .controles-principales {
-    flex-direction: row;
-    gap: 8px;
-  }
-  
-  .control-btn {
-    min-width: 80px;
-    min-height: 40px;
-    padding: 6px 10px;
-    font-size: 0.8rem;
-  }
-  
-  .icono-boton {
-    font-size: 1rem;
-  }
-  
-  .texto-boton {
-    font-size: 0.7rem;
-  }
-  
-  .instrucciones-controles {
-    display: none; /* Ocultar para ahorrar espacio */
-  }
-  
-  .consejos-dinamicos {
-    display: none;
-  }
-  
-  .indicadores-estado {
-    flex-direction: row;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-}
 
-/* Optimizaciones de rendimiento */
-@media (prefers-reduced-motion: reduce) {
-  .control-btn,
-  .control-btn-secundario,
-  .instruccion,
-  .consejo,
-  .punto-estado,
-  .indicador-pulse,
-  .efecto-presion {
-    animation: none;
-    transition: none;
-  }
-  
-  .control-btn:hover,
-  .control-btn-secundario:hover {
-    transform: none;
-  }
-  
-  .control-btn::before {
-    display: none;
-  }
-}
-
-/* Modo de contraste alto */
-@media (prefers-contrast: high) {
-  .control-btn {
-    border: 3px solid #FFFFFF;
-  }
-  
-  .control-btn.deshabilitado {
-    border-color: #666666;
-  }
-  
-  .control-btn-secundario {
-    border: 3px solid #FFFFFF;
-  }
-  
   .instruccion {
-    border: 2px solid #FFFFFF;
+    font-size: 0.8rem;
+    padding: 8px 12px;
+    max-width: 320px;
   }
-  
-  .instruccion.critica {
-    border-color: #FF0000;
-    background: #800000;
+}
+
+/* Mejoras para dispositivos táctiles */
+@media (hover: none) and (pointer: coarse) {
+  .boton-accion,
+  .boton-principal,
+  .boton-secundario {
+    min-height: 48px; /* Tamaño mínimo recomendado para touch */
   }
-  
-  .consejo {
-    border: 2px solid #FFFF00;
-    background: #333300;
+
+  .boton-accion {
+    min-width: 140px;
+  }
+
+  .boton-principal {
+    min-width: 200px;
+    padding: 18px 35px;
+  }
+
+  /* Eliminar efectos hover en dispositivos táctiles */
+  .boton-accion:hover,
+  .boton-principal:hover,
+  .boton-secundario:hover {
+    transform: none;
+    box-shadow: initial;
   }
 }

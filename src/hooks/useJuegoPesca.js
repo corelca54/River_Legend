@@ -1,339 +1,468 @@
-/**
- * useJuegoPesca.js - Hook principal para la lógica del juego de pesca
- * Maneja todos los estados y acciones del juego
- */
-
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { ESTADOS_JUEGO, CONFIGURACION_PESCA, CONFIGURACION_UI } from '../data/constantesJuego';
-import { obtenerPezAleatorio } from '../data/datosPeces';
-import { calcularPuntosPorCaptura, calcularExperienciaPorCaptura } from '../herramientas/calculosPesca';
 
-export const useJuegoPesca = () => {
-  // Estados principales del juego
-  const [estadoJuego, setEstadoJuego] = useState(ESTADOS_JUEGO.ESPERANDO);
+// Estados del juego
+export const ESTADOS_JUEGO = {
+  INICIAL: 'inicial',
+  LANZANDO: 'lanzando',
+  PESCANDO: 'pescando',
+  LUCHANDO: 'luchando',
+  CAPTURADO: 'capturado',
+  PERDIDO: 'perdido'
+};
+
+// Configuración del juego
+const CONFIG_JUEGO = {
+  TIEMPO_ESPERA_MIN: 3000,
+  TIEMPO_ESPERA_MAX: 8000,
+  TIEMPO_LUCHA_MAX: 30000,
+  TENSION_MAX: 100,
+  TENSION_CRITICA: 85
+};
+
+// Base de datos de peces con imágenes reales
+const PECES_DISPONIBLES = {
+  bocachico: {
+    id: 'bocachico',
+    nombre: 'Bocachico',
+    nombreCientifico: 'Prochilodus magdalenae',
+    imagen: '/imagenes/peces/bocachico.jpg',
+    rareza: 'común',
+    dificultad: 3,
+    pesoMin: 0.5,
+    pesoMax: 3.0,
+    longitudMin: 20,
+    longitudMax: 40,
+    habitat: 'Río Magdalena',
+    puntos: 150,
+    descripcion: 'Pez plateado muy común en los ríos colombianos',
+    color: '#C0C0C0',
+    sonidoCaptura: 'splash_pequeno',
+    movimiento: 'zigzag'
+  },
+  bagre_rayado: {
+    id: 'bagre_rayado',
+    nombre: 'Bagre Rayado',
+    nombreCientifico: 'Pseudoplatystoma fasciatum',
+    imagen: '/imagenes/peces/bagre_rayado.jpg',
+    rareza: 'raro',
+    dificultad: 6,
+    pesoMin: 5.0,
+    pesoMax: 25.0,
+    longitudMin: 50,
+    longitudMax: 120,
+    habitat: 'Río Orinoco',
+    puntos: 400,
+    descripcion: 'Depredador con distintivas rayas negras',
+    color: '#F4A460',
+    sonidoCaptura: 'splash_grande',
+    movimiento: 'violento'
+  },
+  sabalo: {
+    id: 'sabalo',
+    nombre: 'Sábalo',
+    nombreCientifico: 'Brycon moorei',
+    imagen: '/imagenes/peces/sabalo.jpg',
+    rareza: 'común',
+    dificultad: 4,
+    pesoMin: 1.0,
+    pesoMax: 8.0,
+    longitudMin: 25,
+    longitudMax: 60,
+    habitat: 'Ríos Andinos',
+    puntos: 200,
+    descripcion: 'Pez plateado con aletas naranjas',
+    color: '#FFD700',
+    sonidoCaptura: 'splash_mediano',
+    movimiento: 'rapido'
+  },
+  pavon: {
+    id: 'pavon',
+    nombre: 'Pavón',
+    nombreCientifico: 'Cichla orinocensis',
+    imagen: '/imagenes/peces/pavon.jpg',
+    rareza: 'épico',
+    dificultad: 8,
+    pesoMin: 3.0,
+    pesoMax: 15.0,
+    longitudMin: 40,
+    longitudMax: 80,
+    habitat: 'Río Orinoco',
+    puntos: 600,
+    descripcion: 'Depredador agresivo de aguas tropicales',
+    color: '#FFD700',
+    sonidoCaptura: 'splash_grande',
+    movimiento: 'agresivo'
+  },
+  arapaima: {
+    id: 'arapaima',
+    nombre: 'Arapaima',
+    nombreCientifico: 'Arapaima gigas',
+    imagen: '/imagenes/peces/arapaima.jpg',
+    rareza: 'legendario',
+    dificultad: 10,
+    pesoMin: 50.0,
+    pesoMax: 200.0,
+    longitudMin: 150,
+    longitudMax: 300,
+    habitat: 'Amazonía',
+    puntos: 1000,
+    descripcion: 'El gigante de los ríos amazónicos',
+    color: '#B22222',
+    sonidoCaptura: 'splash_epico',
+    movimiento: 'salvaje'
+  }
+};
+
+const useJuegoPesca = () => {
+  // Estados principales
+  const [estadoJuego, setEstadoJuego] = useState(ESTADOS_JUEGO.INICIAL);
   const [pezActual, setPezActual] = useState(null);
   const [tension, setTension] = useState(0);
-  const [profundidad, setProfundidad] = useState(0);
   const [tiempoLucha, setTiempoLucha] = useState(0);
-  const [posicionSenuelo, setPosicionSenuelo] = useState({ x: 50, y: 20 });
-  const [animacionPez, setAnimacionPez] = useState({ rotacion: 0, escala: 1 });
+  const [posicionSedal, setPosicionSedal] = useState({ x: 50, y: 15 });
+  const [pezSaliendoDelAgua, setPezSaliendoDelAgua] = useState(false);
+  const [estadisticasJugador, setEstadisticasJugador] = useState({
+    nivel: 1,
+    experiencia: 0,
+    experienciaNecesaria: 100,
+    pecesCapturados: 0,
+    puntosTotales: 0
+  });
 
-  // Estados del jugador
-  const [puntuacion, setPuntuacion] = useState(0);
-  const [nivel, setNivel] = useState(1);
-  const [experiencia, setExperiencia] = useState(0);
-  const [pezesCapturados, setPezesCapturados] = useState([]);
+  // Referencias para timers
+  const timeoutPescaRef = useRef(null);
+  const intervalLuchaRef = useRef(null);
+  const tiempoInicioLuchaRef = useRef(null);
 
-  // Estados de UI
-  const [mostrandoInfoPez, setMostrandoInfoPez] = useState(false);
-  const [mensajeEstado, setMensajeEstado] = useState('');
-  const [ultimaCaptura, setUltimaCaptura] = useState(null);
+  // Sistema de audio mejorado
+  const [audioContext, setAudioContext] = useState(null);
 
-  // Referencias para temporizadores
-  const intervalosRef = useRef([]);
-  const timeoutsRef = useRef([]);
-  const tiempoInicioLuchaRef = useRef(0);
-  const resistenciaPezRef = useRef(0);
-
-  // Función para limpiar temporizadores
-  const limpiarTemporizadores = useCallback(() => {
-    intervalosRef.current.forEach(clearInterval);
-    timeoutsRef.current.forEach(clearTimeout);
-    intervalosRef.current = [];
-    timeoutsRef.current = [];
-  }, []);
-
-  // Función para agregar intervalos con limpieza automática
-  const agregarIntervalo = useCallback((callback, tiempo) => {
-    const intervalo = setInterval(callback, tiempo);
-    intervalosRef.current.push(intervalo);
-    return intervalo;
-  }, []);
-
-  // Función para agregar timeouts con limpieza automática
-  const agregarTimeout = useCallback((callback, tiempo) => {
-    const timeout = setTimeout(callback, tiempo);
-    timeoutsRef.current.push(timeout);
-    return timeout;
-  }, []);
-
-  // Limpiar temporizadores al desmontar
-  useEffect(() => {
-    return () => limpiarTemporizadores();
-  }, [limpiarTemporizadores]);
-
-  // Función para mostrar mensaje temporal
-  const mostrarMensaje = useCallback((mensaje, tiempo = CONFIGURACION_UI.TIEMPO_MENSAJE_ESTADO) => {
-    setMensajeEstado(mensaje);
-    agregarTimeout(() => setMensajeEstado(''), tiempo);
-  }, [agregarTimeout]);
-
-  // Función para obtener color de tensión
-  const obtenerColorTension = useCallback((tensionActual) => {
-    if (tensionActual < CONFIGURACION_UI.UMBRAL_TENSION_MEDIA) {
-      return CONFIGURACION_UI.COLORES_TENSION.BAJA;
-    } else if (tensionActual < CONFIGURACION_UI.UMBRAL_TENSION_ALTA) {
-      return CONFIGURACION_UI.COLORES_TENSION.MEDIA;
+  const inicializarAudio = useCallback(() => {
+    if (!audioContext && typeof window !== 'undefined') {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      setAudioContext(ctx);
     }
-    return CONFIGURACION_UI.COLORES_TENSION.ALTA;
-  }, []);
+  }, [audioContext]);
 
-  // Función para lanzar el señuelo
-  const lanzarSenuelo = useCallback(() => {
-    if (estadoJuego !== ESTADOS_JUEGO.ESPERANDO) return;
+  const reproducirSonido = useCallback((tipo, volumen = 0.5) => {
+    if (!audioContext) return;
 
-    setEstadoJuego(ESTADOS_JUEGO.LANZANDO);
-    setTension(0);
-    setProfundidad(0);
-    mostrarMensaje("Lanzando señuelo al río...");
-
-    // Animación de lanzamiento
-    let profundidadActual = 0;
-    const intervaloLanzamiento = agregarIntervalo(() => {
-      profundidadActual += CONFIGURACION_PESCA.VELOCIDAD_HUNDIMIENTO;
-      setProfundidad(profundidadActual);
-      setPosicionSenuelo(prev => ({ 
-        ...prev, 
-        y: 20 + (profundidadActual / 100) * 60 
-      }));
-
-      if (profundidadActual >= CONFIGURACION_PESCA.PROFUNDIDAD_MAXIMA) {
-        clearInterval(intervaloLanzamiento);
-        setEstadoJuego(ESTADOS_JUEGO.PESCANDO);
-        mostrarMensaje("Esperando que pique un pez... 🎣");
-        
-        // Calcular tiempo de espera aleatorio (más largo para visibilidad)
-        const tiempoEspera = 2000 + Math.random() * 2000;
-
-        agregarTimeout(() => {
-          // Verificar que el juego siga en estado de pesca antes de iniciar lucha
-          setEstadoJuego(prevEstado => {
-            if (prevEstado === ESTADOS_JUEGO.PESCANDO) {
-              iniciarLucha();
-              return ESTADOS_JUEGO.LUCHANDO;
-            }
-            return prevEstado;
-          });
-        }, tiempoEspera);
-      }
-    }, 80); // más lento para animación visible
-  }, [estadoJuego, agregarIntervalo, agregarTimeout, mostrarMensaje]);
-
-  // Función para iniciar la lucha con un pez
-  const iniciarLucha = useCallback(() => {
-    const pez = obtenerPezAleatorio(nivel);
-    setPezActual(pez);
-    setEstadoJuego(ESTADOS_JUEGO.LUCHANDO);
-    setTiempoLucha(0);
-    tiempoInicioLuchaRef.current = Date.now();
-    resistenciaPezRef.current = pez.resistencia;
-
-    mostrarMensaje(`¡${pez.nombre} está luchando!`);
-
-    // Ciclo de lucha
-    const intervaloLucha = agregarIntervalo(() => {
-      const tiempoTranscurrido = (Date.now() - tiempoInicioLuchaRef.current) / 1000;
-      setTiempoLucha(tiempoTranscurrido);
-
-      // El pez lucha y aumenta la tensión
-      if (Math.random() < CONFIGURACION_PESCA.PROBABILIDAD_LUCHA) {
-        const incrementoTension = pez.fuerza * 
-          (CONFIGURACION_PESCA.INCREMENTO_TENSION_BASE + Math.random() * 2);
-        
-        setTension(prev => {
-          const nuevaTension = Math.min(prev + incrementoTension, CONFIGURACION_PESCA.TENSION_MAXIMA);
-          
-          // Si la tensión es muy alta, el sedal se rompe
-          if (nuevaTension >= CONFIGURACION_PESCA.TENSION_MAXIMA) {
-            clearInterval(intervaloLucha);
-            perderPez("¡Se rompió el sedal! 💔");
-          }
-          
-          return nuevaTension;
-        });
-
-        // Animación del pez luchando
-        setAnimacionPez(prev => ({
-          rotacion: prev.rotacion + (Math.random() - 0.5) * CONFIGURACION_PESCA.ROTACION_MAXIMA_PEZ,
-          escala: 1 + Math.sin(Date.now() / CONFIGURACION_PESCA.VELOCIDAD_ANIMACION_PEZ) * 
-                  CONFIGURACION_PESCA.ESCALA_LUCHA_PEZ
-        }));
-      }
-
-      // El pez se cansa gradualmente
-      resistenciaPezRef.current -= CONFIGURACION_PESCA.FACTOR_CANSANCIO;
+    try {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
       
-      if (resistenciaPezRef.current <= 0) {
-        clearInterval(intervaloLucha);
-        capturarPez(pez, tiempoTranscurrido);
-      }
-    }, CONFIGURACION_UI.INTERVALO_ACTUALIZACION);
-  }, [nivel, agregarIntervalo, mostrarMensaje]);
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
 
-  // Función para capturar el pez
-  const capturarPez = useCallback((pez, tiempoLuchaFinal) => {
-    setEstadoJuego(ESTADOS_JUEGO.CAPTURADO);
-    
-    // Calcular puntos y experiencia
-    const puntosGanados = calcularPuntosPorCaptura(pez, tiempoLuchaFinal, nivel);
-    const experienciaGanada = calcularExperienciaPorCaptura(pez, tiempoLuchaFinal);
-
-    // Actualizar estadísticas del jugador
-    setPuntuacion(prev => prev + puntosGanados);
-    setExperiencia(prev => {
-      const nuevaExp = prev + experienciaGanada;
-      const expRequeridaParaNivel = nivel * 100;
+      let frecuencia, duracion, tipoOnda;
       
-      if (nuevaExp >= expRequeridaParaNivel) {
-        setNivel(prevNivel => prevNivel + 1);
-        mostrarMensaje(`¡Felicidades! Has subido al nivel ${nivel + 1}`, 3000);
-        return nuevaExp - expRequeridaParaNivel;
+      switch (tipo) {
+        case 'lanzar':
+          frecuencia = 800;
+          duracion = 0.6;
+          tipoOnda = 'sine';
+          break;
+        case 'recoger':
+          frecuencia = 1200;
+          duracion = 0.3;
+          tipoOnda = 'square';
+          break;
+        case 'carrete':
+          frecuencia = 900;
+          duracion = 0.2;
+          tipoOnda = 'sawtooth';
+          break;
+        case 'pez_pica':
+          frecuencia = 600;
+          duracion = 1.0;
+          tipoOnda = 'triangle';
+          break;
+        case 'pez_salta':
+          frecuencia = 800;
+          duracion = 0.8;
+          tipoOnda = 'sine';
+          break;
+        case 'splash_pequeno':
+          frecuencia = 400;
+          duracion = 0.8;
+          tipoOnda = 'sine';
+          break;
+        case 'splash_mediano':
+          frecuencia = 350;
+          duracion = 1.0;
+          tipoOnda = 'sine';
+          break;
+        case 'splash_grande':
+          frecuencia = 300;
+          duracion = 1.2;
+          tipoOnda = 'sine';
+          break;
+        case 'splash_epico':
+          frecuencia = 250;
+          duracion = 1.5;
+          tipoOnda = 'sine';
+          break;
+        default:
+          frecuencia = 440;
+          duracion = 0.3;
+          tipoOnda = 'sine';
       }
-      return nuevaExp;
-    });
 
-    // Agregar pez a la colección
-    const pezCapturado = {
-      ...pez,
-      fechaCaptura: new Date(),
-      tiempoLucha: tiempoLuchaFinal,
-      puntosObtenidos: puntosGanados,
-      experienciaObtenida: experienciaGanada
-    };
+      oscillator.type = tipoOnda;
+      oscillator.frequency.setValueAtTime(frecuencia, audioContext.currentTime);
+      
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+      gainNode.gain.linearRampToValueAtTime(volumen, audioContext.currentTime + 0.05);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duracion);
 
-    setPezesCapturados(prev => [...prev, pezCapturado]);
-    setUltimaCaptura(pezCapturado);
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + duracion);
+    } catch (error) {
+      console.log('Error reproduciendo sonido:', error);
+    }
+  }, [audioContext]);
 
-    // Mostrar información del pez
-    setMostrandoInfoPez(true);
-    setAnimacionPez({ rotacion: 0, escala: 1.5 });
-
-    // Ocultar información y reiniciar después de un tiempo
-    agregarTimeout(() => {
-      setMostrandoInfoPez(false);
-      reiniciarJuego();
-    }, CONFIGURACION_UI.TIEMPO_MOSTRAR_INFO_PEZ);
-
-    mostrarMensaje(`¡${pez.nombre} capturado! +${puntosGanados} puntos`);
-  }, [nivel, agregarTimeout, mostrarMensaje]);
-
-  // Función para perder el pez
-  const perderPez = useCallback((mensaje) => {
-    setEstadoJuego(ESTADOS_JUEGO.PERDIDO);
-    mostrarMensaje(mensaje);
+  // Generar pez aleatorio
+  const generarPezAleatorio = useCallback(() => {
+    const peces = Object.values(PECES_DISPONIBLES);
+    const pezSeleccionado = peces[Math.floor(Math.random() * peces.length)];
     
-    agregarTimeout(() => {
-      reiniciarJuego();
-    }, 2000);
-  }, [agregarTimeout, mostrarMensaje]);
-
-  // Función para recoger el sedal
-  const recogerSedal = useCallback(() => {
-    if (estadoJuego === ESTADOS_JUEGO.LUCHANDO) {
-      setTension(prev => Math.max(prev - CONFIGURACION_PESCA.REDUCCION_TENSION_RECOGER, 0));
-      setProfundidad(prev => Math.max(prev - CONFIGURACION_PESCA.VELOCIDAD_RECOGIDA, 0));
-      setPosicionSenuelo(prev => ({ 
-        ...prev, 
-        y: Math.max(prev.y - 2, 20) 
-      }));
-    } else if (estadoJuego === ESTADOS_JUEGO.PESCANDO) {
-      // Recoger sin pez enganchado
-      reiniciarJuego();
-    }
-  }, [estadoJuego]);
-
-  // Función para soltar el sedal (cuando hay mucha tensión)
-  const soltarSedal = useCallback(() => {
-    if (estadoJuego === ESTADOS_JUEGO.LUCHANDO && tension >= 50) {
-      setTension(prev => Math.max(prev - CONFIGURACION_PESCA.REDUCCION_TENSION_SOLTAR, 0));
-      setProfundidad(prev => Math.min(prev + 10, CONFIGURACION_PESCA.PROFUNDIDAD_MAXIMA));
-      setPosicionSenuelo(prev => ({ 
-        ...prev, 
-        y: Math.min(prev.y + 3, 80) 
-      }));
-    }
-  }, [estadoJuego, tension]);
-
-  // Función para reiniciar el juego
-  const reiniciarJuego = useCallback(() => {
-    limpiarTemporizadores();
-    setEstadoJuego(ESTADOS_JUEGO.ESPERANDO);
-    setPezActual(null);
-    setTension(0);
-    setProfundidad(0);
-    setTiempoLucha(0);
-    setPosicionSenuelo({ x: 50, y: 20 });
-    setAnimacionPez({ rotacion: 0, escala: 1 });
-    setMensajeEstado('');
-    tiempoInicioLuchaRef.current = 0;
-    resistenciaPezRef.current = 0;
-  }, [limpiarTemporizadores]);
-
-  // Función para pausar/reanudar el juego
-  const alternarPausa = useCallback(() => {
-    if (estadoJuego === ESTADOS_JUEGO.PAUSA) {
-      setEstadoJuego(ESTADOS_JUEGO.ESPERANDO);
-    } else if (estadoJuego !== ESTADOS_JUEGO.CAPTURADO && estadoJuego !== ESTADOS_JUEGO.PERDIDO) {
-      setEstadoJuego(ESTADOS_JUEGO.PAUSA);
-    }
-  }, [estadoJuego]);
-
-  // Función para obtener estadísticas del jugador
-  const obtenerEstadisticas = useCallback(() => {
-    const totalPeces = pezesCapturados.length;
-    const pesoTotal = pezesCapturados.reduce((sum, pez) => sum + pez.pesoActual, 0);
-    const pezMasGrande = pezesCapturados.reduce((mayor, pez) => 
-      pez.pesoActual > (mayor?.pesoActual || 0) ? pez : mayor, null);
+    const peso = (
+      Math.random() * (pezSeleccionado.pesoMax - pezSeleccionado.pesoMin) + 
+      pezSeleccionado.pesoMin
+    ).toFixed(1);
     
-    const especiesCapturadas = [...new Set(pezesCapturados.map(pez => pez.id))].length;
-    const tiempoTotalLucha = pezesCapturados.reduce((sum, pez) => sum + pez.tiempoLucha, 0);
+    const longitud = Math.floor(
+      Math.random() * (pezSeleccionado.longitudMax - pezSeleccionado.longitudMin) + 
+      pezSeleccionado.longitudMin
+    );
 
     return {
-      totalPeces,
-      pesoTotal: pesoTotal.toFixed(1),
-      pezMasGrande,
-      especiesCapturadas,
-      tiempoTotalLucha: tiempoTotalLucha.toFixed(1),
-      promedioTiempoLucha: totalPeces > 0 ? (tiempoTotalLucha / totalPeces).toFixed(1) : 0
+      ...pezSeleccionado,
+      peso: parseFloat(peso),
+      longitud: longitud,
+      id: `${pezSeleccionado.id}_${Date.now()}`
     };
-  }, [pezesCapturados]);
+  }, []);
+
+  // Lanzar señuelo
+  const lanzarSenuelo = useCallback(() => {
+    if (estadoJuego !== ESTADOS_JUEGO.INICIAL) return;
+
+    console.log('🎣 Lanzando señuelo...');
+    inicializarAudio();
+    reproducirSonido('lanzar');
+    setEstadoJuego(ESTADOS_JUEGO.LANZANDO);
+    setPezSaliendoDelAgua(false);
+    
+    // Animación del lanzamiento
+    const nuevaX = 25 + Math.random() * 50; // 25-75%
+    const nuevaY = 35 + Math.random() * 35; // 35-70%
+    setPosicionSedal({ x: nuevaX, y: nuevaY });
+
+    // Transición a pescando
+    setTimeout(() => {
+      console.log('🌊 Señuelo en el agua, esperando...');
+      setEstadoJuego(ESTADOS_JUEGO.PESCANDO);
+      
+      // Tiempo aleatorio para que pique un pez
+      const tiempoEspera = CONFIG_JUEGO.TIEMPO_ESPERA_MIN + 
+        Math.random() * (CONFIG_JUEGO.TIEMPO_ESPERA_MAX - CONFIG_JUEGO.TIEMPO_ESPERA_MIN);
+
+      console.log(`⏳ Pez picará en ${(tiempoEspera/1000).toFixed(1)}s`);
+
+      timeoutPescaRef.current = setTimeout(() => {
+        iniciarCaptura();
+      }, tiempoEspera);
+    }, 1200);
+  }, [estadoJuego, inicializarAudio, reproducirSonido]);
+
+  // Iniciar captura de pez
+  const iniciarCaptura = useCallback(() => {
+    const nuevoPez = generarPezAleatorio();
+    console.log('🐟 Pez picó:', nuevoPez.nombre, `${nuevoPez.peso}kg`);
+    
+    setPezActual(nuevoPez);
+    setEstadoJuego(ESTADOS_JUEGO.LUCHANDO);
+    setTension(30 + Math.random() * 20); // 30-50% inicial
+    setTiempoLucha(0);
+    tiempoInicioLuchaRef.current = Date.now();
+    
+    reproducirSonido('pez_pica');
+    iniciarLucha(nuevoPez);
+  }, [generarPezAleatorio, reproducirSonido]);
+
+  // Iniciar lucha con el pez
+  const iniciarLucha = useCallback((pez) => {
+    console.log('⚔️ Iniciando lucha con:', pez.nombre);
+    
+    intervalLuchaRef.current = setInterval(() => {
+      const tiempoActual = Date.now() - tiempoInicioLuchaRef.current;
+      setTiempoLucha(tiempoActual);
+
+      setTension(prev => {
+        const factorDificultad = pez.dificultad / 10;
+        const incremento = (0.8 + Math.random() * 1.5) * factorDificultad;
+        const nuevaTension = Math.min(prev + incremento, CONFIG_JUEGO.TENSION_MAX);
+        
+        // Si la tensión llega al máximo, el pez se escapa
+        if (nuevaTension >= CONFIG_JUEGO.TENSION_MAX) {
+          console.log('💔 Pez escapó por tensión máxima');
+          clearInterval(intervalLuchaRef.current);
+          setEstadoJuego(ESTADOS_JUEGO.PERDIDO);
+          reproducirSonido('splash_grande');
+          setTimeout(() => reiniciarJuego(), 2500);
+        }
+        
+        return nuevaTension;
+      });
+
+      // Límite de tiempo de lucha
+      if (tiempoActual >= CONFIG_JUEGO.TIEMPO_LUCHA_MAX) {
+        console.log('⏰ Tiempo de lucha agotado');
+        clearInterval(intervalLuchaRef.current);
+        setEstadoJuego(ESTADOS_JUEGO.PERDIDO);
+        reproducirSonido('splash_grande');
+        setTimeout(() => reiniciarJuego(), 2500);
+      }
+    }, 100);
+  }, [reproducirSonido]);
+
+  // Recoger sedal
+  const recogerSedal = useCallback(() => {
+    if (estadoJuego !== ESTADOS_JUEGO.LUCHANDO) return;
+
+    console.log('⬆️ Recogiendo sedal');
+    reproducirSonido('recoger');
+    reproducirSonido('carrete', 0.3);
+    
+    setTension(prev => {
+      const reduccion = 12 + Math.random() * 8; // 12-20 de reducción
+      const nuevaTension = Math.max(prev - reduccion, 0);
+      
+      console.log(`📉 Tensión: ${prev.toFixed(1)} → ${nuevaTension.toFixed(1)}`);
+      
+      // Si la tensión llega a 0, el pez es capturado
+      if (nuevaTension <= 3) {
+        console.log('🎉 ¡Pez capturado!');
+        clearInterval(intervalLuchaRef.current);
+        setPezSaliendoDelAgua(true);
+        reproducirSonido('pez_salta');
+        
+        // Animación del pez saliendo del agua
+        setTimeout(() => {
+          setEstadoJuego(ESTADOS_JUEGO.CAPTURADO);
+          if (pezActual) {
+            reproducirSonido(pezActual.sonidoCaptura);
+            actualizarEstadisticas(pezActual);
+          }
+        }, 500);
+      }
+      
+      return nuevaTension;
+    });
+  }, [estadoJuego, reproducirSonido, pezActual]);
+
+  // Soltar sedal
+  const soltarSedal = useCallback(() => {
+    if (estadoJuego !== ESTADOS_JUEGO.LUCHANDO) return;
+
+    console.log('⬇️ Soltando sedal');
+    setTension(prev => {
+      const reduccion = 6;
+      const nuevaTension = Math.max(prev - reduccion, 0);
+      console.log(`📉 Tensión: ${prev.toFixed(1)} → ${nuevaTension.toFixed(1)} (soltando)`);
+      return nuevaTension;
+    });
+  }, [estadoJuego]);
+
+  // Actualizar estadísticas del jugador
+  const actualizarEstadisticas = useCallback((pez) => {
+    setEstadisticasJugador(prev => {
+      const nuevaExp = prev.experiencia + (pez.dificultad * 15);
+      const nuevoNivel = nuevaExp >= prev.experienciaNecesaria ? prev.nivel + 1 : prev.nivel;
+      
+      const nuevasStats = {
+        ...prev,
+        pecesCapturados: prev.pecesCapturados + 1,
+        puntosTotales: prev.puntosTotales + pez.puntos,
+        experiencia: nuevaExp >= prev.experienciaNecesaria ? 
+          nuevaExp - prev.experienciaNecesaria : nuevaExp,
+        experienciaNecesaria: nuevoNivel > prev.nivel ? 
+          prev.experienciaNecesaria + 50 : prev.experienciaNecesaria,
+        nivel: nuevoNivel
+      };
+      
+      console.log('📊 Estadísticas actualizadas:', nuevasStats);
+      return nuevasStats;
+    });
+  }, []);
+
+  // Reiniciar juego
+  const reiniciarJuego = useCallback(() => {
+    console.log('🔄 Reiniciando juego');
+    clearTimeout(timeoutPescaRef.current);
+    clearInterval(intervalLuchaRef.current);
+    setEstadoJuego(ESTADOS_JUEGO.INICIAL);
+    setPezActual(null);
+    setTension(0);
+    setTiempoLucha(0);
+    setPosicionSedal({ x: 50, y: 15 });
+    setPezSaliendoDelAgua(false);
+  }, []);
+
+  // Pausar/reanudar juego
+  const pausarJuego = useCallback(() => {
+    if (estadoJuego === ESTADOS_JUEGO.LUCHANDO) {
+      clearInterval(intervalLuchaRef.current);
+    }
+    if (estadoJuego === ESTADOS_JUEGO.PESCANDO) {
+      clearTimeout(timeoutPescaRef.current);
+    }
+  }, [estadoJuego]);
+
+  const reanudarJuego = useCallback(() => {
+    if (estadoJuego === ESTADOS_JUEGO.LUCHANDO && pezActual) {
+      iniciarLucha(pezActual);
+    }
+    if (estadoJuego === ESTADOS_JUEGO.PESCANDO) {
+      const tiempoEspera = 2000 + Math.random() * 3000;
+      timeoutPescaRef.current = setTimeout(() => {
+        iniciarCaptura();
+      }, tiempoEspera);
+    }
+  }, [estadoJuego, pezActual, iniciarLucha, iniciarCaptura]);
+
+  // Cleanup al desmontar
+  useEffect(() => {
+    return () => {
+      clearTimeout(timeoutPescaRef.current);
+      clearInterval(intervalLuchaRef.current);
+    };
+  }, []);
 
   return {
-    // Estados del juego
+    // Estados
     estadoJuego,
     pezActual,
     tension,
-    profundidad,
     tiempoLucha,
-    posicionSenuelo,
-    animacionPez,
+    posicionSedal,
+    estadisticasJugador,
+    pezSaliendoDelAgua,
     
-    // Estados del jugador
-    puntuacion,
-    nivel,
-    experiencia,
-    pezesCapturados,
-    
-    // Estados de UI
-    mostrandoInfoPez,
-    mensajeEstado,
-    ultimaCaptura,
-    
-    // Acciones del juego
+    // Acciones
     lanzarSenuelo,
     recogerSedal,
     soltarSedal,
     reiniciarJuego,
-    alternarPausa,
+    pausarJuego,
+    reanudarJuego,
     
-    // Utilidades
-    obtenerColorTension,
-    obtenerEstadisticas,
-    
-    // Estado de la tensión para la UI
-    tensionCritica: tension >= CONFIGURACION_PESCA.TENSION_CRITICA,
-    puedeRecoger: estadoJuego === ESTADOS_JUEGO.LUCHANDO || estadoJuego === ESTADOS_JUEGO.PESCANDO,
-    puedeSoltar: estadoJuego === ESTADOS_JUEGO.LUCHANDO && tension >= 50,
-    puedeLanzar: estadoJuego === ESTADOS_JUEGO.ESPERANDO
+    // Audio
+    reproducirSonido,
+    inicializarAudio
   };
 };
+
+export default useJuegoPesca;

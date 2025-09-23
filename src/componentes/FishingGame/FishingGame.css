@@ -1,1066 +1,763 @@
-/* ========================================================================== */
-/* ESTILOS GLOBALES Y CONTENEDOR PRINCIPAL */
-/* ========================================================================== */
-
-/* Establece el box-sizing globalmente para facilitar el diseño. */
-*, *::before, *::after {
-  box-sizing: border-box;
-}
-
-/* Oculta las barras de desplazamiento, define una fuente base y un color de fondo para el cuerpo. */
-body {
-  overflow: hidden; /* Evita scroll no deseado. */
-  font-family: 'Montserrat', sans-serif; /* Fuente moderna y legible, similar a juegos. */
-  background: none !important;
-  color: #ecf0f1; /* Texto claro por defecto. */
-}
-
-/* Contenedor principal del juego. Ocupa toda la pantalla. */
-.juego-pesca {
-  position: relative; /* Contexto para elementos posicionados absolutamente. */
-  width: 100vw; /* Ancho completo del viewport. */
-  height: 100vh; /* Alto completo del viewport. */
-  display: flex; /* Utiliza flexbox para organizar los hijos. */
-  flex-direction: column; /* Apila los hijos verticalmente. */
-  justify-content: space-between; /* Distribuye el espacio verticalmente. */
-  align-items: center; /* Centra los elementos horizontalmente. */
-  overflow: hidden; /* Asegura que nada se desborde del contenedor. */
-  background: none !important;
-}
-
-/* Interfaz de usuario principal, superpuesta sobre el fondo. */
-.interfaz-juego {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 15px;
-  pointer-events: none;
-  z-index: 10;
-  background: none !important;
-}
-
-/* ========================================================================== */
-/* PANELES DE UI (SUPERIOR, CENTRAL, CONTROLES) */
-/* ========================================================================== */
-
-/* Panel superior (Estadísticas del jugador). */
-.panel-superior {
-  pointer-events: auto; /* Permite la interacción. */
-  width: 100%; /* Ocupa todo el ancho. */
-  display: flex; /* Flexbox para sus componentes internos (EstadisticasJugador). */
-  justify-content: flex-start; /* Alinea los elementos a la izquierda. */
-  padding-bottom: 10px; /* Pequeño espacio inferior. */
-  z-index: 100; /* Asegura que esté por encima de otros elementos. */
-}
-
-/* Área central de pesca. Contiene el señuelo, peces y panel de lucha. */
-.area-central-pesca {
-  position: relative; /* Contexto de posicionamiento para sus hijos. */
-  flex-grow: 1; /* Permite que ocupe el espacio disponible. */
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none; /* Permite la interacción con el área de juego real, no con este div. */
-  overflow: hidden; /* Evita que los elementos internos se desborden. */
-}
-
-/* Panel de información del pez durante la lucha. */
-.panel-info-lucha {
-  position: absolute; /* Posicionado sobre el área de pesca. */
-  top: 50%; /* Centrado verticalmente. */
-  left: 50%; /* Centrado horizontalmente. */
-  transform: translate(-50%, -50%); /* Ajuste final para centrado perfecto. */
-  background: none !important;
-  border: 2px solid #3498db; /* Borde azul brillante. */
-  border-radius: 15px; /* Bordes redondeados. */
-  padding: 20px 25px; /* Relleno interno. */
-  color: #e0f2f7; /* Texto claro. */
-  text-align: center; /* Centra el texto. */
-  box-shadow: 0 0 20px rgba(52, 152, 219, 0.6), inset 0 0 10px rgba(52, 152, 219, 0.4); /* Sombra exterior e interior. */
-  pointer-events: none; /* No interactuable para no interferir con el juego. */
-  z-index: 150; /* Por encima de otros elementos de la UI. */
-  opacity: 0; /* Inicialmente invisible. */
-  animation: fadeInPop 0.3s ease-out forwards; /* Animación de aparición. */
-}
-
-.panel-info-lucha.visible {
-    opacity: 1;
-}
-
-/* Animación para que el panel de información aparezca. */
-@keyframes fadeInPop {
-  0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-}
-
-/* Encabezado del panel de información de lucha. */
-.panel-info-lucha .header-info-lucha {
-  display: flex; /* Usa flexbox para el nombre y rareza. */
-  justify-content: center; /* Centra los elementos horizontalmente. */
-  align-items: center; /* Centra los elementos verticalmente. */
-  margin-bottom: 15px; /* Espacio inferior. */
-  gap: 10px; /* Espacio entre el nombre y la insignia. */
-}
-
-/* Título del nombre del pez. */
-.panel-info-lucha h3 {
-  font-size: 1.8rem; /* Tamaño de la fuente. */
-  color: #f1c40f; /* Color amarillo dorado. */
-  text-shadow: 0 0 8px rgba(241, 196, 15, 0.7); /* Sombra brillante. */
-  margin: 0; /* Elimina margen por defecto. */
-}
-
-/* Insignia de rareza del pez. */
-.rareza-badge {
-  padding: 5px 12px; /* Relleno interno. */
-  border-radius: 20px; /* Bordes muy redondeados. */
-  font-size: 0.8rem; /* Tamaño de la fuente. */
-  font-weight: bold; /* Negrita. */
-  text-transform: uppercase; /* Texto en mayúsculas. */
-  letter-spacing: 0.5px; /* Espaciado entre letras. */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Sombra para el badge. */
-}
-
-/* Contenedor de las estadísticas individuales durante la lucha. */
-.stats-lucha {
-  display: grid; /* Usa grid para organizar las estadísticas. */
-  grid-template-columns: repeat(2, 1fr); /* Dos columnas de igual ancho. */
-  gap: 10px 20px; /* Espacio entre filas y columnas. */
-  margin-top: 15px; /* Espacio superior. */
-}
-
-/* Ítem individual de estadística. */
-.stat-lucha {
-  display: flex; /* Flexbox para la etiqueta y el valor. */
-  justify-content: space-between; /* Etiqueta a la izquierda, valor a la derecha. */
-  align-items: center; /* Centra verticalmente. */
-  padding: 5px 0; /* Relleno vertical. */
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.2); /* Línea divisoria. */
-}
-
-.stat-lucha:last-child {
-  border-bottom: none; /* Elimina la línea en el último elemento. */
-}
-
-.stat-lucha .label {
-  font-weight: bold; /* Etiqueta en negrita. */
-  color: #bdc3c7; /* Color gris claro. */
-  font-size: 0.95rem; /* Tamaño de la fuente. */
-}
-
-.stat-lucha .valor, .stat-lucha .valor-habitat {
-  font-weight: 600; /* Un poco más de negrita. */
-  color: #ecf0f1; /* Texto blanco. */
-  font-size: 1rem; /* Tamaño de la fuente. */
-}
-
-.stat-lucha .valor-habitat {
-  background: none !important;
-  padding: 3px 8px;
-  border-radius: 5px;
-}
-
-/* Panel de controles (botones de acción). */
-.panel-controles {
-  pointer-events: auto; /* Permite la interacción. */
-  width: 100%;
-  display: flex; /* Flexbox para los botones. */
-  justify-content: center; /* Centra los botones. */
-  gap: 20px; /* Espacio entre botones. */
-  padding-top: 10px; /* Espacio superior. */
-  z-index: 100; /* Por encima de otros elementos. */
-}
-
-/* ========================================================================== */
-/* MENSAJES DE ESTADO Y BOTONES FLOTANTES */
-/* ========================================================================== */
-
-/* Contenedor del mensaje de estado del juego. */
-.mensaje-estado {
-  position: absolute; /* Posicionado sobre la interfaz. */
-  top: 150px; /* Posición desde arriba. */
-  left: 50%; /* Centrado horizontalmente. */
-  transform: translateX(-50%); /* Ajuste final para centrado. */
-  background: none !important;
-  color: #ecf0f1; /* Texto blanco. */
-  padding: 12px 25px; /* Relleno. */
-  border-radius: 30px; /* Bordes muy redondeados. */
-  font-size: 1.1rem; /* Tamaño de la fuente. */
-  font-weight: 500; /* Grosor de la fuente. */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); /* Sombra. */
-  pointer-events: none; /* No interactuable. */
-  z-index: 110; /* Por encima de la mayoría de elementos. */
-  animation: fadeInOutMessage 5s ease-in-out forwards; /* Animación de aparición y desaparición. */
-  min-width: 300px; /* Ancho mínimo para legibilidad. */
-  text-align: center; /* Centra el texto. */
-}
-
-/* Animación para el mensaje de estado (aparecer y desaparecer). */
-@keyframes fadeInOutMessage {
-  0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-  10% { opacity: 1; transform: translateX(-50%) translateY(0); }
-  90% { opacity: 1; transform: translateX(-50%) translateY(0); }
-  100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-}
-
-/* Estilo para el texto dentro del mensaje de estado. */
-.mensaje-estado .texto-estado {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-/* Estilo específico para mensajes de error (pez perdido). */
-.mensaje-estado .texto-estado.error {
-  color: #e74c3c; /* Color rojo de error. */
-  font-weight: bold;
-}
-
-/* Contenedor de botones flotantes (Colección, Estadísticas, Configuración). */
-.botones-flotantes {
-  position: absolute; /* Posicionado libremente. */
-  top: 20px; /* Desde arriba. */
-  right: 20px; /* Desde la derecha. */
-  display: flex; /* Flexbox para los botones. */
-  flex-direction: column; /* Apilados verticalmente. */
-  gap: 10px; /* Espacio entre botones. */
-  pointer-events: auto; /* Permite interacción. */
-  z-index: 100; /* Por encima de otros elementos. */
-}
-
-/* Estilo base para los botones flotantes. */
-.boton-coleccion, .boton-estadisticas, .boton-configuracion {
-  background: none !important;
-  color: #ecf0f1; /* Texto blanco. */
-  border: none;
-  border-radius: 10px; /* Bordes redondeados. */
-  padding: 10px 15px; /* Relleno. */
-  font-size: 0.9rem; /* Tamaño de la fuente. */
-  font-weight: 600; /* Negrita. */
-  cursor: pointer;
-  display: flex; /* Flexbox para el ícono, texto y contador. */
-  align-items: center; /* Centra verticalmente. */
-  gap: 8px; /* Espacio entre elementos. */
-  transition: all 0.2s ease; /* Transición suave. */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Sombra. */
-  min-width: 140px; /* Ancho mínimo. */
-  justify-content: space-between; /* Espacio entre elementos internos. */
-}
-
-.boton-coleccion:hover, .boton-estadisticas:hover, .boton-configuracion:hover {
-  background: none !important;
-  transform: translateX(-5px); /* Pequeño desplazamiento a la izquierda. */
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4); /* Sombra más intensa. */
-}
-
-.icono-boton {
-  font-size: 1.2rem; /* Tamaño del ícono. */
-  line-height: 1; /* Asegura la alineación. */
-}
-
-.texto-boton {
-  flex-grow: 1; /* Permite que el texto ocupe el espacio restante. */
-  text-align: left; /* Alinea el texto a la izquierda. */
-}
-
-.contador-boton {
-  background: none !important;
-  color: white;
-  padding: 2px 8px;
-  border-radius: 15px; /* Bordes redondeados. */
-  font-size: 0.8rem;
-  font-weight: bold;
-}
-
-/* ========================================================================== */
-/* MODAL DE CAPTURA REALISTA (NUEVO) */
-/* ========================================================================== */
-
-/* Contenedor del modal de captura. */
-.modal-captura-pez-overlay {
-  position: fixed; /* Fijo en la pantalla. */
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: none !important;
-  display: flex; /* Centra el contenido. */
-  justify-content: center;
-  align-items: center;
-  z-index: 1000; /* Muy por encima de todo. */
-  backdrop-filter: blur(5px); /* Efecto de desenfoque en el fondo. */
-  opacity: 0; /* Invisible por defecto. */
-  visibility: hidden; /* Oculto por defecto. */
-  transition: opacity 0.3s ease, visibility 0.3s ease; /* Transición suave. */
-}
-
-.modal-captura-pez-overlay.visible {
-  opacity: 1; /* Visible cuando se activa. */
-  visibility: visible;
-}
-
-/* Contenido principal del modal. */
-.modal-captura-contenido {
-  background: none !important;
-  border: 4px solid #f1c40f; /* Borde dorado brillante. */
-  border-radius: 20px; /* Bordes redondeados. */
-  padding: 40px; /* Relleno generoso. */
-  text-align: center;
-  color: #ecf0f1;
-  max-width: 600px; /* Ancho máximo. */
-  width: 90%; /* Ancho responsivo. */
-  box-shadow: 0 0 40px rgba(241, 196, 15, 0.8), inset 0 0 20px rgba(241, 196, 15, 0.5); /* Sombra intensa. */
-  transform: scale(0.8); /* Empieza más pequeño. */
-  opacity: 0; /* Invisible. */
-  animation: modalPopIn 0.4s ease-out forwards; /* Animación de aparición. */
+.fishing-game {
   position: relative;
-  overflow: hidden; /* Asegura que el confetti y destellos no se desborden. */
-}
-
-/* Animación para la aparición del modal. */
-@keyframes modalPopIn {
-  0% { transform: scale(0.8); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-/* Botón de cerrar el modal. */
-.modal-cerrar-btn {
-  position: absolute; /* Posicionado en la esquina. */
-  top: 15px;
-  right: 15px;
-  background: none; /* Sin fondo. */
-  border: none;
-  color: #ecf0f1;
-  font-size: 2rem; /* Tamaño grande para el ícono de cerrar. */
-  cursor: pointer;
-  transition: color 0.2s ease;
-  padding: 5px;
-  line-height: 1;
-}
-
-.modal-cerrar-btn:hover {
-  color: #e74c3c; /* Color rojo al pasar el ratón. */
-}
-
-/* Título del modal. */
-.modal-captura-contenido h2 {
-  font-size: 3rem; /* Título grande. */
-  color: #f1c40f;
-  margin-bottom: 20px;
-  text-shadow: 0 0 10px rgba(241, 196, 15, 0.9);
-}
-
-/* Contenedor para la imagen del pez. */
-.modal-pez-imagen-container {
-  width: 100%;
-  height: 200px; /* Altura fija para la imagen. */
-  background: none !important;
-  border-radius: 10px;
-  margin-bottom: 25px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 100vw;
+  height: 100vh;
   overflow: hidden;
-  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.1);
+  font-family: 'Arial', sans-serif;
 }
 
-.modal-pez-imagen {
-  max-width: 90%; /* Asegura que la imagen se ajuste. */
-  max-height: 90%;
-  object-fit: contain; /* Mantiene la proporción. */
-  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5)); /* Sombra brillante. */
-}
-
-/* Nombre del pez en el modal. */
-.modal-pez-nombre {
-  font-size: 2.5rem; /* Nombre grande y prominente. */
-  color: #3498db; /* Color azul. */
-  margin-bottom: 10px;
-  text-shadow: 0 0 8px rgba(52, 152, 219, 0.7);
-}
-
-/* Rarity badge en el modal. */
-.modal-rareza-badge {
-  padding: 8px 18px;
-  border-radius: 25px;
-  font-size: 1rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 25px;
-  display: inline-block; /* Para que ocupe solo el ancho necesario. */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-}
-
-/* Contenedor de estadísticas detalladas del pez. */
-.modal-pez-stats {
-  display: grid; /* Grid para organizar estadísticas. */
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Columnas autoajustables. */
-  gap: 15px; /* Espacio entre las estadísticas. */
-  margin-bottom: 30px;
-  background: none !important;
-  border-radius: 10px;
-  padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.modal-stat-item {
-  background: none !important;
-  border-radius: 8px;
-  padding: 10px 15px;
-  text-align: left;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  border-left: 3px solid #3498db; /* Borde lateral azul. */
-}
-
-.modal-stat-item .label {
-  display: block; /* Etiqueta en una nueva línea. */
-  font-size: 0.85rem;
-  color: #bdc3c7;
-  margin-bottom: 5px;
-  font-weight: 500;
-}
-
-.modal-stat-item .valor {
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: #e0f2f7;
-}
-
-/* Sección de recompensas. */
-.modal-recompensas {
-  display: flex; /* Flexbox para puntos y experiencia. */
-  justify-content: center;
-  gap: 30px; /* Espacio entre las recompensas. */
-  margin-bottom: 30px;
-}
-
-.modal-recompensa-item {
-  display: flex; /* Flexbox para ícono y valor. */
-  align-items: center;
-  gap: 10px;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #2ecc71; /* Color verde para recompensas. */
-  text-shadow: 0 0 8px rgba(46, 204, 113, 0.7);
-}
-
-.modal-recompensa-item.exp {
-  color: #9b59b6; /* Color púrpura para experiencia. */
-  text-shadow: 0 0 8px rgba(155, 89, 182, 0.7);
-}
-
-.modal-nuevo-record {
-  background: none !important;
-  color: #1a3a5a; /* Texto oscuro. */
-  padding: 8px 15px;
-  border-radius: 25px;
-  font-weight: bold;
-  margin-top: -15px; /* Superpone un poco sobre la sección anterior. */
-  margin-bottom: 25px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-  display: inline-block;
-  animation: pulse 1.5s infinite ease-in-out; /* Animación de pulsación. */
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-/* Botón principal de acción en el modal. */
-.modal-boton-accion {
-  background: none !important;
-  color: white;
-  border: none;
-  padding: 15px 30px;
-  border-radius: 50px;
-  font-size: 1.3rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-  letter-spacing: 0.5px;
-}
-
-.modal-boton-accion:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-}
-
-.modal-boton-accion:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* ========================================================================== */
-/* EFECTOS VISUALES GLOBALES (LUCHA Y CELEBRACIÓN) */
-/* ========================================================================== */
-
-/* Contenedor para efectos globales durante la lucha. */
-.efectos-lucha-globales {
+/* ===== EFECTOS SOBRE EL VIDEO ===== */
+.overlay-efectos {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 50; /* Por debajo de la UI principal pero por encima del fondo. */
-  overflow: hidden;
+  z-index: 2;
 }
 
-/* Efecto de vibración de pantalla. */
-.vibración-pantalla {
+/* Partículas ambientales */
+.particulas-ambiente {
   position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
-  background: none !important;
-  opacity: 0; /* Invisible por defecto. */
-  animation: screenShake 0.1s infinite alternate; /* Animación de vibración. */
 }
 
-/* Animación de vibración de pantalla. */
-@keyframes screenShake {
-  0% { transform: translate(0, 0); opacity: 0.1; }
-  25% { transform: translate(2px, 2px); opacity: 0.15; }
-  50% { transform: translate(-2px, 2px); opacity: 0.1; }
-  75% { transform: translate(2px, -2px); opacity: 0.15; }
-  100% { transform: translate(-2px, -2px); opacity: 0.1; }
+.particula-ambiente {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: rgba(139, 101, 65, 0.4);
+  border-radius: 50%;
+  animation: particula-flotacion linear infinite;
 }
 
-/* Alerta de tensión crítica (aparece en medio de la pantalla). */
-.alerta-tension-critica {
+@keyframes particula-flotacion {
+  0% {
+    transform: translateY(-10px) translateX(0px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(calc(100vh + 10px)) translateX(50px) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+/* Rayos de luz */
+.rayos-luz {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.rayo-luz {
+  position: absolute;
+  top: 0;
+  width: 5px;
+  height: 100%;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 200, 0.25) 0%,
+    rgba(255, 255, 200, 0.15) 30%,
+    rgba(255, 255, 200, 0.08) 60%,
+    transparent 100%
+  );
+  animation: rayo-ondulacion 12s ease-in-out infinite;
+  transform-origin: top center;
+}
+
+.rayo-1 { animation-delay: 0s; }
+.rayo-2 { animation-delay: 2s; }
+.rayo-3 { animation-delay: 4s; }
+.rayo-4 { animation-delay: 6s; }
+.rayo-5 { animation-delay: 8s; }
+.rayo-6 { animation-delay: 10s; }
+
+@keyframes rayo-ondulacion {
+  0%, 100% { 
+    transform: translateX(-20px) rotate(-4deg);
+    opacity: 0.3;
+  }
+  50% { 
+    transform: translateX(20px) rotate(4deg);
+    opacity: 0.6;
+  }
+}
+
+/* Ondas de superficie globales */
+.ondas-superficie-global {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 40%;
+}
+
+.onda-global {
+  position: absolute;
+  width: 200%;
+  height: 30px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 25%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.08) 75%,
+    transparent 100%
+  );
+  animation: onda-global-movimiento 8s linear infinite;
+  border-radius: 15px;
+}
+
+.onda-1 {
+  top: 15%;
+  animation-delay: 0s;
+  transform: skewY(2deg);
+}
+
+.onda-2 {
+  top: 25%;
+  animation-delay: -2s;
+  transform: skewY(-1deg);
+}
+
+.onda-3 {
+  top: 35%;
+  animation-delay: -4s;
+  transform: skewY(1.5deg);
+}
+
+.onda-4 {
+  top: 45%;
+  animation-delay: -6s;
+  transform: skewY(-0.5deg);
+}
+
+@keyframes onda-global-movimiento {
+  0% { transform: translateX(-100%) skewY(2deg); }
+  100% { transform: translateX(0%) skewY(2deg); }
+}
+
+/* ===== PANEL SUPERIOR ===== */
+.panel-superior {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 15;
+}
+
+/* ===== MEDIDOR DE TENSIÓN ===== */
+.medidor-tension-container {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: none !important;
-  border: 3px solid #c0392b;
-  border-radius: 20px;
-  padding: 25px 35px;
-  text-align: center;
-  color: white;
-  box-shadow: 0 0 30px rgba(231, 76, 60, 0.8), inset 0 0 15px rgba(231, 76, 60, 0.5);
-  animation: criticalPulse 0.8s infinite alternate, fadeInOutAlert 3s forwards; /* Pulsación y fade in/out. */
-  z-index: 200; /* Muy por encima. */
-  font-weight: bold;
-  letter-spacing: 1px;
+  z-index: 18;
+  pointer-events: none;
 }
 
-/* Animación de pulsación para la alerta crítica. */
-@keyframes criticalPulse {
-  0% { transform: translate(-50%, -50%) scale(1); }
-  100% { transform: translate(-50%, -50%) scale(1.05); }
-}
-
-/* Animación de aparecer y desaparecer para la alerta crítica. */
-@keyframes fadeInOutAlert {
-  0% { opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-.icono-alerta-grande {
-  font-size: 4rem; /* Ícono muy grande. */
-  margin-bottom: 10px;
-  animation: bounce 0.8s infinite alternate; /* Animación de rebote para el ícono. */
-}
-
-@keyframes bounce {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-10px); }
-}
-
-.texto-alerta-grande {
-  font-size: 2.5rem; /* Texto principal grande. */
-  text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
-}
-
-.subtexto-alerta {
-  font-size: 1.2rem; /* Subtexto. */
-  margin-top: 5px;
-  color: #fbdada;
-}
-
-/* Contenedor para efectos globales de celebración. */
-.efectos-celebracion-globales {
+/* ===== MENSAJE DE ESTADO PRINCIPAL ===== */
+.mensaje-estado-principal {
   position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 16;
+  pointer-events: none;
+  max-width: 80%;
+}
+
+.estado-principal {
+  background: rgba(0, 0, 0, 0.85);
+  color: #FFFFFF;
+  padding: 20px 30px;
+  border-radius: 30px;
+  font-size: 20px;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  animation: estado-aparicion 0.5s ease-out;
+  min-width: 300px;
+}
+
+@keyframes estado-aparicion {
+  from { 
+    opacity: 0; 
+    transform: translate(-50%, -50%) scale(0.9); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translate(-50%, -50%) scale(1); 
+  }
+}
+
+.estado-principal.luchando {
+  color: #FF6B6B;
+  border-color: #FF6B6B;
+  animation: estado-lucha-pulso 1.5s ease-in-out infinite;
+}
+
+@keyframes estado-lucha-pulso {
+  0%, 100% { 
+    transform: translate(-50%, -50%) scale(1); 
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  }
+  50% { 
+    transform: translate(-50%, -50%) scale(1.02); 
+    box-shadow: 0 15px 50px rgba(255, 107, 107, 0.3);
+  }
+}
+
+.estado-principal.capturado {
+  color: #4CAF50;
+  border-color: #4CAF50;
+  animation: estado-exito 3s ease-out;
+}
+
+@keyframes estado-exito {
+  0% { 
+    transform: translate(-50%, -50%) scale(1); 
+  }
+  25% { 
+    transform: translate(-50%, -50%) scale(1.1); 
+    box-shadow: 0 20px 60px rgba(76, 175, 80, 0.4);
+  }
+  50% { 
+    transform: translate(-50%, -50%) scale(1.05); 
+  }
+  100% { 
+    transform: translate(-50%, -50%) scale(1); 
+  }
+}
+
+.estado-principal.perdido {
+  color: #FF5252;
+  border-color: #FF5252;
+  animation: estado-error 2s ease-out;
+}
+
+@keyframes estado-error {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  25% { transform: translate(-50%, -50%) scale(0.98); }
+  75% { transform: translate(-50%, -50%) scale(1.02); }
+}
+
+/* ===== INFORMACIÓN DE LUCHA DETALLADA ===== */
+.info-lucha-detallada {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.pez-info {
+  text-align: center;
+}
+
+.pez-datos {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.pez-nombre {
+  font-size: 18px;
+  font-weight: bold;
+  color: #FFD700;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.pez-peso {
+  font-size: 14px;
+  color: #B0E0E6;
+}
+
+.pez-rareza {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 11px;
+  font-weight: bold;
+  margin-top: 8px;
+  text-shadow: none;
+}
+
+.rareza-común {
+  background: #90EE90;
+  color: #006400;
+}
+
+.rareza-raro {
+  background: #87CEEB;
+  color: #000080;
+}
+
+.rareza-épico {
+  background: #DDA0DD;
+  color: #4B0082;
+}
+
+.rareza-legendario {
+  background: #FFD700;
+  color: #B8860B;
+  animation: rareza-legendario-brillo 2s ease-in-out infinite;
+}
+
+@keyframes rareza-legendario-brillo {
+  0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+  50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+}
+
+.pez-habitat {
+  font-size: 12px;
+  color: #87CEEB;
+  margin-top: 8px;
+  font-style: italic;
+}
+
+.consejos-lucha {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.consejo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #E0F6FF;
+}
+
+.consejo.peligro {
+  background: rgba(255, 82, 82, 0.2);
+  border: 1px solid rgba(255, 82, 82, 0.4);
+  animation: consejo-peligro-parpadeo 1.5s ease-in-out infinite;
+}
+
+@keyframes consejo-peligro-parpadeo {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 1; }
+}
+
+/* ===== CELEBRACIÓN DE CAPTURA ===== */
+.celebracion-captura {
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
-  overflow: hidden; /* Muy importante para el confetti. */
-  z-index: 990; /* Por debajo del modal de captura, pero por encima de todo lo demás. */
+  z-index: 25;
 }
 
-/* Contenedor de las piezas de confetti. */
 .confetti-container {
   position: absolute;
   width: 100%;
   height: 100%;
-  overflow: hidden;
 }
 
-/* Pieza individual de confetti. */
 .confetti-piece {
   position: absolute;
   width: 10px;
   height: 10px;
-  opacity: 0;
-  animation: fallConfetti 3s ease-in forwards; /* Animación de caída. */
+  animation: confetti-caida 4s linear infinite;
 }
 
-/* Animación de caída del confetti. */
-@keyframes fallConfetti {
-  0% { transform: translateY(-100px) rotateZ(0deg); opacity: 0; }
-  10% { opacity: 1; }
-  100% { transform: translateY(110vh) rotateZ(720deg); opacity: 0; }
+@keyframes confetti-caida {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
 }
 
-/* Destello de captura (fondo que brilla). */
-.destello-captura {
+.texto-celebracion {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: none !important;
-  opacity: 0;
-  animation: flashCapture 1.5s ease-out forwards; /* Animación de destello. */
-}
-
-/* Animación de destello de captura. */
-@keyframes flashCapture {
-  0% { opacity: 0; transform: scale(0.5); }
-  20% { opacity: 1; transform: scale(1.5); }
-  100% { opacity: 0; transform: scale(2); }
-}
-
-/* ========================================================================== */
-/* INDICADORES DE PROGRESO (LANZAMIENTO, ESPERA) */
-/* ========================================================================== */
-
-/* Contenedor de indicadores de progreso. */
-.indicadores-progreso {
-  position: absolute;
-  bottom: 20%; /* Posición desde abajo. */
+  top: 30%;
   left: 50%;
   transform: translateX(-50%);
-  width: 80%; /* Ancho. */
-  max-width: 400px; /* Ancho máximo. */
-  text-align: center;
-  pointer-events: none;
-  z-index: 80;
-}
-
-/* Estilos para la barra de progreso. */
-.barra-progreso {
-  background: none !important;
-  border-radius: 10px;
-  height: 15px;
-  overflow: hidden;
-  margin-bottom: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.relleno-progreso {
-  height: 100%;
-  width: 0%; /* Empieza vacío. */
-  background-color: #3498db; /* Color azul de progreso. */
-  transition: width 0.3s ease; /* Transición para el relleno. */
-}
-
-.relleno-progreso.lanzando {
-  animation: fillProgress 3s linear forwards; /* Animación de llenado para el lanzamiento. */
-}
-
-@keyframes fillProgress {
-  0% { width: 0%; }
-  100% { width: 100%; }
-}
-
-.texto-progreso {
-  font-size: 1.1rem;
-  color: #e0f2f7;
-  font-weight: 500;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-}
-
-/* Animación de espera (puntos pulsantes). */
-.animacion-espera {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.dot-espera {
-  width: 12px;
-  height: 12px;
-  background-color: #f1c40f;
-  border-radius: 50%;
-  opacity: 0.3;
-  animation: dotPulse 1.4s infinite ease-in-out; /* Animación de pulsación para los puntos. */
-}
-
-.dot-espera:nth-child(2) {
-  animation-delay: 0.2s; /* Retraso para el segundo punto. */
-}
-
-.dot-espera:nth-child(3) {
-  animation-delay: 0.4s; /* Retraso para el tercer punto. */
-}
-
-@keyframes dotPulse {
-  0%, 100% { transform: scale(0.8); opacity: 0.3; }
-  50% { transform: scale(1.2); opacity: 1; }
-}
-
-/* ========================================================================== */
-/* INFO RÁPIDA (PUNTUACIÓN, NIVEL, PECES CAPTURADOS) */
-/* ========================================================================== */
-
-/* Panel de información rápida, en la esquina superior izquierda. */
-.info-rapida {
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  background-color: rgba(18, 52, 86, 0.85); /* Fondo azul oscuro semitransparente. */
-  border-radius: 10px;
-  padding: 10px 15px;
-  display: flex; /* Flexbox para los ítems. */
-  gap: 15px; /* Espacio entre ítems. */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  pointer-events: none; /* No interactuable. */
-  z-index: 100;
-}
-
-.info-item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  color: #e0f2f7;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-.info-icono {
-  font-size: 1.4rem;
-  line-height: 1;
-}
-
-.info-valor {
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-}
-
-/* ========================================================================== */
-/* TUTORIAL OVERLAY PARA NUEVOS USUARIOS */
-/* ========================================================================== */
-
-/* Contenedor del tutorial (fondo oscuro). */
-.tutorial-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.85); /* Fondo muy oscuro. */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000; /* Por encima de todo. */
-  pointer-events: auto; /* Permite interacción con el tutorial (para cerrarlo, etc.). */
-}
-
-/* Burbuja del tutorial. */
-.tutorial-bubble {
-  background: linear-gradient(to bottom, #1a3a5a, #0d1a26); /* Degradado. */
-  border: 3px solid #f1c40f; /* Borde dorado. */
-  border-radius: 20px;
-  padding: 30px;
-  max-width: 450px;
-  width: 90%;
-  text-align: center;
-  box-shadow: 0 0 30px rgba(241, 196, 15, 0.7);
-  animation: tutorialPopIn 0.5s ease-out forwards; /* Animación de aparición. */
-}
-
-@keyframes tutorialPopIn {
-  0% { transform: scale(0.7); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-.tutorial-titulo {
-  font-size: 2.5rem;
-  color: #3498db;
-  margin-bottom: 20px;
-  text-shadow: 0 0 8px rgba(52, 152, 219, 0.7);
+  font-size: 28px;
   font-weight: bold;
+  color: #FFD700;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+  animation: celebracion-texto 3s ease-out;
+  text-align: center;
 }
 
-.tutorial-texto {
-  font-size: 1.2rem;
-  line-height: 1.6;
-  margin-bottom: 25px;
-  color: #ecf0f1;
+@keyframes celebracion-texto {
+  0% { 
+    transform: translateX(-50%) scale(0.5) rotate(-10deg);
+    opacity: 0;
+  }
+  25% { 
+    transform: translateX(-50%) scale(1.2) rotate(5deg);
+    opacity: 1;
+  }
+  50% { 
+    transform: translateX(-50%) scale(1) rotate(0deg);
+  }
+  100% { 
+    transform: translateX(-50%) scale(1) rotate(0deg);
+    opacity: 0.8;
+  }
 }
 
-.tutorial-pasos {
-  background-color: rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  padding: 15px 20px;
-  margin-top: 20px;
+/* ===== INDICADORES AMBIENTALES ===== */
+.indicadores-ambientales {
+  position: absolute;
+  bottom: 120px;
+  right: 20px;
+  z-index: 12;
 }
 
-.tutorial-pasos .paso {
-  font-size: 1rem;
-  color: #bdc3c7;
-  margin-bottom: 8px;
+.condiciones-rio {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 15px;
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.condicion {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
   gap: 10px;
 }
 
-.tutorial-pasos .paso::before {
-  content: '👉'; /* Ícono de flecha. */
-  font-size: 1.2em;
-  line-height: 1;
+.icono-condicion {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
 }
 
-.tutorial-pasos .paso:last-child {
-  margin-bottom: 0;
+.info-condicion {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-/* ========================================================================== */
-/* ESTILOS RESPONSIVOS PARA DISPOSITIVOS MÓVILES */
-/* ========================================================================== */
+.titulo-condicion {
+  font-size: 10px;
+  color: #B0E0E6;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.valor-condicion {
+  font-size: 12px;
+  color: #FFFFFF;
+  font-weight: bold;
+}
+
+/* ===== INDICADOR DE AUDIO VISUAL ===== */
+.indicador-audio-visual {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 10px 15px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  z-index: 14;
+}
+
+.ondas-sonido {
+  display: flex;
+  gap: 2px;
+  align-items: end;
+}
+
+.onda-sonido {
+  width: 3px;
+  background: #4FC3F7;
+  border-radius: 2px;
+  animation: onda-sonido-bounce 1.2s ease-in-out infinite;
+}
+
+.onda-1 { 
+  height: 8px; 
+  animation-delay: 0s; 
+}
+.onda-2 { 
+  height: 12px; 
+  animation-delay: 0.1s; 
+}
+.onda-3 { 
+  height: 10px; 
+  animation-delay: 0.2s; 
+}
+
+@keyframes onda-sonido-bounce {
+  0%, 100% { transform: scaleY(0.4); }
+  50% { transform: scaleY(1); }
+}
+
+.texto-audio {
+  font-size: 14px;
+  color: #4FC3F7;
+}
+
+/* ===== VIDA SILVESTRE ===== */
+.vida-silvestre {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.ave {
+  position: absolute;
+  font-size: 20px;
+  animation: ave-volar 20s linear infinite;
+}
+
+.ave-1 {
+  top: 15%;
+  left: -5%;
+  animation-delay: 0s;
+}
+
+@keyframes ave-volar {
+  0% { 
+    transform: translateX(0) translateY(0);
+    opacity: 0;
+  }
+  10% { 
+    opacity: 1;
+  }
+  90% { 
+    opacity: 1;
+  }
+  100% { 
+    transform: translateX(110vw) translateY(-20px);
+    opacity: 0;
+  }
+}
+
+.mariposa {
+  position: absolute;
+  font-size: 16px;
+  animation: mariposa-volar 15s ease-in-out infinite;
+}
+
+.mariposa-1 {
+  top: 40%;
+  right: -5%;
+  animation-delay: 5s;
+}
+
+@keyframes mariposa-volar {
+  0% { 
+    transform: translateX(0) translateY(0);
+    opacity: 0;
+  }
+  10% { 
+    opacity: 1;
+  }
+  25% { 
+    transform: translateX(-20vw) translateY(20px);
+  }
+  50% { 
+    transform: translateX(-40vw) translateY(-10px);
+  }
+  75% { 
+    transform: translateX(-60vw) translateY(15px);
+  }
+  90% { 
+    opacity: 1;
+  }
+  100% { 
+    transform: translateX(-110vw) translateY(0);
+    opacity: 0;
+  }
+}
+
+.libélula {
+  position: absolute;
+  font-size: 12px;
+  animation: libélula-volar 12s linear infinite;
+}
+
+.libélula-1 {
+  top: 60%;
+  left: -3%;
+  animation-delay: 8s;
+}
+
+@keyframes libélula-volar {
+  0% { 
+    transform: translateX(0) translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  15% { 
+    opacity: 1;
+  }
+  85% { 
+    opacity: 1;
+  }
+  100% { 
+    transform: translateX(105vw) translateY(-30px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1024px) {
+  .estado-principal {
+    font-size: 18px;
+    padding: 18px 25px;
+    min-width: 250px;
+  }
+  
+  .info-lucha-detallada {
+    padding: 15px;
+    gap: 15px;
+  }
+  
+  .indicadores-ambientales {
+    bottom: 100px;
+    right: 15px;
+  }
+  
+  .condiciones-rio {
+    padding: 12px;
+  }
+}
 
 @media (max-width: 768px) {
-  .juego-pesca {
-    padding: 10px; /* Reduce el padding general. */
-  }
-
-  .interfaz-juego {
-    padding: 10px;
-  }
-
   .panel-superior {
-    justify-content: center; /* Centra las estadísticas en móviles. */
+    top: 15px;
+    left: 15px;
   }
-
-  /* Reducir tamaño de fuente en estadísticas del jugador para que quepan. */
-  .estadisticas-jugador { /* Clase asumida del componente EstadisticasJugador */
-    font-size: 0.9rem;
-    padding: 8px 15px;
-    flex-wrap: wrap; /* Permite que los ítems se envuelvan. */
-    justify-content: center;
-    gap: 10px;
+  
+  .estado-principal {
+    font-size: 16px;
+    padding: 15px 20px;
+    min-width: 200px;
   }
-  .estadisticas-jugador .stat-item {
-      flex-basis: 45%; /* Dos ítems por fila. */
-      justify-content: center;
+  
+  .pez-nombre {
+    font-size: 16px;
   }
+  
+  .info-lucha-detallada {
+    padding: 12px;
+    margin-top: 20px;
+  }
+  
+  .consejo {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+  
+  .indicadores-ambientales {
+    bottom: 80px;
+    right: 10px;
+  }
+  
+  .condiciones-rio {
+    padding: 10px;
+    gap: 8px;
+  }
+  
+  .info-condicion {
+    gap: 1px;
+  }
+  
+  .titulo-condicion {
+    font-size: 9px;
+  }
+  
+  .valor-condicion {
+    font-size: 11px;
+  }
+  
+  .indicador-audio-visual {
+    top: 15px;
+    right: 15px;
+    padding: 8px 12px;
+  }
+}
 
-
-  .panel-info-lucha {
-    padding: 15px;
+@media (max-width: 480px) {
+  .mensaje-estado-principal {
     max-width: 95%;
   }
-
-  .panel-info-lucha h3 {
-    font-size: 1.5rem;
+  
+  .estado-principal {
+    font-size: 14px;
+    padding: 12px 18px;
+    min-width: 180px;
   }
-
-  .rareza-badge {
-    padding: 4px 10px;
-    font-size: 0.75rem;
+  
+  .info-lucha-detallada {
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px;
   }
-
-  .stats-lucha {
-    grid-template-columns: 1fr; /* Una sola columna en móviles. */
-    gap: 8px;
-    margin-top: 10px;
+  
+  .pez-datos {
+    gap: 3px;
   }
-
-  .stat-lucha .label, .stat-lucha .valor, .stat-lucha .valor-habitat {
-    font-size: 0.9rem;
+  
+  .pez-nombre {
+    font-size: 14px;
   }
-
-  .panel-controles {
-    flex-direction: column; /* Botones apilados verticalmente. */
-    gap: 10px;
+  
+  .pez-peso {
+    font-size: 12px;
   }
-
-  .boton-accion { /* Asumido del componente ControlesJuego */
-    width: 100%; /* Ocupa todo el ancho disponible. */
-    font-size: 1.1rem;
-    padding: 12px 20px;
+  
+  .consejos-lucha {
+    gap: 6px;
   }
-
-  .mensaje-estado {
-    top: 100px; /* Ajusta la posición para móviles. */
-    font-size: 1rem;
-    padding: 10px 20px;
-    min-width: unset; /* Elimina el ancho mínimo. */
-    width: 90%;
+  
+  .consejo {
+    font-size: 10px;
+    padding: 5px 8px;
+    gap: 6px;
   }
-
-  .botones-flotantes {
-    top: 10px;
-    right: 10px;
-    flex-direction: row; /* Botones flotantes en fila en móviles. */
-    flex-wrap: wrap; /* Permite que se envuelvan si hay muchos. */
-    justify-content: flex-end; /* Alinea a la derecha. */
-    gap: 8px;
+  
+  .indicadores-ambientales {
+    bottom: 60px;
+    right: 5px;
+    transform: scale(0.9);
   }
-
-  .boton-coleccion, .boton-estadisticas, .boton-configuracion {
-    padding: 8px 12px;
-    font-size: 0.8rem;
-    min-width: unset;
-    flex-grow: 1;
-    justify-content: center;
+  
+  .texto-celebracion {
+    font-size: 22px;
+    top: 25%;
   }
-  .boton-coleccion .texto-boton, .boton-estadisticas .texto-boton, .boton-configuracion .texto-boton {
-      display: none; /* Oculta el texto para solo mostrar ícono y contador */
-  }
-  .icono-boton {
-      font-size: 1.1rem;
-  }
-  .contador-boton {
-      font-size: 0.7rem;
-      padding: 1px 6px;
-  }
-
-  /* Ajustes para el modal de captura en móviles. */
-  .modal-captura-contenido {
-    padding: 25px;
-    border-radius: 15px;
-  }
-
-  .modal-captura-contenido h2 {
-    font-size: 2rem;
-    margin-bottom: 15px;
-  }
-
-  .modal-pez-imagen-container {
-    height: 150px;
-    margin-bottom: 20px;
-  }
-
-  .modal-pez-nombre {
-    font-size: 2rem;
-    margin-bottom: 8px;
-  }
-
-  .modal-rareza-badge {
-    padding: 6px 12px;
-    font-size: 0.9rem;
-    margin-bottom: 20px;
-  }
-
-  .modal-pez-stats {
-    grid-template-columns: 1fr; /* Una sola columna. */
-    gap: 10px;
-    padding: 15px;
-    margin-bottom: 25px;
-  }
-
-  .modal-stat-item .label {
-    font-size: 0.8rem;
-  }
-
-  .modal-stat-item .valor {
-    font-size: 1.1rem;
-  }
-
-  .modal-recompensas {
-    flex-direction: column; /* Recompensas apiladas. */
-    gap: 15px;
-    margin-bottom: 25px;
-  }
-
-  .modal-recompensa-item {
-    font-size: 1.2rem;
-  }
-
-  .modal-nuevo-record {
-    font-size: 0.9rem;
-    padding: 6px 12px;
-  }
-
-  .modal-boton-accion {
-    padding: 12px 25px;
-    font-size: 1.1rem;
-  }
-
-  /* Ajustes para la alerta de tensión crítica. */
-  .alerta-tension-critica {
-    padding: 15px 20px;
-    border-radius: 15px;
-  }
-  .icono-alerta-grande {
-      font-size: 3rem;
-  }
-  .texto-alerta-grande {
-      font-size: 1.8rem;
-  }
-  .subtexto-alerta {
-      font-size: 1rem;
-  }
-
-  /* Tutorial en móviles. */
-  .tutorial-bubble {
-    padding: 20px;
-    border-radius: 15px;
-  }
-
-  .tutorial-titulo {
-    font-size: 2rem;
-    margin-bottom: 15px;
-  }
-
-  .tutorial-texto {
-    font-size: 1rem;
-    margin-bottom: 20px;
-  }
-
-  .tutorial-pasos .paso {
-    font-size: 0.9rem;
-  }
-
-  /* Info rápida en móviles. */
-  .info-rapida {
-    position: static; /* Vuelve a su posición normal en el flujo. */
-    width: 100%;
-    margin-top: 10px;
-    justify-content: space-around; /* Distribuye los ítems. */
-    background-color: rgba(18, 52, 86, 0.95); /* Mayor opacidad. */
-    border-radius: 0; /* Sin bordes redondeados. */
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.3);
-    padding: 10px 5px;
-    order: -1; /* Lo coloca al principio del flex container padre. */
-  }
-  .info-item {
-      font-size: 1rem;
-  }
-  .info-icono {
-      font-size: 1.2rem;
+  
+  .ave, .mariposa, .libélula {
+    transform: scale(0.8);
   }
 }
