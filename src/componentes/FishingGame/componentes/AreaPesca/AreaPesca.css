@@ -6,11 +6,14 @@
   transition: left 0.1s linear, top 0.1s linear, transform 0.2s;
   filter: blur(0.7px) brightness(0.8);
 }
+
 .imagen-pez-nadando {
-  width: 50px;
+  width: 140px;
   height: auto;
-  opacity: 0.85;
-  animation: pez-nadando-mov 2.5s ease-in-out infinite;
+  opacity: 1;
+  background: transparent;
+  box-shadow: none;
+  animation: pez-balanceo 3.2s cubic-bezier(.42,.01,.58,1) infinite;
 }
 
 @keyframes pez-nadando-mov {
@@ -27,11 +30,14 @@
   transition: left 0.1s linear, top 0.1s linear, transform 0.2s;
   filter: blur(0.5px) brightness(0.9);
 }
+
 .imagen-pez-picando {
-  width: 60px;
+  width: 160px;
   height: auto;
-  opacity: 0.95;
-  animation: pez-picando-mov 1.2s ease-in-out infinite;
+  opacity: 1;
+  background: transparent;
+  box-shadow: none;
+  animation: pez-balanceo 2.8s cubic-bezier(.42,.01,.58,1) infinite;
 }
 
 @keyframes pez-picando-mov {
@@ -262,12 +268,15 @@
   pointer-events: none;
 }
 
+
 .imagen-pez-lucha {
-  width: 60px;
+  width: 180px;
   height: auto;
-  filter: brightness(0.8) contrast(1.1) blur(0.5px);
+  filter: brightness(1) contrast(1.1) blur(0.1px);
   transition: transform 0.3s ease;
-  animation: pez-luchando-movimiento 1.5s ease-in-out infinite;
+  background: transparent;
+  box-shadow: none;
+  animation: pez-balanceo 2.5s cubic-bezier(.42,.01,.58,1) infinite;
 }
 
 .pez-luchando.rareza-épico .imagen-pez-lucha,
@@ -313,11 +322,29 @@
   animation: salto-pez 2s ease-out forwards;
 }
 
+
 .imagen-pez-salto {
-  width: 80px;
+  width: 220px;
   height: auto;
-  filter: brightness(1.2) contrast(1.1) drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
-  animation: rotacion-salto 2s ease-out forwards;
+  filter: brightness(1.1) contrast(1.1) drop-shadow(0 2px 8px rgba(0,0,0,0.10));
+  background: transparent;
+  box-shadow: none;
+  animation: pez-balanceo 2.2s cubic-bezier(.42,.01,.58,1) infinite;
+}
+/* Animación de balanceo suave para todos los peces */
+@keyframes pez-balanceo {
+  0% { transform: rotate(-6deg) translateY(0); }
+  20% { transform: rotate(-2deg) translateY(-8px); }
+  50% { transform: rotate(4deg) translateY(8px); }
+  80% { transform: rotate(-2deg) translateY(-8px); }
+  100% { transform: rotate(-6deg) translateY(0); }
+}
+
+@keyframes pez-colgado-sedal {
+  0% { transform: translateY(0) scale(1) rotate(-10deg); }
+  60% { transform: translateY(-120px) scale(1.1) rotate(0deg); }
+  80% { transform: translateY(-160px) scale(1.15) rotate(2deg); }
+  100% { transform: translateY(-180px) scale(1.15) rotate(0deg); }
 }
 
 .pez-capturado.rareza-épico .imagen-pez-salto,

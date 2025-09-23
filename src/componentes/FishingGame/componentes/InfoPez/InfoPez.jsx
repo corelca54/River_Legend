@@ -60,15 +60,15 @@ const InfoPez = ({ pez, visible, onCerrar }) => {
             <button className="cerrar-modal" onClick={onCerrar}>✕</button>
           </div>
 
-          {/* Imagen del pez */}
+          {/* Imagen real del pez */}
           <div className="pez-imagen-container">
             <div className="imagen-marco" style={{ borderColor: obtenerColorRareza(pez.rareza) }}>
-              <div 
-                className="pez-icono-grande"
-                style={{ backgroundColor: pez.color || '#C0C0C0' }}
-              >
-                🐟
-              </div>
+              <img 
+                src={pez.imagen}
+                alt={pez.nombre}
+                className="imagen-pez-tarjeta"
+                style={{ borderRadius: '18px', width: '240px', height: 'auto', boxShadow: '0 2px 12px rgba(0,0,0,0.10)', background: 'transparent', animation: 'pez-balanceo 3.2s cubic-bezier(.42,.01,.58,1) infinite' }}
+              />
             </div>
 
             {/* Badge de rareza */}

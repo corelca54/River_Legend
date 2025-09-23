@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { PECES_COLOMBIANOS } from '../../../data/datosPeces';
+import { PECES_COLOMBIANOS } from '../../../../data/datosPeces.js';
 import './AreaPesca.css';
 
 const AreaPesca = ({
@@ -252,9 +252,11 @@ const AreaPesca = ({
             style={{
               left: `${pez.x}%`,
               top: `${pez.y}%`,
-              transform: `scale(${0.35 + pez.dificultad * 0.07}) scaleX(${pez.dir})`,
-              filter: 'blur(0.7px) brightness(0.8)',
-              transition: 'left 0.1s linear, top 0.1s linear, transform 0.2s'
+              transform: `scale(${0.7 + pez.dificultad * 0.13}) scaleX(${pez.dir})`,
+              filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.18)) brightness(0.98)',
+              transition: 'left 0.1s linear, top 0.1s linear, transform 0.2s',
+              background: 'none',
+              border: 'none'
             }}
           >
             <img
@@ -262,11 +264,25 @@ const AreaPesca = ({
               alt={pez.nombre}
               className="imagen-pez-nadando"
               style={{
-                width: '50px',
+                width: '140px',
                 height: 'auto',
-                opacity: 0.85
+                opacity: 1,
+                background: 'transparent',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.18)'
               }}
             />
+            {/* Reflejo en el agua */}
+            <div style={{
+              position: 'absolute',
+              left: 0,
+              top: '100%',
+              width: '140px',
+              height: '30px',
+              background: 'linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0) 100%)',
+              opacity: 0.5,
+              borderRadius: '0 0 40px 40px',
+              pointerEvents: 'none'
+            }} />
           </div>
         ))}
 
@@ -277,9 +293,11 @@ const AreaPesca = ({
             style={{
               left: `${pezPicando.x}%`,
               top: `${pezPicando.y}%`,
-              transform: `scale(${0.4 + pezPicando.dificultad * 0.1}) scaleX(${pezPicando.dir})`,
-              filter: 'blur(0.5px) brightness(0.9)',
-              transition: 'left 0.1s linear, top 0.1s linear, transform 0.2s'
+              transform: `scale(${0.8 + pezPicando.dificultad * 0.15}) scaleX(${pezPicando.dir})`,
+              filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.18)) brightness(1)',
+              transition: 'left 0.1s linear, top 0.1s linear, transform 0.2s',
+              background: 'none',
+              border: 'none'
             }}
           >
             <img
@@ -287,11 +305,24 @@ const AreaPesca = ({
               alt={pezPicando.nombre}
               className="imagen-pez-picando"
               style={{
-                width: '60px',
+                width: '160px',
                 height: 'auto',
-                opacity: 0.95
+                opacity: 1,
+                background: 'transparent',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.18)'
               }}
             />
+            <div style={{
+              position: 'absolute',
+              left: 0,
+              top: '100%',
+              width: '160px',
+              height: '36px',
+              background: 'linear-gradient(to bottom, rgba(0,0,0,0.10) 0%, rgba(0,0,0,0) 100%)',
+              opacity: 0.5,
+              borderRadius: '0 0 40px 40px',
+              pointerEvents: 'none'
+            }} />
           </div>
         )}
         
@@ -302,8 +333,10 @@ const AreaPesca = ({
             style={{
               left: `${posicionSedal.x + Math.sin(tiempoLucha * 3) * 8}%`,
               top: `${posicionSedal.y + 25 + Math.cos(tiempoLucha * 2) * 5}%`,
-              transform: `scale(${0.4 + pezActual.dificultad * 0.1})`,
-              filter: 'blur(1px) brightness(0.7)'
+              transform: `scale(${1.1 + pezActual.dificultad * 0.18})`,
+              filter: 'drop-shadow(0 8px 32px rgba(0,0,0,0.18)) brightness(1)',
+              background: 'none',
+              border: 'none'
             }}
           >
             <img
@@ -311,9 +344,25 @@ const AreaPesca = ({
               alt={pezActual.nombre}
               className="imagen-pez-lucha"
               style={{
+                width: '180px',
+                height: 'auto',
+                opacity: 1,
+                background: 'transparent',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
                 transform: `scaleX(${Math.sin(tiempoLucha * 2) > 0 ? 1 : -1})`
               }}
             />
+            <div style={{
+              position: 'absolute',
+              left: 0,
+              top: '100%',
+              width: '180px',
+              height: '40px',
+              background: 'linear-gradient(to bottom, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0) 100%)',
+              opacity: 0.5,
+              borderRadius: '0 0 40px 40px',
+              pointerEvents: 'none'
+            }} />
             {estadoJuego === 'luchando' && (
               <div className="particulas-lucha">
                 {Array.from({ length: tension > 50 ? 6 : 3 }, (_, i) => (
