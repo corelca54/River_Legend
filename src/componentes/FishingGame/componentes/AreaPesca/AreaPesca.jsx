@@ -1,26 +1,30 @@
+// Componente principal del área de pesca
 import React, { useEffect, useState, useRef } from 'react';
 import { PECES_COLOMBIANOS } from '../../../../data/datosPeces.js';
 import './AreaPesca.css';
 
+// Recibe las props principales del juego de pesca
 const AreaPesca = ({
-  pezActual,
-  posicionSedal,
-  estadoJuego,
-  tension,
-  tiempoLucha,
-  pezSaliendoDelAgua
+  pezActual, // Pez actual en lucha o captura
+  posicionSedal, // Posición del señuelo
+  estadoJuego, // Estado actual del juego
+  tension, // Tensión de la línea
+  tiempoLucha, // Tiempo de lucha con el pez
+  pezSaliendoDelAgua // Si el pez está saltando fuera del agua
 }) => {
-  const [ondas, setOndas] = useState([]);
-  const [burbujas, setBurbujas] = useState([]);
-  const [efectoLanzamiento, setEfectoLanzamiento] = useState(false);
-  const [pezVisible, setPezVisible] = useState(false);
-  const [pecesNadando, setPecesNadando] = useState([]);
-  const [pezPicando, setPezPicando] = useState(null);
-  const intervalRef = useRef();
+  // Estados locales para efectos visuales y animaciones
+  const [ondas, setOndas] = useState([]); // Ondas en el agua
+  const [burbujas, setBurbujas] = useState([]); // Burbujas animadas
+  const [efectoLanzamiento, setEfectoLanzamiento] = useState(false); // Efecto al lanzar
+  const [pezVisible, setPezVisible] = useState(false); // Visibilidad del pez luchando
+  const [pecesNadando, setPecesNadando] = useState([]); // Peces nadando
+  const [pezPicando, setPezPicando] = useState(null); // Pez que pica
+  const intervalRef = useRef(); // Referencia para intervalos
   // Generar peces nadando aleatorios durante la pesca
+  // Efecto: Genera peces nadando aleatorios y gestiona el pez que pica
   useEffect(() => {
     if (estadoJuego === 'pescando') {
-      // Seleccionar aleatoriamente 3-5 peces de la base
+      // Selecciona aleatoriamente 3-5 peces de la base de datos
       const pecesArray = Object.values(PECES_COLOMBIANOS);
       const cantidad = 3 + Math.floor(Math.random() * 3);
       const seleccionados = [];
@@ -40,7 +44,7 @@ const AreaPesca = ({
       setPecesNadando(seleccionados);
       setPezPicando(null);
     } else if (estadoJuego === 'picando' && pecesNadando.length > 0) {
-      // Seleccionar uno de los peces nadando para que pique
+      // Selecciona uno de los peces nadando para que pique
       const idx = Math.floor(Math.random() * pecesNadando.length);
       setPezPicando({ ...pecesNadando[idx] });
     } else if (estadoJuego !== 'pescando' && estadoJuego !== 'picando') {
@@ -49,13 +53,14 @@ const AreaPesca = ({
     }
   }, [estadoJuego]);
   // Animar peces nadando
+  // Efecto: Animación de peces nadando
   useEffect(() => {
     if (estadoJuego === 'pescando' && pecesNadando.length > 0) {
       intervalRef.current = setInterval(() => {
         setPecesNadando(prev => prev.map(pez => {
           let nuevaX = pez.x + pez.dir * pez.speed * (0.7 + Math.sin(Date.now()/500 + pez.fase));
           let nuevaY = pez.y + Math.sin(Date.now()/400 + pez.fase) * 0.7;
-          // Rebote en los bordes
+          // Rebote en los bordes del área
           if (nuevaX < 5 || nuevaX > 90) pez.dir *= -1;
           return { ...pez, x: Math.max(5, Math.min(90, nuevaX)), y: Math.max(35, Math.min(80, nuevaY)), dir: pez.dir };
         }));
@@ -66,6 +71,7 @@ const AreaPesca = ({
     }
   }, [estadoJuego, pecesNadando.length]);
   // Animar pez picando hacia el señuelo
+  // Efecto: Animación del pez que pica acercándose al señuelo
   useEffect(() => {
     if (estadoJuego === 'picando' && pezPicando) {
       intervalRef.current = setInterval(() => {
@@ -90,6 +96,7 @@ const AreaPesca = ({
   }, [estadoJuego, pezPicando, posicionSedal]);
 
   // Generar ondas en el agua
+  // Efecto: Genera ondas en el agua al lanzar o luchar
   useEffect(() => {
     if (estadoJuego === 'lanzando' || estadoJuego === 'luchando') {
       const nuevasOndas = Array.from({ length: 3 }, (_, i) => ({
@@ -104,12 +111,12 @@ const AreaPesca = ({
   }, [estadoJuego, posicionSedal]);
 
   // Generar burbujas constantes
+  // Efecto: Genera burbujas animadas en el agua
   useEffect(() => {
     const interval = setInterval(() => {
       setBurbujas(prev => {
         const nuevasBurbujas = [...prev];
-        
-        // Agregar nueva burbuja
+        // Agrega nueva burbuja si hay menos de 12
         if (nuevasBurbujas.length < 12) {
           nuevasBurbujas.push({
             id: Date.now(),
@@ -120,8 +127,7 @@ const AreaPesca = ({
             opacidad: 0.3 + Math.random() * 0.4
           });
         }
-        
-        // Actualizar posición de burbujas existentes
+        // Actualiza posición y opacidad de burbujas existentes
         return nuevasBurbujas
           .map(burbuja => ({
             ...burbuja,
@@ -131,11 +137,11 @@ const AreaPesca = ({
           .filter(burbuja => burbuja.y > -10 && burbuja.opacidad > 0.1);
       });
     }, 500);
-
     return () => clearInterval(interval);
   }, []);
 
   // Efecto de lanzamiento
+  // Efecto: Muestra animación de lanzamiento
   useEffect(() => {
     if (estadoJuego === 'lanzando') {
       setEfectoLanzamiento(true);
@@ -144,6 +150,7 @@ const AreaPesca = ({
   }, [estadoJuego]);
 
   // Mostrar pez durante la lucha
+  // Efecto: Controla la visibilidad del pez durante la lucha y la picada
   useEffect(() => {
     if (estadoJuego === 'luchando' || estadoJuego === 'picando') {
       setPezVisible(true);
@@ -153,6 +160,7 @@ const AreaPesca = ({
   }, [estadoJuego]);
 
   // Obtener clase CSS para el estado del agua
+  // Devuelve la clase CSS para el estado del agua
   const getClaseAgua = () => {
     switch (estadoJuego) {
       case 'lanzando':
@@ -167,26 +175,13 @@ const AreaPesca = ({
   };
 
   // Calcular intensidad de la lucha para efectos visuales
+  // Calcula la intensidad de la lucha para efectos visuales
   const intensidadLucha = tension > 70 ? 'alta' : tension > 40 ? 'media' : 'baja';
 
   return (
     <div className="area-pesca">
-      {/* Superficie del agua con efectos dinámicos */}
-      <div className={`superficie-agua ${getClaseAgua()}`}>
-        
-        {/* Video de fondo del río */}
-        <div className="fondo-rio">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="video-rio"
-          >
-            <source src="/assets/videos/bucle.mp4" type="video/mp4" />
-          </video>
-          <div className="overlay-agua"></div>
-        </div>
+      {/* Superficie del agua sin fondo de río */}
+      <div className={`superficie-agua ${getClaseAgua()}`}> 
 
         {/* Ondas expansivas en el agua */}
         {ondas.map(onda => (
@@ -244,47 +239,67 @@ const AreaPesca = ({
           <div className="brillo-senuelo"></div>
         </div>
 
-        {/* Peces nadando aleatorios durante la pesca */}
-        {estadoJuego === 'pescando' && pecesNadando.map((pez, idx) => (
-          <div
-            key={pez.id + idx}
-            className={`pez-nadando rareza-${pez.rareza}`}
-            style={{
-              left: `${pez.x}%`,
-              top: `${pez.y}%`,
-              transform: `scale(${0.7 + pez.dificultad * 0.13}) scaleX(${pez.dir})`,
-              filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.18)) brightness(0.98)',
-              transition: 'left 0.1s linear, top 0.1s linear, transform 0.2s',
-              background: 'none',
-              border: 'none'
-            }}
-          >
-            <img
-              src={pez.imagen}
-              alt={pez.nombre}
-              className="imagen-pez-nadando"
-              style={{
-                width: '140px',
-                height: 'auto',
-                opacity: 1,
-                background: 'transparent',
-                boxShadow: '0 8px 32px rgba(0,0,0,0.18)'
-              }}
-            />
-            {/* Reflejo en el agua */}
-            <div style={{
-              position: 'absolute',
-              left: 0,
-              top: '100%',
-              width: '140px',
-              height: '30px',
-              background: 'linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0) 100%)',
-              opacity: 0.5,
-              borderRadius: '0 0 40px 40px',
-              pointerEvents: 'none'
-            }} />
-          </div>
-        ))}
+        {/* Peces nadando y picando siempre visibles durante pesca y picada */}
+        {(estadoJuego === 'pescando' || estadoJuego === 'picando' || estadoJuego === 'luchando') && (
+          <>
+            {pecesNadando.map((pez, idx) => (
+              <div
+                key={pez.id + idx}
+                className={`pez-nadando rareza-${pez.rareza}`}
+                style={{
+                  left: `${pez.x}%`,
+                  top: `${pez.y}%`,
+                  transform: `scale(${0.7 + pez.dificultad * 0.13}) scaleX(${pez.dir})`,
+                  filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.18)) brightness(0.98)',
+                  transition: 'left 0.1s linear, top 0.1s linear, transform 0.2s',
+                  background: 'none',
+                  border: 'none'
+                }}
+              >
+                <img
+                  src={pez.imagen}
+                  alt={pez.nombre}
+                  className="imagen-pez-nadando"
+                  style={{
+                    width: '180px',
+                    height: 'auto',
+                    opacity: 1,
+                    background: 'transparent',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.18)'
+                  }}
+                />
+              </div>
+            ))}
+            {/* Pez picando */}
+            {estadoJuego === 'picando' && pezPicando && (
+              <div
+                className={`pez-picando rareza-${pezPicando.rareza}`}
+                style={{
+                  left: `${pezPicando.x}%`,
+                  top: `${pezPicando.y}%`,
+                  transform: `scale(${0.8 + pezPicando.dificultad * 0.15}) scaleX(${pezPicando.dir})`,
+                  filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.18)) brightness(1)',
+                  transition: 'left 0.1s linear, top 0.1s linear, transform 0.2s',
+                  background: 'none',
+                  border: 'none'
+                }}
+              >
+                <img
+                  src={pezPicando.imagen}
+                  alt={pezPicando.nombre}
+                  className="imagen-pez-picando"
+                  style={{
+                    width: '200px',
+                    height: 'auto',
+                    opacity: 1,
+                    background: 'transparent',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.18)'
+                  }}
+                />
+              </div>
+            )}
+          </>
+        )}
 
         {/* Pez que pica y se acerca al señuelo */}
         {estadoJuego === 'picando' && pezPicando && (
@@ -526,9 +541,15 @@ const AreaPesca = ({
         
         {pezActual && estadoJuego === 'luchando' && (
           <div className="info-pez-luchando">
+            <img
+              src={pezActual.imagen}
+              alt={pezActual.nombre}
+              className="imagen-pez-tarjeta"
+              style={{ width: '80px', height: 'auto', marginBottom: '8px', borderRadius: '8px' }}
+            />
             <div className="nombre-pez">{pezActual.nombre}</div>
-            <div className="peso-estimado">~{pezActual.pesoCapturado}kg</div>
-            <div className="rareza-indicator rareza-${pezActual.rareza}">
+            <div className="peso-estimado">~{pezActual.pesoCapturado || pezActual.peso}kg</div>
+            <div className={`rareza-indicator rareza-${pezActual.rareza}`}>
               {pezActual.rareza.toUpperCase()}
             </div>
           </div>
