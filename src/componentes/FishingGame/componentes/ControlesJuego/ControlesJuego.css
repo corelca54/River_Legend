@@ -1,20 +1,24 @@
 /* ControlesJuego.css - Estilos Profesionales */
 
 .controles-juego {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    rgba(0, 0, 0, 0.8) 30%,
-    rgba(0, 0, 0, 0.95) 100%
-  );
-  backdrop-filter: blur(20px);
-  padding: 20px;
-  z-index: 50;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  width: auto;
+  min-width: unset;
+  max-width: unset;
+  background: none;
+  backdrop-filter: none;
+  padding: 0;
+  z-index: 100;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 /* Controles de lucha */
@@ -92,16 +96,15 @@
   position: relative;
   background: linear-gradient(145deg, #667eea 0%, #764ba2 100%);
   border: none;
-  border-radius: 20px;
-  padding: 15px 25px;
+  border-radius: 10px;
+  padding: 6px 10px;
   color: white;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 
-    0 8px 20px rgba(0, 0, 0, 0.3),
-    inset 0 2px 4px rgba(255, 255, 255, 0.2);
-  min-width: 120px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+  min-width: 60px;
+  font-size: 0.95rem;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
@@ -111,26 +114,22 @@
   background: linear-gradient(145deg, #4CAF50 0%, #45a049 100%);
 }
 
+.boton-recoger {
+  background: linear-gradient(145deg, #4CAF50 0%, #45a049 100%);
+}
 .boton-recoger:hover {
   background: linear-gradient(145deg, #5CBF60 0%, #4CAF50 100%);
-  transform: translateY(-2px);
-  box-shadow: 
-    0 12px 25px rgba(76, 175, 80, 0.4),
-    inset 0 2px 4px rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(76, 175, 80, 0.18);
 }
-
 .boton-soltar {
   background: linear-gradient(145deg, #FF9800 0%, #F57C00 100%);
 }
-
 .boton-soltar:hover {
   background: linear-gradient(145deg, #FFB74D 0%, #FF9800 100%);
-  transform: translateY(-2px);
-  box-shadow: 
-    0 12px 25px rgba(255, 152, 0, 0.4),
-    inset 0 2px 4px rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(255, 152, 0, 0.18);
 }
-
 .boton-accion:active,
 .boton-accion.presionado {
   transform: translateY(2px);

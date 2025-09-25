@@ -61,10 +61,11 @@ const InfoPez = ({ pez, visible, onCerrar }) => {
           </div>
 
           {/* Imagen real del pez */}
+          {/* Imagen real del pez capturado */}
           <div className="pez-imagen-container">
             <div className="imagen-marco" style={{ borderColor: obtenerColorRareza(pez.rareza) }}>
               <img 
-                src={pez.imagen}
+                src={pez.imagen && pez.imagen.startsWith('/') ? pez.imagen : `/assets/imagenes/peces/${pez.imagen}`}
                 alt={pez.nombre}
                 className="imagen-pez-tarjeta"
                 style={{ borderRadius: '18px', width: '240px', height: 'auto', boxShadow: '0 2px 12px rgba(0,0,0,0.10)', background: 'transparent', animation: 'pez-balanceo 3.2s cubic-bezier(.42,.01,.58,1) infinite' }}

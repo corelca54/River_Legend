@@ -106,7 +106,7 @@ export const ESCENARIOS_PESCA = {
     nombre: "Río Amazonas",
     descripcion: "El río más caudaloso del mundo",
     dificultad: "alta",
-    pecesPredominantes: ["arapaima", "bagre", "pavon"],
+  pecesPredominantes: ["bagre", "pavon"],
     multiplicadorPuntos: 1.5,
     colorAgua: "#2F4F4F"
   },
@@ -154,7 +154,7 @@ export const TIPOS_CARNADA = {
   pezVivo: {
     nombre: "Pez Vivo",
     efectividad: {
-      arapaima: 0.9,
+  // arapaima: 0.9, (eliminado porque ya no existe)
       pavon: 0.8,
       bagre: 0.7,
       azulejo: 0.6
@@ -215,13 +215,7 @@ export const LOGROS_JUEGO = {
     recompensa: 1000,
     tipo: "gold"
   },
-  cazadorArapaima: {
-    id: "cazador_arapaima",
-    nombre: "Cazador de Arapaima",
-    descripcion: "Captura un Arapaima",
-    recompensa: 500,
-    tipo: "epic"
-  },
+  // Eliminado logro de Arapaima
   coleccionistaCompleto: {
     id: "coleccionista_completo",
     nombre: "Coleccionista Completo",

@@ -169,53 +169,30 @@ const FishingGame = () => {
         tension={tension}
       />
 
-      {/* Mensaje de estado principal */}
-      <div className="mensaje-estado-principal">
-        <div className={`estado-principal ${estadoJuego}`}>
-          {obtenerMensajeEstado()}
+
+
+      {/* Imagen del pez capturado en grande (sin mensajes flotantes) */}
+      {estadoJuego === 'capturado' && pezActual && pezActual.imagen && (
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          marginTop: 24
+        }}>
+          <img
+            src={pezActual.imagen.startsWith('/') ? pezActual.imagen : `/assets/imagenes/peces/${pezActual.imagen}`}
+            alt={pezActual.nombre}
+            style={{
+              width: 180,
+              height: 'auto',
+              borderRadius: 18,
+              boxShadow: '0 4px 24px rgba(0,0,0,0.25)',
+              background: 'rgba(255,255,255,0.05)',
+              marginBottom: 12
+            }}
+          />
         </div>
-
-        {/* Información adicional durante la lucha */}
-        {estadoJuego === 'luchando' && pezActual && (
-          <div className="info-lucha-detallada">
-            <div className="consejos-lucha">
-              <div className="consejo">
-                💡 <strong>Recoger:</strong> Reduce mucho la tensión
-              </div>
-              <div className="consejo">
-                ⚠️ <strong>Soltar:</strong> Reduce poco la tensión
-              </div>
-              <div className="consejo peligro">
-                🚨 <strong>¡No dejes que llegue al 100%!</strong>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Celebración cuando se captura */}
-        {estadoJuego === 'capturado' && (
-          <div className="celebracion-captura">
-            <div className="confetti-container">
-              {Array.from({ length: 30 }, (_, i) => (
-                <div
-                  key={i}
-                  className="confetti-piece"
-                  style={{
-                    left: `${Math.random() * 100}%`,
-                    animationDelay: `${Math.random() * 2}s`,
-                    backgroundColor: ['#FFD700', '#FF6B6B', '#4FC3F7', '#81C784', '#FFB74D'][
-                      Math.floor(Math.random() * 5)
-                    ]
-                  }}
-                />
-              ))}
-            </div>
-            <div className="texto-celebracion">
-              ¡PEZ CAPTURADO!
-            </div>
-          </div>
-        )}
-      </div>
+      )}
 
       {/* Modal de información del pez CON IMAGEN REAL */}
       {mostrarInfoPez && pezActual && (
@@ -226,7 +203,7 @@ const FishingGame = () => {
         />
       )}
 
-      {/* Indicadores ambientales */}
+      {/* Indicadores ambientales (mantener, pero sin mensaje de lanzar señuelo) */}
       <div className="indicadores-ambientales">
         <div className="condiciones-rio">
           <div className="condicion">

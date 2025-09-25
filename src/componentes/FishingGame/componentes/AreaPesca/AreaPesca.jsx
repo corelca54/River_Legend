@@ -178,9 +178,21 @@ const AreaPesca = ({
   // Calcula la intensidad de la lucha para efectos visuales
   const intensidadLucha = tension > 70 ? 'alta' : tension > 40 ? 'media' : 'baja';
 
+  // Componente principal del área de pesca
+  // - Muestra el área visual donde nadan los peces y ocurre la pesca
+  // - Usa imagen de fondo de río y superpone efectos visuales y peces
+  // - Recibe props desde FishingGame.jsx
   return (
     <div className="area-pesca">
-      {/* Superficie del agua sin fondo de río */}
+      {/* Fondo de río: imagen real, no video */}
+      <img
+        src="/assets/imagenes/fondos/fondo_rio.png"
+        alt="Fondo río colombiano"
+        className="fondo-rio"
+        draggable="false"
+        style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover', zIndex: 1 }}
+      />
+      {/* Superficie del agua y efectos */}
       <div className={`superficie-agua ${getClaseAgua()}`}> 
 
         {/* Ondas expansivas en el agua */}
@@ -240,38 +252,47 @@ const AreaPesca = ({
         </div>
 
         {/* Peces nadando y picando siempre visibles durante pesca y picada */}
+        {/* Peces nadando animados */}
         {(estadoJuego === 'pescando' || estadoJuego === 'picando' || estadoJuego === 'luchando') && (
           <>
             {pecesNadando.map((pez, idx) => (
-              <div
-                key={pez.id + idx}
-                className={`pez-nadando rareza-${pez.rareza}`}
-                style={{
-                  left: `${pez.x}%`,
-                  top: `${pez.y}%`,
-                  transform: `scale(${0.7 + pez.dificultad * 0.13}) scaleX(${pez.dir})`,
-                  filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.18)) brightness(0.98)',
-                  transition: 'left 0.1s linear, top 0.1s linear, transform 0.2s',
-                  background: 'none',
-                  border: 'none'
-                }}
-              >
-                <img
-                  src={pez.imagen}
-                  alt={pez.nombre}
-                  className="imagen-pez-nadando"
+              pez.imagen && (
+                <div
+                  key={pez.id + idx}
+                  className={`pez-nadando rareza-${pez.rareza}`}
                   style={{
-                    width: '180px',
-                    height: 'auto',
-                    opacity: 1,
-                    background: 'transparent',
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.18)'
+                    left: `${pez.x}%`,
+                    top: `${pez.y}%`,
+                    transform: `scale(${0.7 + pez.dificultad * 0.13}) scaleX(${pez.dir})`,
+                    filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.18)) brightness(0.98)',
+                    transition: 'left 0.1s linear, top 0.1s linear, transform 0.2s',
+                    background: 'none',
+                    border: 'none',
+                    zIndex: 6
                   }}
-                />
-              </div>
+                >
+                  <img
+                    src={pez.imagen.startsWith('/') ? pez.imagen : `/assets/imagenes/peces/${pez.imagen}`}
+                    alt={pez.nombre}
+                    className="imagen-pez-nadando"
+                    style={{
+                      width: '140px',
+                      height: 'auto',
+                      opacity: 1,
+                      background: 'transparent',
+                      boxShadow: '0 8px 32px rgba(0,0,0,0.18)'
+                    }}
+                    onError={e => {
+                      if (pez.imagenAlternativa && e.target.src !== pez.imagenAlternativa) {
+                        e.target.src = pez.imagenAlternativa;
+                      }
+                    }}
+                  />
+                </div>
+              )
             ))}
             {/* Pez picando */}
-            {estadoJuego === 'picando' && pezPicando && (
+            {estadoJuego === 'picando' && pezPicando && pezPicando.imagen && (
               <div
                 className={`pez-picando rareza-${pezPicando.rareza}`}
                 style={{
@@ -281,19 +302,25 @@ const AreaPesca = ({
                   filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.18)) brightness(1)',
                   transition: 'left 0.1s linear, top 0.1s linear, transform 0.2s',
                   background: 'none',
-                  border: 'none'
+                  border: 'none',
+                  zIndex: 7
                 }}
               >
                 <img
-                  src={pezPicando.imagen}
+                  src={pezPicando.imagen.startsWith('/') ? pezPicando.imagen : `/assets/imagenes/peces/${pezPicando.imagen}`}
                   alt={pezPicando.nombre}
                   className="imagen-pez-picando"
                   style={{
-                    width: '200px',
+                    width: '160px',
                     height: 'auto',
                     opacity: 1,
                     background: 'transparent',
                     boxShadow: '0 8px 32px rgba(0,0,0,0.18)'
+                  }}
+                  onError={e => {
+                    if (pezPicando.imagenAlternativa && e.target.src !== pezPicando.imagenAlternativa) {
+                      e.target.src = pezPicando.imagenAlternativa;
+                    }
                   }}
                 />
               </div>
@@ -342,7 +369,8 @@ const AreaPesca = ({
         )}
         
         {/* Pez luchando bajo el agua */}
-        {pezVisible && pezActual && (
+        {/* Pez luchando bajo el agua */}
+        {pezVisible && pezActual && pezActual.imagen && (
           <div
             className={`pez-luchando ${estadoJuego} rareza-${pezActual.rareza}`}
             style={{
@@ -351,11 +379,12 @@ const AreaPesca = ({
               transform: `scale(${1.1 + pezActual.dificultad * 0.18})`,
               filter: 'drop-shadow(0 8px 32px rgba(0,0,0,0.18)) brightness(1)',
               background: 'none',
-              border: 'none'
+              border: 'none',
+              zIndex: 8
             }}
           >
             <img
-              src={pezActual.imagen}
+              src={pezActual.imagen.startsWith('/') ? pezActual.imagen : `/assets/imagenes/peces/${pezActual.imagen}`}
               alt={pezActual.nombre}
               className="imagen-pez-lucha"
               style={{
@@ -365,6 +394,11 @@ const AreaPesca = ({
                 background: 'transparent',
                 boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
                 transform: `scaleX(${Math.sin(tiempoLucha * 2) > 0 ? 1 : -1})`
+              }}
+              onError={e => {
+                if (pezActual.imagenAlternativa && e.target.src !== pezActual.imagenAlternativa) {
+                  e.target.src = pezActual.imagenAlternativa;
+                }
               }}
             />
             <div style={{
@@ -396,7 +430,8 @@ const AreaPesca = ({
         )}
 
         {/* Pez saltando fuera del agua */}
-        {pezSaliendoDelAgua && pezActual && (
+        {/* Pez saltando fuera del agua al capturarlo */}
+        {pezSaliendoDelAgua && pezActual && pezActual.imagen && (
           <div className="pez-saltando">
             <div
               className={`pez-capturado rareza-${pezActual.rareza}`}
@@ -406,11 +441,15 @@ const AreaPesca = ({
               }}
             >
               <img
-                src={pezActual.imagen}
+                src={pezActual.imagen.startsWith('/') ? pezActual.imagen : `/assets/imagenes/peces/${pezActual.imagen}`}
                 alt={pezActual.nombre}
                 className="imagen-pez-salto"
+                onError={e => {
+                  if (pezActual.imagenAlternativa && e.target.src !== pezActual.imagenAlternativa) {
+                    e.target.src = pezActual.imagenAlternativa;
+                  }
+                }}
               />
-              
               {/* Gotas de agua del salto */}
               <div className="gotas-salto">
                 {Array.from({ length: 12 }, (_, i) => (
@@ -425,7 +464,6 @@ const AreaPesca = ({
                   />
                 ))}
               </div>
-
               {/* Brillo especial por rareza */}
               {(pezActual.rareza === 'épico' || pezActual.rareza === 'legendario') && (
                 <div className="efecto-rareza">
@@ -538,11 +576,11 @@ const AreaPesca = ({
             <span className="texto">24°C</span>
           </div>
         </div>
-        
-        {pezActual && estadoJuego === 'luchando' && (
+        {/* Tarjeta pequeña con imagen y datos del pez durante la lucha */}
+        {pezActual && estadoJuego === 'luchando' && pezActual.imagen && (
           <div className="info-pez-luchando">
             <img
-              src={pezActual.imagen}
+              src={pezActual.imagen.startsWith('/') ? pezActual.imagen : `/assets/imagenes/peces/${pezActual.imagen}`}
               alt={pezActual.nombre}
               className="imagen-pez-tarjeta"
               style={{ width: '80px', height: 'auto', marginBottom: '8px', borderRadius: '8px' }}
@@ -555,6 +593,39 @@ const AreaPesca = ({
           </div>
         )}
       </div>
+
+      {/* Imagen del pez capturado en el centro del área de pesca */}
+      {estadoJuego === 'capturado' && pezActual && pezActual.imagen && (
+        <div style={{
+          position: 'absolute',
+          left: '50%',
+          top: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 100,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          pointerEvents: 'none'
+        }}>
+          <img
+            src={pezActual.imagen.startsWith('/') ? pezActual.imagen : `/assets/imagenes/peces/${pezActual.imagen}`}
+            alt={pezActual.nombre}
+            style={{
+              width: 220,
+              height: 'auto',
+              borderRadius: 18,
+              boxShadow: '0 4px 24px rgba(0,0,0,0.25)',
+              background: 'rgba(255,255,255,0.05)',
+              marginBottom: 12
+            }}
+            onError={e => {
+              if (pezActual.imagenAlternativa && e.target.src !== pezActual.imagenAlternativa) {
+                e.target.src = pezActual.imagenAlternativa;
+              }
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };

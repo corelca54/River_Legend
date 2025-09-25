@@ -59,9 +59,9 @@ const PECES_DISPONIBLES = {
   },
   sabalo: {
     id: 'sabalo',
-    nombre: 'Sábalo',
+    nombre: 'Sabalo',
     nombreCientifico: 'Brycon moorei',
-    imagen: '/imagenes/peces/sabalo.jpg',
+    imagen: '/assets/imagenes/peces/Sabalo.png',
     rareza: 'común',
     dificultad: 4,
     pesoMin: 1.0,
@@ -93,24 +93,7 @@ const PECES_DISPONIBLES = {
     sonidoCaptura: 'splash_grande',
     movimiento: 'agresivo'
   },
-  arapaima: {
-    id: 'arapaima',
-    nombre: 'Arapaima',
-    nombreCientifico: 'Arapaima gigas',
-    imagen: '/imagenes/peces/arapaima.jpg',
-    rareza: 'legendario',
-    dificultad: 10,
-    pesoMin: 50.0,
-    pesoMax: 200.0,
-    longitudMin: 150,
-    longitudMax: 300,
-    habitat: 'Amazonía',
-    puntos: 1000,
-    descripcion: 'El gigante de los ríos amazónicos',
-    color: '#B22222',
-    sonidoCaptura: 'splash_epico',
-    movimiento: 'salvaje'
-  }
+
 };
 
 const useJuegoPesca = () => {

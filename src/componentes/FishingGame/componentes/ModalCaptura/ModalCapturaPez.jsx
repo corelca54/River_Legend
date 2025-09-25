@@ -61,9 +61,9 @@ const ModalCapturaPez = ({
   const obtenerImagenPez = () => {
     const rutasImagenes = {
       bocachico: '/assets/imagenes/peces/Bocachico.png',
-      arapaima: '/assets/imagenes/peces/Arapaima.png',
-      bagre: '/assets/imagenes/peces/Bagre rayado.png',
-      sabalo: '/assets/imagenes/peces/Sábalo.png',
+  // arapaima: '/assets/imagenes/peces/Arapaima.png',
+  bagre_rayado: '/assets/imagenes/peces/Bagre_rayado.png',
+  sabalo: '/assets/imagenes/peces/Sabalo.png',
       sabaleta: '/assets/imagenes/peces/Sabaleta.png',
       nicuro: '/assets/imagenes/peces/dorado.png',
       corroncho: '/assets/imagenes/peces/Bocachico.png',
