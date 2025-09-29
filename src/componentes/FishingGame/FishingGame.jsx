@@ -111,20 +111,20 @@ const FishingGame = () => {
 
   return (
     <div className="fishing-game">
-      {/* Video de fondo del río colombiano */}
-      <div className="video-background">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="background-video"
-        >
-          <source src="/assets/videos/rio-colombiano.mp4" type="video/mp4" />
-          <source src="/assets/videos/rio-colombiano.webm" type="video/webm" />
-        </video>
-        <div className="video-overlay"></div>
-      </div>
+      {/* Imagen fija de fondo del río */}
+      <div className="imagen-background" style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 0,
+        backgroundImage: 'url(/assets/imagenes/fondos/fondo_rio.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        opacity: 1
+      }} />
 
       {/* Panel de estadísticas del jugador */}
       <div className="panel-superior">
