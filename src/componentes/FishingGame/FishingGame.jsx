@@ -3,7 +3,7 @@ import AreaPesca from './componentes/AreaPesca/AreaPesca';
 import ControlesJuego from './componentes/ControlesJuego/ControlesJuego';
 import EstadoJugador from './componentes/estadoJugador/estadoJugador';
 import MedidorTension from './componentes/MedidorTension/MedidorTension';
-import InfoPez from './componentes/InfoPez/InfoPez';
+import ModalCapturaPez from './componentes/ModalCaptura/ModalCapturaPez';
 import useJuegoPesca from '../../hooks/useJuegoPesca';
 import './FishingGame.css';
 
@@ -196,10 +196,13 @@ const FishingGame = () => {
 
       {/* Modal de información del pez CON IMAGEN REAL */}
       {mostrarInfoPez && pezActual && (
-        <InfoPez
-          pez={pezActual}
+        <ModalCapturaPez
+          pezCapturado={pezActual}
           visible={mostrarInfoPez}
           onCerrar={cerrarInfoPez}
+          esNuevoRecord={false}
+          puntosGanados={pezActual.puntos || 0}
+          experienciaGanada={pezActual.experiencia || 0}
         />
       )}
 
