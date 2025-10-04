@@ -119,7 +119,7 @@ const FishingGame = () => {
         width: '100vw',
         height: '100vh',
         zIndex: 0,
-        background: 'url(/assets/imagenes/fondos/fondo_rio.png), linear-gradient(180deg, #4682B4 0%, #2F4F4F 100%)',
+        background: 'linear-gradient(180deg, #4682B4 0%, #2F4F4F 100%)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -127,23 +127,25 @@ const FishingGame = () => {
       }} />
 
       {/* Panel de estadísticas del jugador */}
-      <div className="panel-superior">
+      <div className="panel-superior" style={{zIndex: 10}}>
         <EstadoJugador estadisticas={estadisticasJugador} />
       </div>
 
       {/* Área principal de pesca CON IMÁGENES REALES */}
-      <AreaPesca
-        pezActual={pezActual}
-        posicionSedal={posicionSedal}
-        estadoJuego={estadoJuego}
-        tension={tension}
-        tiempoLucha={tiempoLucha}
-        pezSaliendoDelAgua={pezSaliendoDelAgua}
-      />
+      <div style={{zIndex: 5, position: 'relative'}}>
+        <AreaPesca
+          pezActual={pezActual}
+          posicionSedal={posicionSedal}
+          estadoJuego={estadoJuego}
+          tension={tension}
+          tiempoLucha={tiempoLucha}
+          pezSaliendoDelAgua={pezSaliendoDelAgua}
+        />
+      </div>
 
       {/* Medidor de tensión (solo durante la lucha) */}
       {estadoJuego === 'luchando' && (
-        <div className="medidor-tension-container">
+        <div className="medidor-tension-container" style={{zIndex: 20}}>
           <MedidorTension
             tension={tension}
             tensionMaxima={100}
@@ -156,18 +158,20 @@ const FishingGame = () => {
       )}
 
       {/* Controles del juego */}
-      <ControlesJuego
-        estadoJuego={estadoJuego}
-        onLanzar={manejarLanzamiento}
-        onRecoger={manejarRecogida}
-        onSoltar={manejarSoltada}
-        onReiniciar={reiniciarJuego}
-        onPausar={pausarJuego}
-        onReanudar={reanudarJuego}
-        efectosSonido={efectosSonido}
-        onToggleSonido={() => setEfectosSonido(!efectosSonido)}
-        tension={tension}
-      />
+      <div style={{zIndex: 30, position: 'relative'}}>
+        <ControlesJuego
+          estadoJuego={estadoJuego}
+          onLanzar={manejarLanzamiento}
+          onRecoger={manejarRecogida}
+          onSoltar={manejarSoltada}
+          onReiniciar={reiniciarJuego}
+          onPausar={pausarJuego}
+          onReanudar={reanudarJuego}
+          efectosSonido={efectosSonido}
+          onToggleSonido={() => setEfectosSonido(!efectosSonido)}
+          tension={tension}
+        />
+      </div>
 
 
 
