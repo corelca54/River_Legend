@@ -435,8 +435,6 @@ a {
   width: 100vw;
   height: 100vh;
   min-height: 100vh;
-  background: var(--color-fondo-principal) url('/public/assets/imagenes/fondos/fondo_rio.png') no-repeat center center;
-  background-size: cover;
   overflow: hidden;
   z-index: 1;
 }
