@@ -109,188 +109,195 @@ const FishingGame = () => {
     return '#F44336';
   };
 
-  return (
-    <div className="fishing-game">
-      {/* Imagen fija de fondo del río */}
-      <div className="imagen-background" style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        zIndex: 0,
-        background: 'linear-gradient(180deg, #4682B4 0%, #2F4F4F 100%)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        opacity: 1
-      }} />
+  try {
+    return (
+      <div className="fishing-game" style={{ minHeight: '100vh', minWidth: '100vw', background: '#4682B4' }}>
+        {/* Imagen fija de fondo del río */}
+        <div className="imagen-background" style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: 0,
+          background: 'linear-gradient(180deg, #4682B4 0%, #2F4F4F 100%)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          opacity: 1
+        }} />
 
-      {/* Panel de estadísticas del jugador */}
-      <div className="panel-superior" style={{zIndex: 10}}>
-        <EstadoJugador estadisticas={estadisticasJugador} />
-      </div>
+        {/* Panel de estadísticas del jugador */}
+        <div className="panel-superior" style={{zIndex: 10}}>
+          <EstadoJugador estadisticas={estadisticasJugador} />
+        </div>
 
-      {/* Área principal de pesca CON IMÁGENES REALES */}
-      <div style={{zIndex: 5, position: 'relative'}}>
-        <AreaPesca
-          pezActual={pezActual}
-          posicionSedal={posicionSedal}
-          estadoJuego={estadoJuego}
-          tension={tension}
-          tiempoLucha={tiempoLucha}
-          pezSaliendoDelAgua={pezSaliendoDelAgua}
-        />
-      </div>
-
-      {/* Medidor de tensión (solo durante la lucha) */}
-      {estadoJuego === 'luchando' && (
-        <div className="medidor-tension-container" style={{zIndex: 20}}>
-          <MedidorTension
+        {/* Área principal de pesca CON IMÁGENES REALES */}
+        <div style={{zIndex: 5, position: 'relative'}}>
+          <AreaPesca
+            pezActual={pezActual}
+            posicionSedal={posicionSedal}
+            estadoJuego={estadoJuego}
             tension={tension}
-            tensionMaxima={100}
-            colorTension={obtenerColorTension()}
             tiempoLucha={tiempoLucha}
-            pezNombre={pezActual?.nombre}
-            pezDificultad={pezActual?.dificultad}
+            pezSaliendoDelAgua={pezSaliendoDelAgua}
           />
         </div>
-      )}
 
-      {/* Controles del juego */}
-      <div style={{zIndex: 30, position: 'relative'}}>
-        <ControlesJuego
-          estadoJuego={estadoJuego}
-          onLanzar={manejarLanzamiento}
-          onRecoger={manejarRecogida}
-          onSoltar={manejarSoltada}
-          onReiniciar={reiniciarJuego}
-          onPausar={pausarJuego}
-          onReanudar={reanudarJuego}
-          efectosSonido={efectosSonido}
-          onToggleSonido={() => setEfectosSonido(!efectosSonido)}
-          tension={tension}
-        />
-      </div>
-
-
-
-      {/* Imagen del pez capturado en grande (sin mensajes flotantes) */}
-      {estadoJuego === 'capturado' && pezActual && pezActual.imagen && (
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          marginTop: 24
-        }}>
-          <img
-            src={pezActual.imagen.startsWith('/') ? pezActual.imagen : `/assets/imagenes/peces/${pezActual.imagen}`}
-            alt={pezActual.nombre}
-            style={{
-              width: 180,
-              height: 'auto',
-              borderRadius: 18,
-              boxShadow: '0 4px 24px rgba(0,0,0,0.25)',
-              background: 'rgba(255,255,255,0.05)',
-              marginBottom: 12
-            }}
-          />
-        </div>
-      )}
-
-      {/* Modal de información del pez CON IMAGEN REAL */}
-      {mostrarInfoPez && pezActual && (
-        <ModalCapturaPez
-          pezCapturado={pezActual}
-          visible={mostrarInfoPez}
-          onCerrar={cerrarInfoPez}
-          esNuevoRecord={false}
-          puntosGanados={pezActual.puntos || 0}
-          experienciaGanada={pezActual.experiencia || 0}
-        />
-      )}
-
-      {/* Indicadores ambientales (mantener, pero sin mensaje de lanzar señuelo) */}
-      <div className="indicadores-ambientales">
-        <div className="condiciones-rio">
-          <div className="condicion">
-            <span className="icono-condicion">🌊</span>
-            <span className="texto-condicion">Río Turbio</span>
-          </div>
-          <div className="condicion">
-            <span className="icono-condicion">🌡️</span>
-            <span className="texto-condicion">24°C</span>
-          </div>
-          <div className="condicion">
-            <span className="icono-condicion">💨</span>
-            <span className="texto-condicion">Viento Suave</span>
-          </div>
-          <div className="condicion">
-            <span className="icono-condicion">🕐</span>
-            <span className="texto-condicion">Tarde</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Efectos de agua y ambiente */}
-      <div className="efectos-ambiente">
-        {/* Burbujas del agua */}
-        {Array.from({ length: 8 }, (_, i) => (
-          <div
-            key={`burbuja-${i}`}
-            className="burbuja"
-            style={{
-              left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 4}s`,
-              animationDuration: `${3 + Math.random() * 2}s`
-            }}
-          />
-        ))}
-
-        {/* Ondas en el agua cuando hay actividad */}
-        {(estadoJuego === 'lanzando' || estadoJuego === 'luchando') && (
-          <div className="ondas-agua">
-            {Array.from({ length: 3 }, (_, i) => (
-              <div
-                key={`onda-${i}`}
-                className="onda"
-                style={{
-                  animationDelay: `${i * 0.3}s`
-                }}
-              />
-            ))}
+        {/* Medidor de tensión (solo durante la lucha) */}
+        {estadoJuego === 'luchando' && (
+          <div className="medidor-tension-container" style={{zIndex: 20}}>
+            <MedidorTension
+              tension={tension}
+              tensionMaxima={100}
+              colorTension={obtenerColorTension()}
+              tiempoLucha={tiempoLucha}
+              pezNombre={pezActual?.nombre}
+              pezDificultad={pezActual?.dificultad}
+            />
           </div>
         )}
 
-        {/* Efecto de chapuzón cuando el pez salta */}
-        {pezSaliendoDelAgua && (
-          <div className="efecto-chapuzon">
-            <div className="splash-principal"></div>
-            {Array.from({ length: 6 }, (_, i) => (
-              <div
-                key={`gotas-${i}`}
-                className="gota-agua"
-                style={{
-                  left: `${45 + Math.random() * 10}%`,
-                  animationDelay: `${i * 0.1}s`
-                }}
-              />
-            ))}
+        {/* Controles del juego */}
+        <div style={{zIndex: 30, position: 'relative'}}>
+          <ControlesJuego
+            estadoJuego={estadoJuego}
+            onLanzar={manejarLanzamiento}
+            onRecoger={manejarRecogida}
+            onSoltar={manejarSoltada}
+            onReiniciar={reiniciarJuego}
+            onPausar={pausarJuego}
+            onReanudar={reanudarJuego}
+            efectosSonido={efectosSonido}
+            onToggleSonido={() => setEfectosSonido(!efectosSonido)}
+            tension={tension}
+          />
+        </div>
+
+        {/* Imagen del pez capturado en grande (sin mensajes flotantes) */}
+        {estadoJuego === 'capturado' && pezActual && pezActual.imagen && (
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            marginTop: 24
+          }}>
+            <img
+              src={`/assets/imagenes/peces/${pezActual.imagen.replace(/^\/+/, '')}`}
+              alt={pezActual.nombre}
+              style={{
+                width: 180,
+                height: 'auto',
+                borderRadius: 18,
+                boxShadow: '0 4px 24px rgba(0,0,0,0.25)',
+                background: 'rgba(255,255,255,0.05)',
+                marginBottom: 12
+              }}
+            />
+          </div>
+        )}
+
+        {/* Modal de información del pez CON IMAGEN REAL */}
+        {mostrarInfoPez && pezActual && (
+          <ModalCapturaPez
+            pezCapturado={pezActual}
+            visible={mostrarInfoPez}
+            onCerrar={cerrarInfoPez}
+            esNuevoRecord={false}
+            puntosGanados={pezActual.puntos || 0}
+            experienciaGanada={pezActual.experiencia || 0}
+          />
+        )}
+
+        {/* Indicadores ambientales (mantener, pero sin mensaje de lanzar señuelo) */}
+        <div className="indicadores-ambientales">
+          <div className="condiciones-rio">
+            <div className="condicion">
+              <span className="icono-condicion">🌊</span>
+              <span className="texto-condicion">Río Turbio</span>
+            </div>
+            <div className="condicion">
+              <span className="icono-condicion">🌡️</span>
+              <span className="texto-condicion">24°C</span>
+            </div>
+            <div className="condicion">
+              <span className="icono-condicion">💨</span>
+              <span className="texto-condicion">Viento Suave</span>
+            </div>
+            <div className="condicion">
+              <span className="icono-condicion">🕐</span>
+              <span className="texto-condicion">Tarde</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Efectos de agua y ambiente */}
+        <div className="efectos-ambiente">
+          {/* Burbujas del agua */}
+          {Array.from({ length: 8 }, (_, i) => (
+            <div
+              key={`burbuja-${i}`}
+              className="burbuja"
+              style={{
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 4}s`,
+                animationDuration: `${3 + Math.random() * 2}s`
+              }}
+            />
+          ))}
+
+          {/* Ondas en el agua cuando hay actividad */}
+          {(estadoJuego === 'lanzando' || estadoJuego === 'luchando') && (
+            <div className="ondas-agua">
+              {Array.from({ length: 3 }, (_, i) => (
+                <div
+                  key={`onda-${i}`}
+                  className="onda"
+                  style={{
+                    animationDelay: `${i * 0.3}s`
+                  }}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Efecto de chapuzón cuando el pez salta */}
+          {pezSaliendoDelAgua && (
+            <div className="efecto-chapuzon">
+              <div className="splash-principal"></div>
+              {Array.from({ length: 6 }, (_, i) => (
+                <div
+                  key={`gotas-${i}`}
+                  className="gota-agua"
+                  style={{
+                    left: `${45 + Math.random() * 10}%`,
+                    animationDelay: `${i * 0.1}s`
+                  }}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Overlay de pausa */}
+        {estadoJuego === 'pausado' && (
+          <div className="overlay-pausa">
+            <div className="mensaje-pausa">
+              <h2>⏸️ JUEGO PAUSADO</h2>
+              <p>Presiona "Reanudar" para continuar</p>
+            </div>
           </div>
         )}
       </div>
-
-      {/* Overlay de pausa */}
-      {estadoJuego === 'pausado' && (
-        <div className="overlay-pausa">
-          <div className="mensaje-pausa">
-            <h2>⏸️ JUEGO PAUSADO</h2>
-            <p>Presiona "Reanudar" para continuar</p>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+    );
+  } catch (error) {
+    return (
+      <div style={{background: '#4682B4', color: 'white', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        <h2>Error al cargar el juego</h2>
+        <p>{error.message}</p>
+      </div>
+    );
+  }
 };
 
 export default FishingGame;

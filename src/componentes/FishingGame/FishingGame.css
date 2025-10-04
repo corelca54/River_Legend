@@ -1,15 +1,17 @@
 /* Fondo del río para el juego */
 .imagen-background {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, #4682B4 0%, #2F4F4F 100%), #4682B4;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   pointer-events: none;
+  opacity: 1;
 }
 /* Mejoras extra para responsividad móvil */
 @media (max-width: 600px) {
@@ -38,8 +40,11 @@
   position: relative;
   width: 100vw;
   height: 100vh;
+  min-width: 100vw;
+  min-height: 100vh;
   overflow: hidden;
   font-family: 'Arial', sans-serif;
+  background: #4682B4;
 }
 
 /* ===== EFECTOS SOBRE EL VIDEO ===== */
