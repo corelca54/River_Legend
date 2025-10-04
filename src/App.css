@@ -657,3 +657,36 @@ select {
     min-width: 44px;
   }
 }
+
+/* Mejoras extra para responsividad móvil */
+@media (max-width: 600px) {
+  .App, #root, .contenedor-juego {
+    width: 100vw;
+    min-width: 0;
+    max-width: 100vw;
+    padding: 0.5em;
+    overflow-x: hidden;
+  }
+  .flex {
+    flex-wrap: wrap;
+  }
+  .panel-glass {
+    margin: 0.5em 0;
+    padding: 1em;
+  }
+  h1, h2, h3 {
+    font-size: var(--texto-lg);
+  }
+  p, ul, ol {
+    font-size: var(--texto-base);
+  }
+  img, video {
+    max-width: 100vw;
+    height: auto;
+  }
+  .boton-principal {
+    min-width: 80vw;
+    font-size: var(--texto-base);
+    padding: var(--espaciado-sm) var(--espaciado-md);
+  }
+}

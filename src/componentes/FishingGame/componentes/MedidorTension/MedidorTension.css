@@ -1,3 +1,12 @@
+@media (max-width: 600px) {
+  .medidor-tension-root, .medidor-tension-container {
+    width: 100vw;
+    min-width: 0;
+    max-width: 100vw;
+    padding: 0.5em;
+    overflow-x: hidden;
+  }
+}
 /**
  * MedidorTension.css - Estilos para el medidor de tensión del sedal
  * Diseño moderno con efectos visuales y animaciones fluidas
