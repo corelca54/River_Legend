@@ -16,11 +16,11 @@
 /* ControlesJuego.css - Estilos Profesionales */
 
 .controles-juego {
-  position: fixed;
+  position: absolute;
   left: 50%;
   bottom: 24px;
   transform: translateX(-50%);
-  width: 100vw;
+  width: 90vw;
   max-width: 500px;
   min-width: 0;
   background: none;
