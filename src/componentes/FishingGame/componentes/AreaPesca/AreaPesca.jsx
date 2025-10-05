@@ -220,7 +220,7 @@ const AreaPesca = ({
               bottom: `${100 - burbuja.y}%`,
               width: `${burbuja.size}px`,
               height: `${burbuja.size}px`,
-              opacity: burbuja.opacidad
+              opacity: isNaN(burbuja.opacidad) ? 0.5 : burbuja.opacidad
             }}
           />
         ))}
@@ -420,7 +420,7 @@ const AreaPesca = ({
                     className="particula"
                     style={{
                       animationDelay: `${i * 0.2}s`,
-                      opacity: tension / 100
+                      opacity: isNaN(tension / 100) ? 0.5 : tension / 100
                     }}
                   />
                 ))}

@@ -168,23 +168,25 @@ const ModalCapturaPez = ({
           </div>
 
           {/* Badge de rareza */}
-          <div 
-            className="badge-rareza-grande"
-            style={{ 
-              backgroundColor: obtenerColorRareza(pezCapturado.rareza),
-              color: pezCapturado.rareza === 'común' ? '#2F4F4F' : '#FFFFFF'
-            }}
-          >
-            <div className="texto-rareza-grande">{pezCapturado.rareza.toUpperCase()}</div>
-            <div className="estrellas-rareza">
-              {Array.from({ length: pezCapturado.rareza === 'común' ? 1 : 
-                                    pezCapturado.rareza === 'raro' ? 2 :
-                                    pezCapturado.rareza === 'épico' ? 3 : 4 
-              }).map((_, i) => (
-                <span key={i} className="estrella-rareza">★</span>
-              ))}
+          {pezCapturado.rareza && (
+            <div 
+              className="badge-rareza-grande"
+              style={{ 
+                backgroundColor: obtenerColorRareza(pezCapturado.rareza),
+                color: pezCapturado.rareza === 'común' ? '#2F4F4F' : '#FFFFFF'
+              }}
+            >
+              <div className="texto-rareza-grande">{pezCapturado.rareza.toUpperCase()}</div>
+              <div className="estrellas-rareza">
+                {Array.from({ length: pezCapturado.rareza === 'común' ? 1 : 
+                                      pezCapturado.rareza === 'raro' ? 2 :
+                                      pezCapturado.rareza === 'épico' ? 3 : 4 
+                }).map((_, i) => (
+                  <span key={i} className="estrella-rareza">★</span>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Estadísticas del pez */}

@@ -338,8 +338,9 @@ const useJuegoPesca = () => {
     reproducirSonido('carrete', 0.3);
     
     setTension(prev => {
-      const reduccion = 12 + Math.random() * 8; // 12-20 de reducción
-      const nuevaTension = Math.max(prev - reduccion, 0);
+        let reduccion = 12 + Math.random() * 8; // 12-20 de reducción
+        let nuevaTension = Math.max(prev - reduccion, 0);
+        if (isNaN(nuevaTension)) nuevaTension = 0;
       
       console.log(`📉 Tensión: ${prev.toFixed(1)} → ${nuevaTension.toFixed(1)}`);
       
