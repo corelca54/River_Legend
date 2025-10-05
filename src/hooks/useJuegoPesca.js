@@ -25,7 +25,7 @@ const PECES_DISPONIBLES = {
     id: 'bocachico',
     nombre: 'Bocachico',
     nombreCientifico: 'Prochilodus magdalenae',
-    imagen: '/imagenes/peces/bocachico.jpg',
+    imagen: '/assets/imagenes/peces/Bocachico.png', // ✅ Mayúscula + .png
     rareza: 'común',
     dificultad: 3,
     pesoMin: 0.5,
@@ -35,15 +35,12 @@ const PECES_DISPONIBLES = {
     habitat: 'Río Magdalena',
     puntos: 150,
     descripcion: 'Pez plateado muy común en los ríos colombianos',
-    color: '#C0C0C0',
-    sonidoCaptura: 'splash_pequeno',
-    movimiento: 'zigzag'
   },
   bagre_rayado: {
     id: 'bagre_rayado',
     nombre: 'Bagre Rayado',
     nombreCientifico: 'Pseudoplatystoma fasciatum',
-    imagen: '/imagenes/peces/bagre_rayado.jpg',
+    imagen: '/assets/imagenes/peces/Bagre_rayado.png', // ✅ Mayúscula + guion + .png
     rareza: 'raro',
     dificultad: 6,
     pesoMin: 5.0,
@@ -53,15 +50,12 @@ const PECES_DISPONIBLES = {
     habitat: 'Río Orinoco',
     puntos: 400,
     descripcion: 'Depredador con distintivas rayas negras',
-    color: '#F4A460',
-    sonidoCaptura: 'splash_grande',
-    movimiento: 'violento'
   },
   sabalo: {
     id: 'sabalo',
     nombre: 'Sabalo',
     nombreCientifico: 'Brycon moorei',
-    imagen: '/assets/imagenes/peces/Sabalo.png',
+    imagen: '/assets/imagenes/peces/sabalo.png', // ✅ minúscula + .png
     rareza: 'común',
     dificultad: 4,
     pesoMin: 1.0,
@@ -71,15 +65,12 @@ const PECES_DISPONIBLES = {
     habitat: 'Ríos Andinos',
     puntos: 200,
     descripcion: 'Pez plateado con aletas naranjas',
-    color: '#FFD700',
-    sonidoCaptura: 'splash_mediano',
-    movimiento: 'rapido'
   },
   pavon: {
     id: 'pavon',
     nombre: 'Pavón',
     nombreCientifico: 'Cichla orinocensis',
-    imagen: '/imagenes/peces/pavon.jpg',
+    imagen: '/assets/imagenes/peces/Pavon.png', // ✅ Mayúscula + .png
     rareza: 'épico',
     dificultad: 8,
     pesoMin: 3.0,
@@ -89,11 +80,38 @@ const PECES_DISPONIBLES = {
     habitat: 'Río Orinoco',
     puntos: 600,
     descripcion: 'Depredador agresivo de aguas tropicales',
-    color: '#FFD700',
-    sonidoCaptura: 'splash_grande',
-    movimiento: 'agresivo'
   },
-
+  arapaima: {
+    id: 'arapaima',
+    nombre: 'Arapaima',
+    nombreCientifico: 'Arapaima gigas',
+    imagen: '/assets/imagenes/peces/arapaima.png', // ✅ minúscula + .png
+    // ... resto de propiedades
+  },
+  corroncho: {
+    id: 'corroncho',
+    nombre: 'Corroncho',
+    imagen: '/assets/imagenes/peces/Corroncho.png', // ✅ Mayúscula + .png
+    // ... resto
+  },
+  dorado: {
+    id: 'dorado',
+    nombre: 'Dorado',
+    imagen: '/assets/imagenes/peces/dorado.png', // ✅ minúscula + .png
+    // ... resto
+  },
+  perca: {
+    id: 'perca',
+    nombre: 'Perca',
+    imagen: '/assets/imagenes/peces/perca.png', // ✅ minúscula + .png
+    // ... resto
+  },
+  trucha_mariposa: {
+    id: 'trucha_mariposa',
+    nombre: 'Trucha Mariposa',
+    imagen: '/assets/imagenes/peces/trucha_mariposa.png', // ✅ minúscula + guion + .png
+    // ... resto
+  }
 };
 
 const useJuegoPesca = () => {

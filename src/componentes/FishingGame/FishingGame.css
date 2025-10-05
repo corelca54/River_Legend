@@ -6,7 +6,8 @@
   width: 100vw;
   height: 100vh;
   z-index: -1;
-  background: linear-gradient(180deg, #4682B4 0%, #2F4F4F 100%), #4682B4;
+  background: linear-gradient(180deg, #4682B4 0%, #2F4F4F 100%);
+  background-image: url('/assets/imagenes/fondos/fondo_rio.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

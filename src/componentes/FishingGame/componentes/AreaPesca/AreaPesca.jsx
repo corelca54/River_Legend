@@ -587,9 +587,11 @@ const AreaPesca = ({
             />
             <div className="nombre-pez">{pezActual.nombre}</div>
             <div className="peso-estimado">~{pezActual.pesoCapturado || pezActual.peso}kg</div>
-            <div className={`rareza-indicator rareza-${pezActual.rareza}`}>
-              {pezActual.rareza.toUpperCase()}
-            </div>
+            {pezActual.rareza && (
+              <div className={`rareza-indicator rareza-${pezActual.rareza}`}>
+                {pezActual.rareza.toUpperCase()}
+              </div>
+            )}
           </div>
         )}
       </div>

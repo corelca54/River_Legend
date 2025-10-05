@@ -172,8 +172,9 @@ const ControlesJuego = ({
               onMouseDown={iniciarRecoger}
               onMouseUp={detenerRecoger}
               onMouseLeave={detenerRecoger}
-              onTouchStart={(e) => { e.preventDefault(); iniciarRecoger(); }}
-              onTouchEnd={(e) => { e.preventDefault(); detenerRecoger(); }}
+              onPointerDown={(e) => { iniciarRecoger(); }}
+              onPointerUp={(e) => { detenerRecoger(); }}
+              onPointerLeave={(e) => { detenerRecoger(); }}
             >
               <div className="icono-boton">🎣</div>
               <div className="texto-boton">RECOGER</div>
@@ -187,8 +188,9 @@ const ControlesJuego = ({
               onMouseDown={iniciarSoltar}
               onMouseUp={detenerSoltar}
               onMouseLeave={detenerSoltar}
-              onTouchStart={(e) => { e.preventDefault(); iniciarSoltar(); }}
-              onTouchEnd={(e) => { e.preventDefault(); detenerSoltar(); }}
+              onPointerDown={(e) => { iniciarRecoger(); }}
+              onPointerUp={(e) => { detenerRecoger(); }}
+              onPointerLeave={(e) => { detenerRecoger(); }}
             >
               <div className="icono-boton">🤲</div>
               <div className="texto-boton">SOLTAR</div>

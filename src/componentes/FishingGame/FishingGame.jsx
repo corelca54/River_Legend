@@ -113,19 +113,7 @@ const FishingGame = () => {
     return (
       <div className="fishing-game" style={{ minHeight: '100vh', minWidth: '100vw', background: '#4682B4' }}>
         {/* Imagen fija de fondo del río */}
-        <div className="imagen-background" style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          zIndex: 0,
-          background: 'linear-gradient(180deg, #4682B4 0%, #2F4F4F 100%)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          opacity: 1
-        }} />
+        <div className="imagen-background" />
 
         {/* Panel de estadísticas del jugador */}
         <div className="panel-superior" style={{zIndex: 10}}>
@@ -183,7 +171,7 @@ const FishingGame = () => {
             marginTop: 24
           }}>
             <img
-              src={`/assets/imagenes/peces/${pezActual.imagen.replace(/^\/+/, '')}`}
+              src={pezActual.imagen.startsWith('/') ? pezActual.imagen : `/assets/imagenes/peces/${pezActual.imagen}`}
               alt={pezActual.nombre}
               style={{
                 width: 180,
