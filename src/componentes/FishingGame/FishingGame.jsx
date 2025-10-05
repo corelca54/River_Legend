@@ -149,7 +149,7 @@ const FishingGame = () => {
         )}
 
         {/* Controles del juego */}
-        <div style={{zIndex: 100, position: 'absolute', left: 0, right: 0, bottom: 0}}>
+        <div style={{zIndex: 1000, position: 'fixed', left: 0, right: 0, bottom: 0}}>
           <ControlesJuego
             estadoJuego={estadoJuego}
             onLanzar={manejarLanzamiento}
