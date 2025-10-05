@@ -59,6 +59,7 @@ const FishingGame = () => {
       reproducirSonido('lanzar');
     }
     lanzarSenuelo();
+    
   };
 
   const manejarRecogida = () => {
@@ -79,6 +80,7 @@ const FishingGame = () => {
     setTimeout(() => {
       reiniciarJuego();
     }, 300);
+    
   };
 
   // Obtener mensaje de estado principal
@@ -147,7 +149,7 @@ const FishingGame = () => {
         )}
 
         {/* Controles del juego */}
-        <div style={{zIndex: 30, position: 'relative'}}>
+        <div style={{zIndex: 100, position: 'absolute', left: 0, right: 0, bottom: 0}}>
           <ControlesJuego
             estadoJuego={estadoJuego}
             onLanzar={manejarLanzamiento}
